@@ -17,6 +17,7 @@
     "amplify:tpmchatgptdfd0678a": "cd amplify/backend/function/tpmchatgptdfd0678a && tsc -p tsconfig.json && cd -"
   },
   "dependencies": {
+    "@aws-amplify/ui-react": "^4.6.1",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@pinecone-database/pinecone": "0.0.12",
     "@radix-ui/react-accordion": "^1.1.1",
