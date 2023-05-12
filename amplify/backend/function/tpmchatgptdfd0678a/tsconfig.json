@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "outDir": "./src",
+    "rootDir": "./lib",
+    "paths": {
+      "src": [  "./lib" ]
+    }
+  }
+}

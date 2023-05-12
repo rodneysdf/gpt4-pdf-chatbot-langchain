@@ -1,0 +1,60 @@
+{
+  "custom": {},
+  "function": {
+    "tpmchatgptdfd0678a": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "hosting": {
+    "amplifyhosting": {
+      "providerPlugin": "awscloudformation",
+      "service": "amplifyhosting",
+      "type": "manual"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_tpmchatgptdfd0678a_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_secretsPathAmplifyAppId": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_appId": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_type": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    }
+  }
+}

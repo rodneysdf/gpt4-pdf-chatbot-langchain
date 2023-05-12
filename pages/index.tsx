@@ -1,17 +1,17 @@
-import { useRef, useState, useEffect } from 'react';
+import { AWS_API_URL } from '@/config/aws-amplify';
 import Layout from '@/components/layout';
-import styles from '@/styles/Home.module.css';
-import { Message } from '@/types/chat';
-import Image from 'next/image';
-import ReactMarkdown from 'react-markdown';
 import LoadingDots from '@/components/ui/LoadingDots';
-import { Document } from 'langchain/document';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import styles from '@/styles/Home.module.css';
+import { Message } from '@/types/chat';
+import { Document } from 'langchain/document';
+import { useEffect, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 export default function Home() {
   const [query, setQuery] = useState<string>('');
@@ -25,7 +25,7 @@ export default function Home() {
   }>({
     messages: [
       {
-        message: 'Hi, what would you like to learn about this legal case?',
+        message: 'Hi, what would you like to know about this document?',
         type: 'apiMessage',
       },
     ],
@@ -34,8 +34,9 @@ export default function Home() {
 
   const { messages, history } = messageState;
 
-  const messageListRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const messageListRef = useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
     textAreaRef.current?.focus();
@@ -69,7 +70,7 @@ export default function Home() {
     setQuery('');
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch(AWS_API_URL + '/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -125,7 +126,7 @@ export default function Home() {
       <Layout>
         <div className="mx-auto flex flex-col gap-4">
           <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
-            Chat With Your Legal Docs
+            Chat and Summarize Your Docs
           </h1>
           <main className={styles.main}>
             <div className={styles.cloud}>
@@ -135,27 +136,25 @@ export default function Home() {
                   let className;
                   if (message.type === 'apiMessage') {
                     icon = (
-                      <Image
+                      <img
                         key={index}
                         src="/bot-image.png"
                         alt="AI"
                         width="40"
                         height="40"
                         className={styles.boticon}
-                        priority
                       />
                     );
                     className = styles.apimessage;
                   } else {
                     icon = (
-                      <Image
+                      <img
                         key={index}
                         src="/usericon.png"
                         alt="Me"
                         width="30"
                         height="30"
                         className={styles.usericon}
-                        priority
                       />
                     );
                     // The latest message sent by the user will be animated while waiting for a response
@@ -224,7 +223,7 @@ export default function Home() {
                     placeholder={
                       loading
                         ? 'Waiting for response...'
-                        : 'What is this legal case about?'
+                        : 'What is this doc about?'
                     }
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
@@ -261,9 +260,7 @@ export default function Home() {
           </main>
         </div>
         <footer className="m-auto p-4">
-          <a href="https://twitter.com/mayowaoshin">
-            Powered by LangChainAI. Demo built by Mayo (Twitter: @mayowaoshin).
-          </a>
+           MVP for TPM. Powered by LangChainAI.
         </footer>
       </Layout>
     </>

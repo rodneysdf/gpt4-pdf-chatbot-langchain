@@ -1,0 +1,15 @@
+{
+  "name": "hooks",
+  "version": "1.0.0",
+  "description": "Command hooks can be used to run custom scripts upon Amplify CLI lifecycle events like pre-push, post-add-function, etc.",
+  "main": "pre-push.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "require": "^2.4.20"
+  }
+}

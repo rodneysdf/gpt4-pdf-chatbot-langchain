@@ -1,0 +1,8 @@
+{
+  "lambdaLayers": [],
+  "secretNames": [
+    "tpmchatgpt_prod_google_docs",
+    "tpmchatgpt_prod_pinecone",
+    "tpmchatgpt_prod_openai_apikey"
+  ]
+}
