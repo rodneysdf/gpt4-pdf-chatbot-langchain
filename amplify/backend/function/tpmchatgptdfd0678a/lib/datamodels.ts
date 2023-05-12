@@ -1,11 +1,29 @@
 // To parse this data:
 //
-//   import { Convert, LambdaFunctionURLEvent } from "./file";
+//   import { Convert, Credentials, LambdaFunctionURLEvent, QuestionHistory } from "./file";
 //
+//   const credentials = Convert.toCredentials(json);
 //   const lambdaFunctionURLEvent = Convert.toLambdaFunctionURLEvent(json);
+//   const questionHistory = Convert.toQuestionHistory(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
+
+export interface Credentials {
+    google:       Google;
+    pinecone:     Pinecone;
+    openAiApiKey: string;
+}
+
+export interface Google {
+}
+
+export interface Pinecone {
+    namespace:   string;
+    environment: string;
+    indexName:   string;
+    apiKey:      string;
+}
 
 export interface LambdaFunctionURLEvent {
     version:         string;
@@ -68,6 +86,38 @@ export interface HTTP {
     userAgent: string;
 }
 
+export interface QuestionHistory {
+    question: string;
+    history:  any[];
+}
+
+// Converts JSON strings to/from your types
+// and asserts the results of JSON.parse at runtime
+export class Convert {
+    public static toCredentials(json: string): Credentials {
+        return cast(JSON.parse(json), r("Credentials"));
+    }
+
+    public static credentialsToJson(value: Credentials): string {
+        return JSON.stringify(uncast(value, r("Credentials")), null, 2);
+    }
+
+    public static toLambdaFunctionURLEvent(json: string): LambdaFunctionURLEvent {
+        return cast(JSON.parse(json), r("LambdaFunctionURLEvent"));
+    }
+
+    public static lambdaFunctionURLEventToJson(value: LambdaFunctionURLEvent): string {
+        return JSON.stringify(uncast(value, r("LambdaFunctionURLEvent")), null, 2);
+    }
+
+    public static toQuestionHistory(json: string): QuestionHistory {
+        return cast(JSON.parse(json), r("QuestionHistory"));
+    }
+
+    public static questionHistoryToJson(value: QuestionHistory): string {
+        return JSON.stringify(uncast(value, r("QuestionHistory")), null, 2);
+    }
+}
 
 function invalidValue(typ: any, val: any, key: any, parent: any = ''): never {
     const prettyTyp = prettyTypeName(typ);
@@ -222,6 +272,19 @@ function r(name: string) {
 }
 
 const typeMap: any = {
+    "Credentials": o([
+        { json: "google", js: "google", typ: r("Google") },
+        { json: "pinecone", js: "pinecone", typ: r("Pinecone") },
+        { json: "openAiApiKey", js: "openAiApiKey", typ: "" },
+    ], false),
+    "Google": o([
+    ], false),
+    "Pinecone": o([
+        { json: "namespace", js: "namespace", typ: "" },
+        { json: "environment", js: "environment", typ: "" },
+        { json: "indexName", js: "indexName", typ: "" },
+        { json: "apiKey", js: "apiKey", typ: "" },
+    ], false),
     "LambdaFunctionURLEvent": o([
         { json: "version", js: "version", typ: "" },
         { json: "routeKey", js: "routeKey", typ: "" },
@@ -278,5 +341,9 @@ const typeMap: any = {
         { json: "protocol", js: "protocol", typ: "" },
         { json: "sourceIp", js: "sourceIp", typ: "" },
         { json: "userAgent", js: "userAgent", typ: "" },
+    ], false),
+    "QuestionHistory": o([
+        { json: "question", js: "question", typ: "" },
+        { json: "history", js: "history", typ: a("any") },
     ], false),
 };

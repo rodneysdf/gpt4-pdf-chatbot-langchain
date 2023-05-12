@@ -49,6 +49,6 @@
         "time": "11/May/2023:18:42:16 +0000",
         "timeEpoch": 1683830536114
     },
-    "body": "fd",
+    "body": "{\"question\":\"Please summarize\",\"history\":[]}",
     "isBase64Encoded": false
 }

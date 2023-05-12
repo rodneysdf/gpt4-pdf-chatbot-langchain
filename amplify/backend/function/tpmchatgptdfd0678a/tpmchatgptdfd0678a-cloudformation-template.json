@@ -74,7 +74,7 @@
             "REGION": {
               "Ref": "AWS::Region"
             },
-            "tpmchatgpt_prod_google_docs": {
+            "credentials": {
               "Fn::Join": [
                 "",
                 [
@@ -92,51 +92,7 @@
                       }
                     ]
                   },
-                  "tpmchatgpt_prod_google_docs"
-                ]
-              ]
-            },
-            "tpmchatgpt_prod_pinecone": {
-              "Fn::Join": [
-                "",
-                [
-                  {
-                    "Fn::Sub": [
-                      "/amplify/${appId}/${env}/AMPLIFY_${functionName}_",
-                      {
-                        "appId": {
-                          "Ref": "secretsPathAmplifyAppId"
-                        },
-                        "env": {
-                          "Ref": "env"
-                        },
-                        "functionName": "tpmchatgptdfd0678a"
-                      }
-                    ]
-                  },
-                  "tpmchatgpt_prod_pinecone"
-                ]
-              ]
-            },
-            "tpmchatgpt_prod_openai_apikey": {
-              "Fn::Join": [
-                "",
-                [
-                  {
-                    "Fn::Sub": [
-                      "/amplify/${appId}/${env}/AMPLIFY_${functionName}_",
-                      {
-                        "appId": {
-                          "Ref": "secretsPathAmplifyAppId"
-                        },
-                        "env": {
-                          "Ref": "env"
-                        },
-                        "functionName": "tpmchatgptdfd0678a"
-                      }
-                    ]
-                  },
-                  "tpmchatgpt_prod_openai_apikey"
+                  "credentials"
                 ]
               ]
             }

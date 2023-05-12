@@ -1,8 +1,9 @@
 # TPM implementation
 
 UI is hosted in AWS using Amplify
-
 Processing is done by a Lambda Function URL (avoiding API Gateway's 30 second limit)
+Credentials are in SSM Parameter Store for the lambda
+
 
 ## In Progress
 
@@ -14,7 +15,7 @@ Processing is done by a Lambda Function URL (avoiding API Gateway's 30 second li
 - Add Google Drive support
   - customize a driver that better understands TPM specs
 - Update dependencies - currently Embedding relies on an environment variable instead of a passed-in parameter.
-- Move credentials to SSM Parameter Store or DynamoDB, per-user
+- Make credentials per-user - maybe in DynamoDB.
 - Support multiple users in the UI and db
 - Make model and database index selectable
 - Make the Lambda do response streaming (using '[lambda-stream](https://github.com/astuyve/lambda-stream)') like ChatGPT does
