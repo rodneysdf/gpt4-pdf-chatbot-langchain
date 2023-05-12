@@ -24,6 +24,40 @@
           "deploymentBucketName": "amplify-tpmchatgpt-dev-184051-deployment",
           "s3Key": "amplify-builds/tpmchatgptdfd0678a-33776b316d4569356e79-build.zip"
         }
+      },
+      "auth": {
+        "tpmchatgpt6780338c": {}
+      }
+    }
+  },
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tpmchatgpt-prod-152840-authRole",
+      "UnauthRoleArn": "arn:aws:iam::088858129648:role/amplify-tpmchatgpt-prod-152840-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::088858129648:role/amplify-tpmchatgpt-prod-152840-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-tpmchatgpt-prod-152840-deployment",
+      "UnauthRoleName": "amplify-tpmchatgpt-prod-152840-unauthRole",
+      "StackName": "amplify-tpmchatgpt-prod-152840",
+      "StackId": "arn:aws:cloudformation:us-east-1:088858129648:stack/amplify-tpmchatgpt-prod-152840/f78b28e0-f10b-11ed-ab90-0ae2dc95655b",
+      "AmplifyAppId": "d3oslnel1z9r6i"
+    },
+    "categories": {
+      "auth": {
+        "tpmchatgpt6780338c": {}
+      },
+      "function": {
+        "tpmchatgptdfd0678a": {
+          "secretsPathAmplifyAppId": "d3oslnel1z9r6i",
+          "deploymentBucketName": "amplify-tpmchatgpt-prod-152840-deployment",
+          "s3Key": "amplify-builds/tpmchatgptdfd0678a-33776b316d4569356e79-build.zip"
+        }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d3oslnel1z9r6i",
+          "type": "manual"
+        }
       }
     }
   }
