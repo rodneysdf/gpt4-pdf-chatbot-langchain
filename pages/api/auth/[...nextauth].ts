@@ -8,7 +8,7 @@ export const authOptions = {
     CognitoProvider({
       clientId: awsmobile.aws_user_pools_web_client_id,
       clientSecret: "",
-      issuer: "https://cognito-idp." + awsmobile.aws_cognito_region + "amazonaws.com/" + awsmobile.aws_user_pools_id
+      issuer: "https://cognito-idp." + awsmobile.aws_cognito_region + ".amazonaws.com/" + awsmobile.aws_user_pools_id
     })
     // ...add more providers here
   ],
