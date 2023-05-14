@@ -1,5 +1,3 @@
-import { signIn } from "next-auth/react"
-
 interface LayoutProps {
   children?: React.ReactNode;
 }
@@ -17,7 +15,7 @@ export default function Layout({ children }: LayoutProps) {
           </nav>
         </div>
 
-        <button onClick={() => signIn("cognito")}>Sign in</button>
+
       </header>
       <div>
         <main className="flex w-full flex-1 flex-col overflow-hidden">

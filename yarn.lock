@@ -5017,7 +5017,7 @@
   resolved "https://registry.npmjs.org/@babel/regjsgen/-/regjsgen-0.8.0.tgz"
   integrity sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.13.10", "@babel/runtime@^7.20.13", "@babel/runtime@^7.20.7", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.13.10", "@babel/runtime@^7.20.7", "@babel/runtime@^7.8.4":
   version "7.21.0"
   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.21.0.tgz"
   integrity sha512-xwII0//EObnq89Ji5AKYQaRYiW/nZ3llSv29d49IuxPhKbtJoLP+9QUUZ4nVragQVtaVGeZrpB+ZtG/Pdy/POw==
@@ -5582,11 +5582,6 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
-
-"@panva/hkdf@^1.0.2":
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/@panva/hkdf/-/hkdf-1.1.1.tgz"
-  integrity sha512-dhPeilub1NuIG0X5Kvhh9lH4iW3ZsHlnzwgwbOlgwQ2wG1IqFzsgHqmKPk3WzsdWAeaxKJxgM0+W433RmN45GA==
 
 "@pinecone-database/pinecone@*", "@pinecone-database/pinecone@0.0.12":
   version "0.0.12"
@@ -8570,11 +8565,6 @@ cookie@^0.4.0, cookie@0.4.2:
   resolved "https://registry.npmjs.org/cookie/-/cookie-0.4.2.tgz"
   integrity sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==
 
-cookie@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.npmjs.org/cookie/-/cookie-0.5.0.tgz"
-  integrity sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==
-
 copy-descriptor@^0.1.0:
   version "0.1.1"
   resolved "https://registry.npmjs.org/copy-descriptor/-/copy-descriptor-0.1.1.tgz"
@@ -11369,11 +11359,6 @@ joi@^17.2.1:
     "@sideway/formula" "^3.0.1"
     "@sideway/pinpoint" "^2.0.0"
 
-jose@^4.11.4, jose@^4.14.1:
-  version "4.14.4"
-  resolved "https://registry.npmjs.org/jose/-/jose-4.14.4.tgz"
-  integrity sha512-j8GhLiKmUAh+dsFXlX1aJCbt5KMibuKb+d7j1JaOJG6s2UjX1PQlW+OKB/sD4a/5ZYF4RcmYmLSndOoU3Lt/3g==
-
 js-cookie@^2.2.1:
   version "2.2.1"
   resolved "https://registry.npmjs.org/js-cookie/-/js-cookie-2.2.1.tgz"
@@ -12911,46 +12896,6 @@ neo-async@^2.5.0, neo-async@^2.6.2:
   resolved "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-next-auth@^4.22.1:
-  version "4.22.1"
-  resolved "https://registry.npmjs.org/next-auth/-/next-auth-4.22.1.tgz"
-  integrity sha512-NTR3f6W7/AWXKw8GSsgSyQcDW6jkslZLH8AiZa5PQ09w1kR8uHtR9rez/E9gAq/o17+p0JYHE8QjF3RoniiObA==
-  dependencies:
-    "@babel/runtime" "^7.20.13"
-    "@panva/hkdf" "^1.0.2"
-    cookie "^0.5.0"
-    jose "^4.11.4"
-    oauth "^0.9.15"
-    openid-client "^5.4.0"
-    preact "^10.6.3"
-    preact-render-to-string "^5.1.19"
-    uuid "^8.3.2"
-
-"next@^12.2.5 || ^13", next@13.2.3:
-  version "13.2.3"
-  resolved "https://registry.npmjs.org/next/-/next-13.2.3.tgz"
-  integrity sha512-nKFJC6upCPN7DWRx4+0S/1PIOT7vNlCT157w9AzbXEgKy6zkiPKEt5YyRUsRZkmpEqBVrGgOqNfwecTociyg+w==
-  dependencies:
-    "@next/env" "13.2.3"
-    "@swc/helpers" "0.4.14"
-    caniuse-lite "^1.0.30001406"
-    postcss "8.4.14"
-    styled-jsx "5.1.1"
-  optionalDependencies:
-    "@next/swc-android-arm-eabi" "13.2.3"
-    "@next/swc-android-arm64" "13.2.3"
-    "@next/swc-darwin-arm64" "13.2.3"
-    "@next/swc-darwin-x64" "13.2.3"
-    "@next/swc-freebsd-x64" "13.2.3"
-    "@next/swc-linux-arm-gnueabihf" "13.2.3"
-    "@next/swc-linux-arm64-gnu" "13.2.3"
-    "@next/swc-linux-arm64-musl" "13.2.3"
-    "@next/swc-linux-x64-gnu" "13.2.3"
-    "@next/swc-linux-x64-musl" "13.2.3"
-    "@next/swc-win32-arm64-msvc" "13.2.3"
-    "@next/swc-win32-ia32-msvc" "13.2.3"
-    "@next/swc-win32-x64-msvc" "13.2.3"
-
 next@11.1.2:
   version "11.1.2"
   resolved "https://registry.npmjs.org/next/-/next-11.1.2.tgz"
@@ -13011,6 +12956,31 @@ next@11.1.2:
     "@next/swc-darwin-x64" "11.1.2"
     "@next/swc-linux-x64-gnu" "11.1.2"
     "@next/swc-win32-x64-msvc" "11.1.2"
+
+next@13.2.3:
+  version "13.2.3"
+  resolved "https://registry.npmjs.org/next/-/next-13.2.3.tgz"
+  integrity sha512-nKFJC6upCPN7DWRx4+0S/1PIOT7vNlCT157w9AzbXEgKy6zkiPKEt5YyRUsRZkmpEqBVrGgOqNfwecTociyg+w==
+  dependencies:
+    "@next/env" "13.2.3"
+    "@swc/helpers" "0.4.14"
+    caniuse-lite "^1.0.30001406"
+    postcss "8.4.14"
+    styled-jsx "5.1.1"
+  optionalDependencies:
+    "@next/swc-android-arm-eabi" "13.2.3"
+    "@next/swc-android-arm64" "13.2.3"
+    "@next/swc-darwin-arm64" "13.2.3"
+    "@next/swc-darwin-x64" "13.2.3"
+    "@next/swc-freebsd-x64" "13.2.3"
+    "@next/swc-linux-arm-gnueabihf" "13.2.3"
+    "@next/swc-linux-arm64-gnu" "13.2.3"
+    "@next/swc-linux-arm64-musl" "13.2.3"
+    "@next/swc-linux-x64-gnu" "13.2.3"
+    "@next/swc-linux-x64-musl" "13.2.3"
+    "@next/swc-win32-arm64-msvc" "13.2.3"
+    "@next/swc-win32-ia32-msvc" "13.2.3"
+    "@next/swc-win32-x64-msvc" "13.2.3"
 
 nice-try@^1.0.4:
   version "1.0.5"
@@ -13277,11 +13247,6 @@ number-is-nan@^1.0.0:
   resolved "https://registry.npmjs.org/number-is-nan/-/number-is-nan-1.0.1.tgz"
   integrity sha512-4jbtZXNAsfZbAHiiqjLPBiCl16dES1zI4Hpzzxw61Tk+loF+sBDBKx1ICKKKwIqQ7M0mFn1TmkN7euSncWgHiQ==
 
-oauth@^0.9.15:
-  version "0.9.15"
-  resolved "https://registry.npmjs.org/oauth/-/oauth-0.9.15.tgz"
-  integrity sha512-a5ERWK1kh38ExDEfoO6qUHJb32rd7aYmPHuyCu3Fta/cnICvYmgd2uhuKXvPD+PXB+gCEYYEaQdIRAjCOwAKNA==
-
 ob1@0.73.9:
   version "0.73.9"
   resolved "https://registry.npmjs.org/ob1/-/ob1-0.73.9.tgz"
@@ -13300,11 +13265,6 @@ object-copy@^0.1.0:
     copy-descriptor "^0.1.0"
     define-property "^0.2.5"
     kind-of "^3.0.3"
-
-object-hash@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.npmjs.org/object-hash/-/object-hash-2.2.0.tgz"
-  integrity sha512-gScRMn0bS5fH+IuwyIFgnh9zBdo4DV+6GhygmWM9HyNJSgS0hScp1f5vjtm7oIIOiT9trXrShAkLFSc2IqKNgw==
 
 object-hash@^3.0.0:
   version "3.0.0"
@@ -13388,11 +13348,6 @@ object.values@^1.1.6:
     define-properties "^1.1.4"
     es-abstract "^1.20.4"
 
-oidc-token-hash@^5.0.3:
-  version "5.0.3"
-  resolved "https://registry.npmjs.org/oidc-token-hash/-/oidc-token-hash-5.0.3.tgz"
-  integrity sha512-IF4PcGgzAr6XXSff26Sk/+P4KZFJVuHAJZj3wgO3vX2bMdNVp/QXTP3P7CEm9V1IdG8lDLY3HhiqpsE/nOwpPw==
-
 on-finished@~2.3.0:
   version "2.3.0"
   resolved "https://registry.npmjs.org/on-finished/-/on-finished-2.3.0.tgz"
@@ -13449,16 +13404,6 @@ openai@^3.2.0:
   dependencies:
     axios "^0.26.0"
     form-data "^4.0.0"
-
-openid-client@^5.4.0:
-  version "5.4.2"
-  resolved "https://registry.npmjs.org/openid-client/-/openid-client-5.4.2.tgz"
-  integrity sha512-lIhsdPvJ2RneBm3nGBBhQchpe3Uka//xf7WPHTIglery8gnckvW7Bd9IaQzekzXJvWthCMyi/xVEyGW0RFPytw==
-  dependencies:
-    jose "^4.14.1"
-    lru-cache "^6.0.0"
-    object-hash "^2.2.0"
-    oidc-token-hash "^5.0.3"
 
 optionator@^0.9.1:
   version "0.9.1"
@@ -13908,18 +13853,6 @@ potpack@^1.0.1, potpack@^1.0.2:
   resolved "https://registry.npmjs.org/potpack/-/potpack-1.0.2.tgz"
   integrity sha512-choctRBIV9EMT9WGAZHn3V7t0Z2pMQyl0EZE6pFc/6ml3ssw7Dlf/oAOvFwjm1HVsqfQN8GfeFyJ+d8tRzqueQ==
 
-preact-render-to-string@^5.1.19:
-  version "5.2.6"
-  resolved "https://registry.npmjs.org/preact-render-to-string/-/preact-render-to-string-5.2.6.tgz"
-  integrity sha512-JyhErpYOvBV1hEPwIxc/fHWXPfnEGdRKxc8gFdAZ7XV4tlzyzG847XAyEZqoDnynP88akM4eaHcSOzNcLWFguw==
-  dependencies:
-    pretty-format "^3.8.0"
-
-preact@^10.6.3, preact@>=10:
-  version "10.13.2"
-  resolved "https://registry.npmjs.org/preact/-/preact-10.13.2.tgz"
-  integrity sha512-q44QFLhOhty2Bd0Y46fnYW0gD/cbVM9dUVtNTDKPcdXSMA7jfY+Jpd6rk3GB0lcQss0z5s/6CmVP0Z/hV+g6pw==
-
 prebuild-install@^6.1.4:
   version "6.1.4"
   resolved "https://registry.npmjs.org/prebuild-install/-/prebuild-install-6.1.4.tgz"
@@ -13973,11 +13906,6 @@ pretty-format@^29.5.0:
     ansi-styles "^5.0.0"
     react-is "^18.0.0"
 
-pretty-format@^3.8.0:
-  version "3.8.0"
-  resolved "https://registry.npmjs.org/pretty-format/-/pretty-format-3.8.0.tgz"
-  integrity sha512-WuxUnVtlWL1OfZFQFuqvnvs6MiAGk9UNsBostyBOB0Is9wb5uRESevA6rnl/rkksXaGX3GzZhPup5d6Vp1nFew==
-
 process-nextick-args@^2.0.1, process-nextick-args@~2.0.0:
   version "2.0.1"
   resolved "https://registry.npmjs.org/process-nextick-args/-/process-nextick-args-2.0.1.tgz"
@@ -14008,7 +13936,7 @@ prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@^15.0.0, prop-types@^15.8.1:
+prop-types@*, prop-types@^15.0.0, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -14174,7 +14102,7 @@ react-devtools-core@^4.26.1:
     shell-quote "^1.6.1"
     ws "^7"
 
-"react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^17.0.2 || ^18", react-dom@^18.2.0, "react-dom@>= 16.14.0", react-dom@>=16.8.0, react-dom@18.2.0:
+"react-dom@^16.8 || ^17.0 || ^18.0", react-dom@^18.2.0, "react-dom@>= 16.14.0", react-dom@>=16.8.0, react-dom@18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz"
   integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
@@ -14195,6 +14123,13 @@ react-generate-context@1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/react-generate-context/-/react-generate-context-1.0.1.tgz"
   integrity sha512-rOFGh3KgC2Ot66DmVCcT1p8lVJCmmCjzGE5WK/KsyDFi43wpIbW1PYcr04cQ3mbF4LaIkY6SpK7k1DOgwtpUXA==
+
+react-google-button@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.npmjs.org/react-google-button/-/react-google-button-0.7.2.tgz"
+  integrity sha512-LPIqU2hIlc212kqks8MtKjRstquVkP3SIjxlK5B1nIfg2R7YqSusJAxZUkJA5dv/z6QeSuGyI9ujwV/VWMTyAA==
+  dependencies:
+    prop-types "^15.7.2"
 
 "react-is@^16.12.0 || ^17.0.0 || ^18.0.0", react-is@^18.0.0:
   version "18.2.0"
@@ -14352,7 +14287,7 @@ react-style-singleton@^2.2.1:
     invariant "^2.2.4"
     tslib "^2.0.0"
 
-"react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.5.1 || ^17.0.0 || ^18.0.0", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18", react@^18.2.0, "react@>= 16.14.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16, react@>=16.3.0, react@>=16.8.0, react@18.2.0:
+react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.5.1 || ^17.0.0 || ^18.0.0", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", react@^18.2.0, "react@>= 16.14.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16, react@>=16.3.0, react@>=16.8.0, react@18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==

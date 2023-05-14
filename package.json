@@ -29,10 +29,10 @@
     "langchain": "0.0.55",
     "lucide-react": "^0.125.0",
     "next": "13.2.3",
-    "next-auth": "^4.22.1",
     "pdf-parse": "1.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-google-button": "^0.7.2",
     "react-markdown": "^8.0.5",
     "source-map-support": "^0.5.21",
     "tailwind-merge": "^1.10.0"

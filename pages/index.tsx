@@ -12,8 +12,12 @@ import { Message } from '@/types/chat';
 import { Document } from 'langchain/document';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { Auth, Hub } from 'aws-amplify';
+import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth';
+import GoogleButton from 'react-google-button'
 
 export default function Home() {
+  const [user, setUser] = useState(null);
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,8 +43,32 @@ export default function Home() {
 
 
   useEffect(() => {
+    Hub.listen('auth', ({ payload: { event, data } }) => {
+      switch (event) {
+        case 'signIn':
+        case 'cognitoHostedUI':
+          getUser().then(userData => setUser(userData));
+          break;
+        case 'signOut':
+          setUser(null);
+          break;
+        case 'signIn_failure':
+        case 'cognitoHostedUI_failure':
+          console.log('Sign in failure', data);
+          break;
+      }
+    });
+
+    getUser().then(userData => setUser(userData));
+
     textAreaRef.current?.focus();
   }, []);
+
+  function getUser() {
+    return Auth.currentAuthenticatedUser()
+      .then(userData => userData)
+      .catch(() => console.log('Not signed in'));
+  }
 
   //handle form submission
   async function handleSubmit(e: any) {
@@ -124,6 +152,16 @@ export default function Home() {
   return (
     <>
       <Layout>
+        <div>
+          <p>User: {user ? JSON.stringify(user["attributes"]["sub"]) : "None"}</p>
+          {user ? (
+            <button onClick={() => Auth.signOut()}>Sign Out</button>
+          ) : (
+            <GoogleButton
+              onClick={() => { Auth.federatedSignIn({ provider: CognitoHostedUIIdentityProvider.Google }) }}
+            />
+          )}
+        </div>
         <div className="mx-auto flex flex-col gap-4">
           <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
             Chat and Summarize Your Docs
@@ -260,7 +298,7 @@ export default function Home() {
           </main>
         </div>
         <footer className="m-auto p-4">
-           MVP for TPM. Powered by LangChainAI.
+          MVP for TPM. Powered by LangChainAI.
         </footer>
       </Layout>
     </>
