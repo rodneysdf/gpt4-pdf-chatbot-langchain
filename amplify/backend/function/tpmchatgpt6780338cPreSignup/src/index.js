@@ -10,12 +10,11 @@
  * `MODULES` env var.
  */
 const moduleNames = process.env.MODULES.split(',');
-console.log("moduleNames", moduleNames);
 /**
  * The array of imported modules.
  */
 const modules = moduleNames.map((name) => require(`./${name}`));
-console.log("modules", modules);
+
 /**
  * This async handler iterates over the given modules and awaits them.
  *
