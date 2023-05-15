@@ -27,7 +27,7 @@
         },
         "tpmchatgpt6780338cPreSignup": {
           "deploymentBucketName": "amplify-tpmchatgpt-dev-184051-deployment",
-          "s3Key": "amplify-builds/tpmchatgpt6780338cPreSignup-53626549514a4c4b5579-build.zip"
+          "s3Key": "amplify-builds/tpmchatgpt6780338cPreSignup-7148414c6a6f674d6b6d-build.zip"
         }
       },
       "auth": {
