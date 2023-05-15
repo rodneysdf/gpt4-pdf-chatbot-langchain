@@ -9,7 +9,8 @@
       "UnauthRoleName": "amplify-tpmchatgpt-dev-184051-unauthRole",
       "StackName": "amplify-tpmchatgpt-dev-184051",
       "StackId": "arn:aws:cloudformation:us-east-1:088858129648:stack/amplify-tpmchatgpt-dev-184051/2733b9c0-ee02-11ed-abf1-0e2d8bb0b23f",
-      "AmplifyAppId": "d3oslnel1z9r6i"
+      "AmplifyAppId": "d3oslnel1z9r6i",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-tpmchatgpt-dev-184051-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
     },
     "categories": {
       "hosting": {
@@ -23,10 +24,17 @@
           "secretsPathAmplifyAppId": "d3oslnel1z9r6i",
           "deploymentBucketName": "amplify-tpmchatgpt-dev-184051-deployment",
           "s3Key": "amplify-builds/tpmchatgptdfd0678a-3956336a54422f463474-build.zip"
+        },
+        "tpmchatgpt6780338cPreSignup": {
+          "deploymentBucketName": "amplify-tpmchatgpt-dev-184051-deployment",
+          "s3Key": "amplify-builds/tpmchatgpt6780338cPreSignup-53626549514a4c4b5579-build.zip"
         }
       },
       "auth": {
-        "tpmchatgpt6780338c": {}
+        "tpmchatgpt6780338c": {
+          "googleClientId": "632052571112-196ci83pk5etlcq8ehkkmbu77anshr6a.apps.googleusercontent.com"
+        },
+        "userPoolGroups": {}
       }
     }
   },

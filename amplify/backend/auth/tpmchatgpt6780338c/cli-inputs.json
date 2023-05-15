@@ -36,18 +36,24 @@
     "sharedId": "6780338c",
     "resourceName": "tpmchatgpt6780338c",
     "authSelections": "identityPoolAndUserPool",
-    "useDefault": "defaultSocial",
+    "useDefault": "manual",
     "hostedUI": true,
     "usernameAttributes": [
       "email"
     ],
-    "triggers": {},
+    "triggers": {
+      "PreSignup": [
+        "custom"
+      ]
+    },
     "hostedUIDomainName": "tpm-ai",
     "authProvidersUserPool": [
       "Google"
     ],
     "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
-    "userPoolGroupList": [],
+    "userPoolGroupList": [
+      "Google"
+    ],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
     "useEnabledMfas": true,
@@ -64,11 +70,28 @@
       ]
     },
     "breakCircularDependency": true,
-    "dependsOn": [],
+    "dependsOn": [
+      {
+        "category": "function",
+        "resourceName": "tpmchatgpt6780338cPreSignup",
+        "triggerProvider": "Cognito",
+        "attributes": [
+          "Arn",
+          "Name"
+        ]
+      }
+    ],
     "parentStack": {
       "Ref": "AWS::StackId"
     },
     "permissions": [],
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://tpm-ai.devfactory.com/signin/\",\"http://localhost:3000/\"],\"LogoutURLs\":[\"https://tpm-ai.devfactory.com/signout/\",\"http://localhost:3000/\"]}"
+    "thirdPartyAuth": true,
+    "authProviders": [
+      "accounts.google.com"
+    ],
+    "userPoolGroups": true,
+    "adminQueries": false,
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://tpm-ai.devfactory.com/signin/\",\"http://localhost:3000/\"],\"LogoutURLs\":[\"https://tpm-ai.devfactory.com/signout/\",\"http://localhost:3000/\"]}",
+    "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PreSignUp\",\n    \"lambdaFunctionName\": \"tpmchatgpt6780338cPreSignup\"\n  }\n]"
   }
 }

@@ -108,9 +108,9 @@
         "Architectures": [
           "arm64"
         ],
-        "MemorySize": 512,
+        "MemorySize": 1024,
         "Layers": [],
-        "Timeout": 25
+        "Timeout": 240
       }
     },
     "LambdaExecutionRole": {

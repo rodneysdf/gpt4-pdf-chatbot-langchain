@@ -9,7 +9,7 @@ const path = require("node:path");
  */
 export const BuildUIEnv = async (hook, data, error) => {
   // console.log(hook, data.amplify.environment, data.amplify.command, data.amplify.subcommand )
-  console.log("Generating config from AWS")
+  console.log("Generating AWS config into config/aws-amplify.ts")
   const child_process = require("node:child_process");
   // const path = require("node:path");
 
@@ -32,7 +32,7 @@ export const BuildUIEnv = async (hook, data, error) => {
   const fnUrlSlash = fnUrlEntry.toString('utf8').trim()     // remove ending lf
   const fnUrl = fnUrlSlash.replace(/\/$/, '');    // remove trailing slash
 
-  
+
   // write vars to config/aws-amplify.js
   // from https://github.com/aws-amplify/amplify-cli/issues/3643
   let configContents =
