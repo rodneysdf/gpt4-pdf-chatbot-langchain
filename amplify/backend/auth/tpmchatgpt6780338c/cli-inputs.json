@@ -92,6 +92,6 @@
     "userPoolGroups": true,
     "adminQueries": false,
     "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PreSignUp\",\n    \"lambdaFunctionName\": \"tpmchatgpt6780338cPreSignup\"\n  }\n]",
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://tpm-ai-dev.devfactory.com/signin/\",\"http://localhost:3000/\"],\"LogoutURLs\":[\"https://tpm-ai-dev.devfactory.com/signout/\",\"http://localhost:3000/\"]}"
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://tpm-ai-dev.devfactory.com/signin/\",\"http://localhost:3000/signin/\",\"https://tpm-ai.devfactory.com/signin/\"],\"LogoutURLs\":[\"https://tpm-ai-dev.devfactory.com/signout/\",\"http://localhost:3000/signout/\",\"https://tpm-ai.devfactory.com/signout/\"]}"
   }
 }
