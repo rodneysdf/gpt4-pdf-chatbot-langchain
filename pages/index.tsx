@@ -136,6 +136,7 @@ const PurgeDocuments = () => {
 export default function Home() {
   const auth = useAuth();
   const [model, setModel] = useState<string>('gpt-3.5-turbo');
+  const [algo, setAlgo] = useState<string>('LangChain ConversationalRetrievalQAChain');
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -147,7 +148,7 @@ export default function Home() {
   }>({
     messages: [
       {
-        message: 'Hi, what would you like to know about this document?',
+        message: 'Hi, what would you like to know about these documents?',
         type: 'apiMessage',
       },
     ],
@@ -213,6 +214,7 @@ export default function Home() {
 
     postChat({
       model,
+      algo,
       question,
       history,
       openAiKey: "",
@@ -366,9 +368,9 @@ export default function Home() {
                   </button>
                 </form>
               </div>
-              <div className="flex flex-col justify-between w-full mt-3 m-3">
+              <div className="flex justify-between mt-3 m-3">
                 <div className="flex gap-3">
-                  <select
+                  Model: <select
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
                     name="model"
@@ -386,7 +388,20 @@ export default function Home() {
                   </select>
 
                 </div>
+                <div className="flex gap-3">
+                  Algorithm<select
+                    value={algo}
+                    onChange={(e) => setAlgo(e.target.value)}
+                    name="algo"
+                    id="algo"
+                    className="border px-2 py-1 rounded-md"
+                  >
+                    <option value="lc-CRQAC">LangChain ConversationalRetrievalQAChain</option>
+                    <option value="lc-CRC">LangChain ConversationalRetrievalChain</option>
+                    <option value="Bing" disabled>Bing</option>
+                  </select>
 
+                </div>
               </div>
             </div>
 

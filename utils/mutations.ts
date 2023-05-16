@@ -37,6 +37,7 @@ const authedApiCall = async (
 type PostChatBody = {
   question: string;
   model: string;
+  algo: string;
   history: [string, string][];
   openAiKey: string;    // optional
 };

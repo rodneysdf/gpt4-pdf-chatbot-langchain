@@ -13,7 +13,7 @@ export default function Layout({ children }: LayoutProps) {
       <header className="sticky top-0 z-40 bg-white w-screen">
         <div className="h-16 border-b border-b-slate-200 w-full flex flex-col items-center">
           <nav className="flex items-center justify-between w-[75vw] mx-auto h-full">
-            <h1><a href="#" className="hover:text-slate-600 cursor-pointer font-bold text-2xl leading-[1.1] tracking-tighter">
+            <h1><a href="#" className="hover:text-slate-600 cursor-pointer font-bold text-2xl tracking-tight">
               Chat and Summarize Your Docs
             </a>
             </h1>

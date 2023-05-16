@@ -91,6 +91,7 @@ export interface QuestionHistory {
     question:  string;
     history:   any[];
     model:     string;
+    algo:      string;
     openAiKey: string;
 }
 
@@ -350,6 +351,7 @@ const typeMap: any = {
         { json: "question", js: "question", typ: "" },
         { json: "history", js: "history", typ: a("any") },
         { json: "model", js: "model", typ: "" },
+        { json: "algo", js: "algo", typ: "" },
         { json: "openAiKey", js: "openAiKey", typ: "" },
     ], false),
 };

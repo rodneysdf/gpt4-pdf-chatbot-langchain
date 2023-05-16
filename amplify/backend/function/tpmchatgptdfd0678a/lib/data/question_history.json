@@ -2,5 +2,6 @@
   "question": "Please summarize",
   "history": [],
   "model": "gpt",
+  "algo": "langchain",
   "openAiKey": "sf-"
 }
