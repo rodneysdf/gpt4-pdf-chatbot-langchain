@@ -1,12 +1,9 @@
 import axios from 'axios';
-// import {AxiosRequestConfig} from 'axios';
-// import { useAuth } from '@/providers/auth';
 import { AWS_API_URL } from '../config/aws-amplify';
 
 const axiosInstance = axios.create({
   baseURL: AWS_API_URL,
 });
-
 
 const authedApiCall = async (
   options: {
