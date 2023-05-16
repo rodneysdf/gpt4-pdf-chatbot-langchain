@@ -50,6 +50,6 @@
         "time": "11/May/2023:18:42:16 +0000",
         "timeEpoch": 1683830536114
     },
-    "body": "{\"question\":\"Please summarize\",\"history\":[]}",
+    "body": "{\"question\":\"Please summarize\",\"model\": \"\",\"history\":[]}",
     "isBase64Encoded": false
 }

@@ -38,6 +38,7 @@ type PostChatBody = {
   question: string;
   model: string;
   history: [string, string][];
+  openAiKey: string;    // optional
 };
 
 // const chat = (body: any, auth: any) => makeMutation<PostChatBody>({
@@ -89,8 +90,12 @@ export const postSendUrl = async(url: string, auth: any) => authedApiCall({
   }
 }, auth);
 
-
 export const postPurgeDocuments = async(auth: any) => authedApiCall({
   method: 'POST',
   url: '/api/purge',
+}, auth);
+
+export const getCollection = async(auth: any) => authedApiCall({
+  method: 'GET',
+  url: '/api/collection',
 }, auth);

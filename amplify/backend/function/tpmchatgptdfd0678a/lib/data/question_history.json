@@ -1,5 +1,6 @@
 {
   "question": "Please summarize",
   "history": [],
-  "model": "gpt"
+  "model": "gpt",
+  "openAiKey": "sf-"
 }
