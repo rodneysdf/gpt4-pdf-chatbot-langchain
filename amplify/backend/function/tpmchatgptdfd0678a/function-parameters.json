@@ -3,5 +3,12 @@
   "secretNames": [
     "credentials"
   ],
-  "environmentVariableList": []
+  "environmentVariableList": [],
+  "permissions": {
+    "auth": {
+      "tpmchatgpt6780338c": [
+        "read"
+      ]
+    }
+  }
 }

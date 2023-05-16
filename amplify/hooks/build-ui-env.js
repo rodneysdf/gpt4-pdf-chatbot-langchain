@@ -17,15 +17,15 @@ export const BuildUIEnv = async (hook, data, error) => {
 
   // read info
   const fs = require("fs");
-  const obj = JSON.parse(fs.readFileSync(amplify_settings_file, { encoding: "utf8" }));
+  const teamProvider = JSON.parse(fs.readFileSync(amplify_settings_file, { encoding: "utf8" }));
   // console.log( "json", obj[data.amplify.environment.envName].categories.function.tpmchatgptdfd0678a)
 
   // get sub stack
-  const subStack = getCloudFormationNestedStack(obj[data.amplify.environment.envName].awscloudformation.StackName,
-    "function" + Object.keys(obj[data.amplify.environment.envName].categories.function)[0])
+  const subStack = getCloudFormationNestedStack(teamProvider[data.amplify.environment.envName].awscloudformation.StackName,
+    "function" + Object.keys(teamProvider[data.amplify.environment.envName].categories.function)[0])
 
-    let subStackStr = subStack.toString('utf8').trim()
-  var regex = new RegExp('^arn:aws:cloudformation:' + obj[data.amplify.environment.envName].awscloudformation.Region + ':\\d+:stack\/(.+)\/.+', 'g')
+  let subStackStr = subStack.toString('utf8').trim()
+  var regex = new RegExp('^arn:aws:cloudformation:' + teamProvider[data.amplify.environment.envName].awscloudformation.Region + ':\\d+:stack\/(.+)\/.+', 'g')
   let  subStackShort = subStackStr.replace(regex, '$1');
   // get FnUrl
   const fnUrlEntry = getCloudFormationOutputValue(subStackShort,  "tpmchatLambdaFuncUrl");
@@ -46,6 +46,15 @@ const AWS_API_URL = "${fnUrl}";
 export { AWS_API_URL };
 `
   fs.writeFileSync(path.join(data.amplify.environment.projectPath,"config", "aws-amplify.ts"), configContents);
+
+  //
+  // Update the Lambda Function Env parameters
+  let jsonFile = require("../backend/function/tpmchatgptdfd0678a/tpmchatgptdfd0678a-cloudformation-template.json")
+  // edit it
+  // jsonFile.Resources.LambdaFunction.Properties.Environment.Variables["USERPOOL_ID"] = process.env.AMPLIFY_USERPOOL_ID
+  jsonFile.Resources.LambdaFunction.Properties.Environment.Variables["AUTHNAME"] = Object.getOwnPropertyNames(teamProvider[data.amplify.environment.envName].categories.auth)[0]
+  // write it back
+  fs.writeFileSync("./amplify/backend/function/tpmchatgptdfd0678a/tpmchatgptdfd0678a-cloudformation-template.json", JSON.stringify(jsonFile, null, 2))
 };
 
 // CloudFormation queries

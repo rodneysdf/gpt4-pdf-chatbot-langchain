@@ -64,7 +64,15 @@
     },
     "tpmchatgptdfd0678a": {
       "build": true,
-      "dependsOn": [],
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "tpmchatgpt6780338c"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }

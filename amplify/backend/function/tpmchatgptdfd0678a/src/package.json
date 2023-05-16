@@ -6,7 +6,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@pinecone-database/pinecone": "^0.0.12",
+    "@types/jwk-to-pem": "^2.0.1",
     "aws-sdk": "^2.1377.0",
+    "jwk-to-pem": "^2.0.5",
     "langchain": "^0.0.55",
     "source-map-support": "^0.5.21"
   },

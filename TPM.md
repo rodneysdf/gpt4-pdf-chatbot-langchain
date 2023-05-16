@@ -30,6 +30,7 @@ The UI makes a call to a single server function `'/api/chat'` in `pages/index.ts
 ## Implementation notes
 
 Typescript objects were created using [quicktype](https://quicktype.io/typescript)
+  `quicktype data/ -o datamodels.ts`
 
 ## Research
 evaluate a Cognito token in a Lambda - https://github.com/aws-samples/aws-lambda-function-url-security
