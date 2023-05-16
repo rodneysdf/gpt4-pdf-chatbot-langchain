@@ -88,9 +88,10 @@ export interface HTTP {
 }
 
 export interface QuestionHistory {
-    question: string;
-    history:  any[];
-    model:    string;
+    question:  string;
+    history:   any[];
+    model:     string;
+    openAiKey: string;
 }
 
 // Converts JSON strings to/from your types
@@ -349,5 +350,6 @@ const typeMap: any = {
         { json: "question", js: "question", typ: "" },
         { json: "history", js: "history", typ: a("any") },
         { json: "model", js: "model", typ: "" },
+        { json: "openAiKey", js: "openAiKey", typ: "" },
     ], false),
 };

@@ -215,6 +215,7 @@ export default function Home() {
       model,
       question,
       history,
+      openAiKey: "",
     });
   }
 
@@ -230,13 +231,7 @@ export default function Home() {
   return (
     <>
       <Layout>
-        {/* <div>
-          <p>User: {auth.sub ? auth.sub : 'None'}</p>
-        </div> */}
         <div className="mx-auto flex flex-col gap-4">
-          <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
-            Chat and Summarize Your Docs
-          </h1>
           <div className="flex flex-col bg-slate-400/10 p-1 rounded-md border">
             <div className="text-lg font-bold mt-0 m-2">
               Collection

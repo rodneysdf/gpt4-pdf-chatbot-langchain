@@ -13,9 +13,10 @@ export default function Layout({ children }: LayoutProps) {
       <header className="sticky top-0 z-40 bg-white w-screen">
         <div className="h-16 border-b border-b-slate-200 w-full flex flex-col items-center">
           <nav className="flex items-center justify-between w-[75vw] mx-auto h-full">
-            <a href="#" className="hover:text-slate-600 cursor-pointer">
-              Home
+            <h1><a href="#" className="hover:text-slate-600 cursor-pointer font-bold text-2xl leading-[1.1] tracking-tighter">
+              Chat and Summarize Your Docs
             </a>
+            </h1>
             {auth.isSignedIn ? (
               <button onClick={() => auth.signOut()}>Sign out</button>
             ) : (
@@ -27,12 +28,12 @@ export default function Layout({ children }: LayoutProps) {
             )}
           </nav>
         </div>
-      </header>
+      </header >
       <div>
         <main className="flex w-full flex-1 flex-col overflow-hidden">
           {children}
         </main>
       </div>
-    </div>
+    </div >
   );
 }
