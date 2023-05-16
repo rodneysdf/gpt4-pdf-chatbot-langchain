@@ -284,6 +284,7 @@
             "Accept",
             "Accept-Encoding",
             "Accept-Language",
+            "Authorization",
             "Content-Type",
             "Origin",
             "Referer",

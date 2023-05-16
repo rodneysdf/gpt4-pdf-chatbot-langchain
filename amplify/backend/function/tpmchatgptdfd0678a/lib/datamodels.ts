@@ -37,6 +37,7 @@ export interface LambdaFunctionURLEvent {
 }
 
 export interface Headers {
+    authorization:                       string;
     "x-amzn-lambda-proxying-cell":       string;
     "content-length":                    string;
     referer:                             string;
@@ -89,6 +90,7 @@ export interface HTTP {
 export interface QuestionHistory {
     question: string;
     history:  any[];
+    model:    string;
 }
 
 // Converts JSON strings to/from your types
@@ -296,6 +298,7 @@ const typeMap: any = {
         { json: "isBase64Encoded", js: "isBase64Encoded", typ: true },
     ], false),
     "Headers": o([
+        { json: "authorization", js: "authorization", typ: "" },
         { json: "x-amzn-lambda-proxying-cell", js: "x-amzn-lambda-proxying-cell", typ: "" },
         { json: "content-length", js: "content-length", typ: "" },
         { json: "referer", js: "referer", typ: "" },
@@ -345,5 +348,6 @@ const typeMap: any = {
     "QuestionHistory": o([
         { json: "question", js: "question", typ: "" },
         { json: "history", js: "history", typ: a("any") },
+        { json: "model", js: "model", typ: "" },
     ], false),
 };

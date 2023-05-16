@@ -43,7 +43,10 @@ export const BuildUIEnv = async (hook, data, error) => {
 
 const AWS_API_URL = "${fnUrl}";
 
-export { AWS_API_URL };
+type AmplifyEnv = "dev" | "prod";
+const AMPLIFY_ENV: AmplifyEnv = "${data.amplify.environment.envName}";
+
+export { AWS_API_URL, AMPLIFY_ENV };
 `
   fs.writeFileSync(path.join(data.amplify.environment.projectPath,"config", "aws-amplify.ts"), configContents);
 

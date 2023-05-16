@@ -14,7 +14,7 @@
     "outDir": "./src",
     "rootDir": "./lib",
     "paths": {
-      "src": [  "./lib" ]
-    }
-  }
+      "src": [  "./lib" ],
+    },
+  },
 }

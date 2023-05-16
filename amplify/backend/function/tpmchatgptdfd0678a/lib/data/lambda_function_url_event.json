@@ -4,6 +4,7 @@
     "rawPath": "/api/chat",
     "rawQueryString": "",
     "headers": {
+        "authorization": "Bearer eyxxx",
         "x-amzn-lambda-proxying-cell": "0",
         "content-length": "100",
         "referer": "https://dev.d3oslnel1z9r6i.amplifyapp.com/",

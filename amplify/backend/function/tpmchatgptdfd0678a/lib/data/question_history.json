@@ -1,4 +1,5 @@
 {
   "question": "Please summarize",
-  "history": []
+  "history": [],
+  "model": "gpt"
 }

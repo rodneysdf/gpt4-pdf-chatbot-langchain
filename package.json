@@ -14,7 +14,7 @@
     "format": "prettier --ignore-path .gitignore \"**/*.+(ts|js|tsx)\" --write",
     "ingest": "tsx -r dotenv/config scripts/ingest-data.ts",
     "deploy": "next build && next export -o build",
-    "amplify:tpmchatgptdfd0678a": "cd amplify/backend/function/tpmchatgptdfd0678a && tsc -p tsconfig.json && cd -"
+    "amplify:tpmchatgptdfd0678a": "cp config/aws-exports.js amplify/backend/function/tpmchatgptdfd0678a/lib/aws-exports.ts && cd amplify/backend/function/tpmchatgptdfd0678a && tsc -p tsconfig.json && cd -"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^4.6.1",
@@ -24,7 +24,9 @@
     "@sls-next/serverless-component": "^3.7.0",
     "@types/jwk-to-pem": "^2.0.1",
     "aws-amplify": "^5.2.0",
+    "aws-jwt-verify": "^4.0.0",
     "aws-lambda": "^1.0.7",
+    "axios": "^1.4.0",
     "clsx": "^1.2.1",
     "dotenv": "^16.0.3",
     "import": "^0.0.6",
