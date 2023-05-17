@@ -118,7 +118,7 @@
         ],
         "MemorySize": 1024,
         "Layers": [],
-        "Timeout": 240
+        "Timeout": 600
       }
     },
     "LambdaExecutionRole": {

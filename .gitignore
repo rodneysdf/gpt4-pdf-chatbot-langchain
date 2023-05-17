@@ -47,6 +47,7 @@ amplify/backend/function/tpmchatgptdfd0678a/lib/aws-exports.ts
 amplify/backend/function/tpmchatgptdfd0678a/lib/datamodels.ts
 amplify/backend/function/tpmchatgptdfd0678a/lib/interfaces.ts
 amplify/backend/function/tpmchatgptdfd0678a/test/*
+amplify/team-provider-info.json
 
 #Notion_db
 /Notion_DB

@@ -1,19 +1,21 @@
 import { useAuth } from '@/providers/auth';
 import { BsPersonCircle } from 'react-icons/bs';
 import GoogleButton from './GoogleButton';
+import { AMPLIFY_ENV } from '../config/aws-amplify';
 
 interface LayoutProps {
   children?: React.ReactNode;
   onNavigate?: (path: string) => void;
-  apiKeyPreview?: string;
+  apiKey?: string;
 }
 
 export default function Layout({
   children,
-  onNavigate = () => { },
-  apiKeyPreview = '',
+  onNavigate = () => {},
+  apiKey = '',
 }: LayoutProps) {
   const auth = useAuth();
+  const apiKeyPreview = apiKey ? '***' + apiKey.slice(-4) : null;
 
   return (
     <div className="mx-auto flex flex-col space-y-4">
@@ -28,10 +30,13 @@ export default function Layout({
               >
                 Chat and Summarize Your Docs
               </a>
+              {!(AMPLIFY_ENV === 'prod') && (
+                <span className="text-blue-600 font-bold text-2xl leading-[1.1] tracking-tighter"> - DEV</span>
+                )}
             </h1>
             <div className="flex flex-grow"></div>
-              {(auth.isSignedIn && apiKeyPreview) && (
-              <div className="flex flex-row gap-2 items-center pr-4">
+            {auth.isSignedIn && apiKeyPreview && (
+               <div className="flex flex-row gap-2 items-center pr-4">
                 API Key: {apiKeyPreview}
               </div>
               )}

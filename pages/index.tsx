@@ -136,22 +136,18 @@ const PurgeDocuments = () => {
       onClick={purgeDocuments}
       className="border px-2 py-1 rounded-md w-40"
     >
-      {loading ? <LoadingDots color="#000" /> : 'Purge documents'}
+      {loading ? <LoadingDots color="#000" /> : 'Purge collection'}
     </button>
   );
 };
 
-const Profile = () => {
+const Profile = (props: any) => {
+  const { apiKey, onSetApiKey } = props;
   const auth = useAuth();
-  const [apiKey, setApiKey] = useState<string>();
-
-  useEffect(() => {
-    setApiKey(window.localStorage.getItem('openai-api-key') || '');
-  }, [setApiKey]);
 
   const handleSetApiKey = (apiKey: string) => {
     window.localStorage.setItem('openai-api-key', apiKey);
-    setApiKey(apiKey);
+    onSetApiKey(apiKey);
   };
 
   return (
@@ -175,7 +171,10 @@ const Profile = () => {
       </div>
       <div className="flex flex-row gap-3 mt-4">
         <button
-          onClick={() => auth.signOut()}
+          onClick={() => {
+            auth.signOut();
+            onSetApiKey('');
+          }}
           className="border px-2 py-1 rounded-md w-40"
         >
           Sign out
@@ -188,7 +187,9 @@ const Profile = () => {
 export default function Home() {
   const auth = useAuth();
   const [model, setModel] = useState<string>('gpt-3.5-turbo');
-  const [algo, setAlgo] = useState<string>('LangChain ConversationalRetrievalQAChain');
+  const [algo, setAlgo] = useState<string>(
+    'LangChain ConversationalRetrievalQAChain',
+  );
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -295,17 +296,10 @@ export default function Home() {
   };
 
   const [openAiApiKey, setOpenAiApiKey] = useState('');
-  const [apiKeyPreview, setApiKeyPreview] = useState<string>('');
-
 
   useEffect(() => {
     const storedApiKey = window.localStorage.getItem('openai-api-key') || '';
     setOpenAiApiKey(storedApiKey);
-    if (storedApiKey.length === 0) {
-      setApiKeyPreview('');
-    } else {
-      setApiKeyPreview('***' + storedApiKey.slice(-4));
-    }
   }, [setOpenAiApiKey]);
 
   useEffect(() => {
@@ -334,7 +328,7 @@ export default function Home() {
 
   return (
     <>
-      <Layout onNavigate={handleNavigate} apiKeyPreview={apiKeyPreview}>
+      <Layout onNavigate={handleNavigate} apiKey={openAiApiKey}>
         {page === 'home' ? (
           <div className="mx-auto flex flex-col gap-4">
             <div className="flex flex-col bg-slate-400/10 p-1 rounded-md border">
@@ -342,7 +336,7 @@ export default function Home() {
                 Collection
                 {collectionSize ? (
                   <span className="text-sm font-normal ml-2">
-                    Size: ({collectionSize} documents)
+                    Size: ({collectionSize} chunks)
                   </span>
                 ) : null}
               </div>
@@ -478,7 +472,8 @@ export default function Home() {
                 </div>
                 <div className="flex flex-row  w-full mt-3 m-3 gap-3 justify-end">
                   <div className="flex gap-3">
-                    Model<select
+                    Model
+                    <select
                       value={model}
                       onChange={(e) => setModel(e.target.value)}
                       name="model"
@@ -492,19 +487,25 @@ export default function Home() {
                       </option>
                       <option value="gpt-4-0314">gpt-4-0314</option>
                     </select>
-
                   </div>
                   <div className="flex gap-3">
-                    Algorithm: <select
+                    Algorithm:{' '}
+                    <select
                       value={algo}
                       onChange={(e) => setAlgo(e.target.value)}
                       name="algo"
                       id="algo"
                       className="border px-2 py-1 rounded-md w-64"
                     >
-                      <option value="lc-CRQAC">LangChain ConversationalRetrievalQAChain</option>
-                      <option value="lc-CRC">LangChain ConversationalRetrievalChain</option>
-                      <option value="Bing" disabled>Bing</option>
+                      <option value="lc-CRQAC">
+                        LangChain ConversationalRetrievalQAChain
+                      </option>
+                      <option value="lc-CRC">
+                        LangChain ConversationalRetrievalChain
+                      </option>
+                      <option value="Bing" disabled>
+                        Bing
+                      </option>
                     </select>
 
                   </div>
@@ -519,10 +520,16 @@ export default function Home() {
             </main>
           </div>
         ) : (
-          <Profile  />
+          <Profile onSetApiKey={setOpenAiApiKey} apiKey={openAiApiKey} />
         )}
         <footer className="m-auto p-4">
-          MVP for TPM. Powered by LangChainAI.
+          <div className="flex flex-row gap-10 text">
+            <div className="flex ">Powered by LangChainAI.
+            </div>
+            <div className="flex gap-1">
+              See the <a className="hover:text-slate-600 cursor-pointer" href="https://devfactory.com/privacy-policy/">DevFactory Privacy Policy.</a>
+            </div>
+          </div>
         </footer>
       </Layout>
     </>

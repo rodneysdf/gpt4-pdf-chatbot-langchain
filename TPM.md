@@ -2,8 +2,13 @@
 
 UI is hosted in AWS using Amplify
 Processing is done by a Lambda Function URL (avoiding API Gateway's 30 second limit)
-Credentials are in SSM Parameter Store for the lambda
+Credentials for the lambda are in SSM Parameter Store
 
+## Develop locally
+
+To develop locally and have Google signin redirect back to your local app, change this line in `_app.tsx' to true as in:
+
+`const isLocalhost : Boolean = false;`
 
 ## In Progress
 
