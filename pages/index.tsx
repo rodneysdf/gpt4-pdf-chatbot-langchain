@@ -36,14 +36,22 @@ const DocumentUpload = () => {
     setLoading(true);
 
     try {
+      console.log("starting")
+
       await postUploadFiles(files, auth);
+      console.log("done")
+      e.target.value = null;
     } catch (err: any) {
       alert('an error occured uploading the documents');
       console.log('err', err.response);
     }
+    setLoading(true);
+    console.log("setLoading true")
+
 
     setTimeout(() => {
       setLoading(false);
+      console.log("timeout complete")
     }, 5000);
   };
 
@@ -133,7 +141,7 @@ const PurgeDocuments = () => {
   );
 };
 
-const Profile = (onSetApiKey:(apiKey: string) => void) => {
+const Profile = () => {
   const auth = useAuth();
   const [apiKey, setApiKey] = useState<string>();
 
@@ -511,7 +519,7 @@ export default function Home() {
             </main>
           </div>
         ) : (
-          <Profile onSetApiKey={setOpenAiApiKey} />
+          <Profile  />
         )}
         <footer className="m-auto p-4">
           MVP for TPM. Powered by LangChainAI.

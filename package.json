@@ -14,7 +14,9 @@
     "format": "prettier --ignore-path .gitignore \"**/*.+(ts|js|tsx)\" --write",
     "ingest": "tsx -r dotenv/config scripts/ingest-data.ts",
     "deploy": "next build && next export -o build",
-    "amplify:tpmchatgptdfd0678a": "cp config/aws-exports.js amplify/backend/function/tpmchatgptdfd0678a/lib/aws-exports.ts && cd amplify/backend/function/tpmchatgptdfd0678a && tsc -p tsconfig.json && cd -"
+    "amplify:tpmchatgptdfd0678a": "npm run bldenv && npm run bldtypes && cd amplify/backend/function/tpmchatgptdfd0678a && tsc -p tsconfig.json && cd -",
+    "bldenv": "cp config/aws-exports.js amplify/backend/function/tpmchatgptdfd0678a/lib/aws-exports.ts",
+    "bldtypes": "quicktype -l typescript --all-properties-optional --telemetry disable --src amplify/backend/function/tpmchatgptdfd0678a/lib/interface/ -o amplify/backend/function/tpmchatgptdfd0678a/lib/interfaces.ts && quicktype -l typescript --telemetry disable --src amplify/backend/function/tpmchatgptdfd0678a/lib/data/ -o amplify/backend/function/tpmchatgptdfd0678a/lib/datamodels.ts"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^4.6.1",

@@ -23,7 +23,7 @@
         "tpmchatgptdfd0678a": {
           "secretsPathAmplifyAppId": "d3oslnel1z9r6i",
           "deploymentBucketName": "amplify-tpmchatgpt-dev-184051-deployment",
-          "s3Key": "amplify-builds/tpmchatgptdfd0678a-3373473755314d393776-build.zip"
+          "s3Key": "amplify-builds/tpmchatgptdfd0678a-636a4c632b554b496530-build.zip"
         },
         "tpmchatgpt6780338cPreSignup": {
           "deploymentBucketName": "amplify-tpmchatgpt-dev-184051-deployment",

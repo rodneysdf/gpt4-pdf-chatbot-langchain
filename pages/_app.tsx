@@ -24,7 +24,7 @@ import { AMPLIFY_ENV } from '../config/aws-amplify';
 //     )
 // );
 // @ts-ignore: Unreachable code error
-const isLocalhost : Boolean = true;
+const isLocalhost : Boolean = false;
 
 const isProd : Boolean = (AMPLIFY_ENV === 'prod');
 

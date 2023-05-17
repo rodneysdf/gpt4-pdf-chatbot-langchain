@@ -4,6 +4,7 @@ import { AWS_API_URL } from '../config/aws-amplify';
 const axiosInstance = axios.create({
   baseURL: AWS_API_URL,
 });
+axiosInstance.defaults.headers.common['Accept'] = "application/json";
 
 const authedApiCall = async (
   options: {
@@ -22,7 +23,6 @@ const authedApiCall = async (
       reqHeaders.authorization =  "Bearer " + accessToken;
     }
   }
-
   return await axiosInstance.request({
       method: options.method,
       url: options.url,

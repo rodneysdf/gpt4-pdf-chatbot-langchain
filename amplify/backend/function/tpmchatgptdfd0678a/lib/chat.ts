@@ -1,4 +1,4 @@
-import { APIGatewayProxyResult } from 'aws-lambda';
+import {  LambdaFunctionURLResponse } from "./interfaces";
 import { initPinecone } from './util/pineconeclient';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
@@ -8,7 +8,7 @@ import { Convert, Credentials, LambdaFunctionURLEvent, QuestionHistory } from ".
 import { env } from 'node:process';
 
 // '/api/chat'
-export const chat = async (event: LambdaFunctionURLEvent): Promise<APIGatewayProxyResult> => {
+export const chat = async (event: LambdaFunctionURLEvent): Promise<LambdaFunctionURLResponse> => {
   let questionHistory: QuestionHistory
   try {
     let inputBody: string;

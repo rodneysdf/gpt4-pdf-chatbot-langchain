@@ -1,6 +1,6 @@
-import { APIGatewayProxyResult } from 'aws-lambda';
 import 'source-map-support/register';
 import {  LambdaFunctionURLEvent } from "./datamodels";
+import {  LambdaFunctionURLResponse } from "./interfaces";
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
 import awsmobile from "./aws-exports";
 import { chat } from './chat'
@@ -27,7 +27,7 @@ const jwtVerifier = CognitoJwtVerifier.create({
 
 
 // Lambda entry point
-export const handler = async (event: LambdaFunctionURLEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunctionURLResponse> => {
   if (!(event.requestContext.http.method === 'POST' || event.requestContext.http.method === 'GET')) {
     return {
       statusCode: 405,
@@ -68,6 +68,9 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<APIGateway
       return chat(event);
       break;
     case '/api/upload':
+    console.log("sleep start")
+    await sleep(7000);
+    console.log("sleep end")
       return upload(event);
       break;
     case '/api/add':
@@ -88,4 +91,9 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<APIGateway
       "error": "unknown request"
     })
   }
+}
+
+
+function sleep(msDuration: number) {
+  return new Promise((resolve) => setTimeout(resolve, msDuration));
 }

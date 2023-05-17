@@ -28,7 +28,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-.env*.local
+.env*.local*
 .env
 
 # config
@@ -40,8 +40,13 @@ config/aws-amplify.ts
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Amplify
 amplify/backend/function/tpmchatgptdfd0678a/src/**/*.js
 amplify/backend/function/tpmchatgptdfd0678a/lib/aws-exports.ts
+amplify/backend/function/tpmchatgptdfd0678a/lib/datamodels.ts
+amplify/backend/function/tpmchatgptdfd0678a/lib/interfaces.ts
+amplify/backend/function/tpmchatgptdfd0678a/test/*
 
 #Notion_db
 /Notion_DB
