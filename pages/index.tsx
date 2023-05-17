@@ -133,7 +133,7 @@ const PurgeDocuments = () => {
   );
 };
 
-const Profile = (onSetApiKey: (apiKey: string) => void) => {
+const Profile = (onSetApiKey:(apiKey: string) => void) => {
   const auth = useAuth();
   const [apiKey, setApiKey] = useState<string>();
 
