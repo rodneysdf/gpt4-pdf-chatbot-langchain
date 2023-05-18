@@ -9,7 +9,7 @@ import { LambdaFunctionURLResponse } from "./interfaces";
 console.log('INDEX');
 
 // DEVELOPER ONLY
-const disableAuth: Boolean = true;
+const disableAuth: Boolean = false;
 
 // auth - must be done outside of lambda handler for cache to be effective
 const region: string = process.env["REGION"] || ""
@@ -54,7 +54,7 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
       // https://repost.aws/knowledge-center/decode-verify-cognito-json-token
       // If the token is not valid, an error is thrown:
       payload = await jwtVerifier.verify(accessToken);
-      console.log("Token is valid. Payload:", payload);
+      // console.log("Token is valid. Payload:", payload);
     } catch {
       return {
         statusCode: 401,
@@ -72,7 +72,6 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
       return chat(event);
       break;
     case '/api/upload':
-      console.log('upload')
       return upload(event);
       break;
     case '/api/add':

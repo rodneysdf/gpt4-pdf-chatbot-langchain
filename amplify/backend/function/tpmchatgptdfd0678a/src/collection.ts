@@ -6,61 +6,24 @@ import YError from 'yerror';
 import { LambdaFunctionURLResponse } from "./interfaces";
 import { CustomPDFLoader } from './util/customPDFLoader';
 import { initPinecone } from './util/pineconeclient';
-import { Convert, Credentials, LambdaFunctionURLEvent,  } from "./datamodels";
+import { Convert, Credentials, LambdaFunctionURLEvent, } from "./datamodels";
 import { getParameter } from './util/parameterStore';
-
 import { env } from 'node:process';
-
 const Busboy = require('busboy');
 const fs = require('fs');
 const path = require('path');
 const getRawBody = require('raw-body');
 
-
-const getMultiParts = (content: any, headers: any, destDir: string) =>
-  new Promise((resolve, reject) => {
-    const filePromises = <any>[];
-    const bb = Busboy({
-      headers,
-    });
-
-    bb.on('file', (name: string, file: any, info: any) => {
-      const filename = info.filename;
-      console.log('FILE');
-      const saveTo = path.join(destDir, filename);
-
-      file.on('data', (data: any) => {
-        console.log('GOT DATA');
-        console.log('Saving to', saveTo);
-        fs.writeFileSync(saveTo, data);
-      });
-    });
-
-    bb.on('error', (err: Error) => reject(YError.wrap(err)));
-    bb.on('finish', () =>
-      resolve(Promise.all(filePromises).then(() => {
-        console.log("on finish")
-        return true;
-      }))
-    );
-    bb.write(content);
-    bb.end();
-  })
-
-
 export const upload = async (event: LambdaFunctionURLEvent): Promise<LambdaFunctionURLResponse> => {
-  console.log('upload');
   let payload: string
   try {
     if (event.isBase64Encoded) {
-      console.log('base 64');
       payload = Buffer.from(event.body, 'base64').toString("utf8");
     } else {
       payload = event.body;
     }
   } catch (error) {
     console.log("error converting payload:", error);
-
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -76,7 +39,6 @@ export const upload = async (event: LambdaFunctionURLEvent): Promise<LambdaFunct
       })
     }
   }
-  // console.log("payload:", payload);
 
   // load credentials needed to call ChatGPT
   let credentials: Credentials
@@ -87,7 +49,6 @@ export const upload = async (event: LambdaFunctionURLEvent): Promise<LambdaFunct
     credentials = Convert.toCredentials(credentialsJSON);
   } catch (error) {
     console.log("error accessing credentials :", error);
-
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -101,7 +62,6 @@ export const upload = async (event: LambdaFunctionURLEvent): Promise<LambdaFunct
 
   // load docs
   let contype = event.headers['content-type']
-
   try {
     // make a dir for the upload batch
     const DESTINATION_DIR = "/tmp/col";
@@ -109,40 +69,33 @@ export const upload = async (event: LambdaFunctionURLEvent): Promise<LambdaFunct
     if (!fs.existsSync(DESTINATION_DIR)) {
       fs.mkdirSync(DESTINATION_DIR);
     }
-    // TODO delete any files that already exist
+
+    // delete any files that already exist
     const lsdel = fs.readdirSync(DESTINATION_DIR);
-    console.log('LS -del', DESTINATION_DIR);
+    // console.log('LS -deleting', DESTINATION_DIR);
     lsdel.forEach((filename: string) => {
       const filepath = path.join(DESTINATION_DIR, filename);
       const info = fs.statSync(filepath);
-
-      console.log(filename, info.size+' bytes');
+      // console.log(`deleting ${filename}`, info.size+' bytes');
       fs.unlink(filepath, (err: any) => {
-         if (err) throw err;
+        if (err) throw err;
       });
     });
 
-    // console.log(JSON.stringify(event, null, 2));
-    // console.log('hdr dt', JSON.stringify(   event.headers['content-type'], null, 2));
     const lodedDocs = await getMultiParts(payload, {
       'content-type': contype
     }, DESTINATION_DIR)
 
-    console.log('MUTI PARTS DONE');
+    // const ls = fs.readdirSync(DESTINATION_DIR);
+    // console.log('LS', DESTINATION_DIR);
+    // ls.forEach((filename: string) => {
+    //   const filepath = path.join(DESTINATION_DIR, filename);
+    //   const info = fs.statSync(filepath);
+    //   console.log(filename, info.size+' bytes');
+    // })
 
-    const ls = fs.readdirSync(DESTINATION_DIR);
-    console.log('LS', DESTINATION_DIR);
-    ls.forEach((filename: string) => {
-      const filepath = path.join(DESTINATION_DIR, filename);
-      const info = fs.statSync(filepath);
-
-      console.log(filename, info.size+' bytes');
-    })
-
-    // console.log(`ls ${DESTINATION_DIR}`, ls);
-
-
-    /*load raw docs from the all files in the directory */
+    // Start of LangChain loading
+    /* load raw docs from the all files in the directory */
     const directoryLoader = new DirectoryLoader(DESTINATION_DIR, {
       '.pdf': (path) => new CustomPDFLoader(path),
     });
@@ -203,8 +156,35 @@ export const upload = async (event: LambdaFunctionURLEvent): Promise<LambdaFunct
       "max": 100
     })
   }
-
 }
+
+const getMultiParts = (content: any, headers: any, destDir: string) =>
+  new Promise((resolve, reject) => {
+    const filePromises = <any>[];
+    const bb = Busboy({
+      headers,
+    });
+
+    bb.on('file', (name: string, file: any, info: any) => {
+      const filename = info.filename;
+      const saveTo = path.join(destDir, filename);
+
+      file.on('data', (data: any) => {
+        // console.log('Saving to', filename);
+        fs.writeFileSync(saveTo, data);
+      });
+    });
+
+    bb.on('error', (err: Error) => reject(YError.wrap(err)));
+    bb.on('finish', () =>
+      resolve(Promise.all(filePromises).then(() => {
+        return true;
+      }))
+    );
+    bb.write(content);
+    bb.end();
+  })
+
 
 export const add = async (event: LambdaFunctionURLEvent): Promise<LambdaFunctionURLResponse> => {
   console.log(event);
