@@ -16801,6 +16801,11 @@ yargs@^3.6.0:
     window-size "^0.1.4"
     y18n "^3.2.0"
 
+yerror@^6.2.1:
+  version "6.2.1"
+  resolved "https://registry.npmjs.org/yerror/-/yerror-6.2.1.tgz"
+  integrity sha512-WPZgybhCBzsMSSqGYBnj20NZo4FiFKQG0+i/21cYGVd4B7eYtvYDOpjk/0e8UM1eVHJ+4Ja6bZ7TAjHH6mk+ew==
+
 yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz"
