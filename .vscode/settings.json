@@ -17,8 +17,14 @@
   "files.encoding": "utf8",
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
-  "eslint.validate": ["typescript"],
-  "eslint.workingDirectories": [{ "pattern": "amplify/backend/function/*/ts" }],
+  "eslint.validate": [
+    "typescript"
+  ],
+  "eslint.workingDirectories": [
+    {
+      "pattern": "amplify/backend/function/*/ts"
+    }
+  ],
   "[typescript]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
@@ -33,6 +39,5 @@
     "amplify/#current-cloud-backend": true,
     "amplify/backend/amplify-meta.json": true,
     "amplify/backend/awscloudformation": true,
-    "amplify/backend/function/**/*.js": true
   }
 }

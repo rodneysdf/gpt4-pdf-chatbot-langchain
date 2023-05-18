@@ -1,0 +1,53 @@
+{
+  "version": "2.0",
+  "routeKey": "$default",
+  "rawPath": "/api/upload",
+  "rawQueryString": "",
+  "headers": {
+    "x-amzn-lambda-proxying-cell": "0",
+    "content-length": "1050",
+    "referer": "http: //localhost:3000/",
+    "x-amzn-tls-version": "TLSv1.2",
+    "sec-fetch-site": "cross-site",
+    "origin": "http: //localhost:3000",
+    "x-forwarded-port": "443",
+    "x-amzn-lambda-proxy-auth": "HmacSHA256, SignedHeaders=Authorization;x-amzn-lambda-forwarded-client-ip;x-amzn-lambda-forwarded-host;x-amzn-lambda-proxying-cell, Signature=/JHywEGMOnaa8rq8YgiScacUGdQfFdVIOqKat9RkmVY=",
+    "authorization": "Bearer eyJ",
+    "x-amzn-tls-cipher-suite": "ECDHE-RSA-AES128-GCM-SHA256",
+    "sec-ch-ua-mobile": "?0",
+    "host": "lnd3ycldospc5lyqacgzcm2fry0bpebp.cell-1-lambda-url.us-east-1.on.aws",
+    "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryYiVxoyERpAFZhwym",
+    "x-amzn-lambda-forwarded-host": "lnd3ycldospc5lyqacgzcm2fry0bpebp.lambda-url.us-east-1.on.aws",
+    "sec-fetch-mode": "cors",
+    "accept-language": "en-US,en;q=0.9",
+    "x-forwarded-proto": "https",
+    "dnt": "1",
+    "x-forwarded-for": "2601: 681: 8800: 28b1:acac: 9669:48ec: 6fa7",
+    "accept": "application/json",
+    "x-amzn-lambda-forwarded-client-ip": "2601: 681: 8800: 28b1:acac: 9669:48ec: 6fa7",
+    "sec-ch-ua-platform": "macOS",
+    "accept-encoding": "gzip, deflate, br",
+    "sec-fetch-dest": "empty",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+  },
+  "requestContext": {
+    "accountId": "anonymous",
+    "apiId": "lnd3ycldospc5lyqacgzcm2fry0bpebp",
+    "domainName": "lnd3ycldospc5lyqacgzcm2fry0bpebp.cell-1-lambda-url.us-east-1.on.aws",
+    "domainPrefix": "lnd3ycldospc5lyqacgzcm2fry0bpebp",
+    "http": {
+      "method": "POST",
+      "path": "/api/upload",
+      "protocol": "HTTP/1.1",
+      "sourceIp": "2601: 681: 8800: 28b1:acac: 9669:48ec: 6fa7",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+    },
+    "requestId": "b2eabc1-2795-41de-8190-b0a2c954aeab",
+    "routeKey": "$default",
+    "stage": "$default",
+    "time": "17/May/2023: 20: 50: 49 +0000",
+    "timeEpoch": 1684356649023
+  },
+  "body": "LS0tLS0tV2ViS2l0Rm9ybUJvdW5kYXJ5WWlWeG95RVJwQUZaaHd5bQ0KQ29udGVudC1EaXNwb3NpdGlvbjogZm9ybS1kYXRhOyBuYW1lPSJhcnJheU9mRmlsZXNOYW1lIjsgZmlsZW5hbWU9InBpbmVjb25lLnRzIg0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0NCg0KLyoqCiAqIENoYW5nZSB0aGUgbmFtZXNwYWNlIHRvIHRoZSBuYW1lc3BhY2Ugb24gUGluZWNvbmUgeW91J2QgbGlrZSB0byBzdG9yZSB5b3VyIGVtYmVkZGluZ3MuCiAqLwoKaWYgKCFwcm9jZXNzLmVudi5QSU5FQ09ORV9JTkRFWF9OQU1FKSB7CiAgdGhyb3cgbmV3IEVycm9yKCdNaXNzaW5nIFBpbmVjb25lIGluZGV4IG5hbWUgaW4gLmVudiBmaWxlJyk7Cn0KCmNvbnN0IFBJTkVDT05FX0lOREVYX05BTUUgPSBwcm9jZXNzLmVudi5QSU5FQ09ORV9JTkRFWF9OQU1FID8/ICcnOwoKY29uc3QgUElORUNPTkVfTkFNRV9TUEFDRSA9ICdwZGYtdGVzdCc7IC8vbmFtZXNwYWNlIGlzIG9wdGlvbmFsIGZvciB5b3VyIHZlY3RvcnMKCmV4cG9ydCB7IFBJTkVDT05FX0lOREVYX05BTUUsIFBJTkVDT05FX05BTUVfU1BBQ0UgfTsKDQotLS0tLS1XZWJLaXRGb3JtQm91bmRhcnlZaVZ4b3lFUnBBRlpod3ltDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9ImFycmF5T2ZGaWxlc05hbWUiOyBmaWxlbmFtZT0iYXdzLWFtcGxpZnkudHMiDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbQ0KDQoKLyoqCiAqIFNldHRpbmdzIGZyb20gQW1wbGlmeSBob3N0ZWQgaW5mcmFzdHJ1Y3R1cmUKICovCgpjb25zdCBBV1NfQVBJX1VSTCA9ICJodHRwczovL2xuZDN5Y2xkb3NwYzVseXFhY2d6Y20yZnJ5MGJwZWJwLmxhbWJkYS11cmwudXMtZWFzdC0xLm9uLmF3cyI7Cgp0eXBlIEFtcGxpZnlFbnYgPSAiZGV2IiB8ICJwcm9kIjsKY29uc3QgQU1QTElGWV9FTlY6IEFtcGxpZnlFbnYgPSAiZGV2IjsKCmV4cG9ydCB7IEFXU19BUElfVVJMLCBBTVBMSUZZX0VOViB9OwoNCi0tLS0tLVdlYktpdEZvcm1Cb3VuZGFyeVlpVnhveUVScEFGWmh3eW0tLQ0K",
+  "isBase64Encoded": true
+}

@@ -486,6 +486,7 @@ export default function Home() {
                         gpt-3.5-turbo-0301
                       </option>
                       <option value="gpt-4-0314">gpt-4-0314</option>
+                      <option value="clyde">Anthropic-Clyde</option>
                     </select>
                   </div>
                   <div className="flex gap-3">
