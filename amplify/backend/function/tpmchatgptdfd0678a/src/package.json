@@ -7,10 +7,8 @@
   "dependencies": {
     "@pinecone-database/pinecone": "^0.0.12",
     "aws-jwt-verify": "^4.0.0",
-    "aws-multipart-parser": "^0.2.1",
     "aws-sdk": "^2.1378.0",
     "busboy": "^1.6.0",
-    "lambda-multipart-parser": "^1.0.1",
     "langchain": "^0.0.55",
     "pdf-parse": "^1.1.1",
     "raw-body": "^2.5.2",
