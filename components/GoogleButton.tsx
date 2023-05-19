@@ -129,7 +129,7 @@ const GoogleIcon = () => {
 const GoogleButton = (props: { onClick: () => void; children: ReactNode }) => {
   return (
     <button
-      className="flex bg-[#4285f4] p-[2px] h-11"
+      className="flex bg-[#4285f4] p-[2px] h-11 rounded shadow shadow-slate-500"
       onClick={() => props.onClick()}
     >
       <div className="h-10 w-10 bg-white flex flex-col align-middle">

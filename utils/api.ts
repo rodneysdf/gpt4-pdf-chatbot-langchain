@@ -18,7 +18,6 @@ const authedApiCall = async (
 
   if (auth) {
     const accessToken = await auth.getAccessToken();
-
     if (accessToken) {
       reqHeaders.authorization =  "Bearer " + accessToken;
     }

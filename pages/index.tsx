@@ -59,7 +59,7 @@ const DocumentUpload = () => {
     <div>
       <button
         onClick={() => openFileDialog()}
-        className="border px-2 py-1 rounded-md w-40"
+        className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10"
       >
         {loading ? <LoadingDots color="#000" /> : 'Upload documents'}
       </button>
@@ -109,7 +109,7 @@ const AddUrl = () => {
   };
 
   return (
-    <button onClick={promptForUrl} className="border px-2 py-1 rounded-md w-40">
+    <button onClick={promptForUrl} className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10">
       {loading ? <LoadingDots color="#000" /> : 'Add url'}
     </button>
   );
@@ -134,7 +134,7 @@ const PurgeDocuments = () => {
   return (
     <button
       onClick={purgeDocuments}
-      className="border px-2 py-1 rounded-md w-40"
+      className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10"
     >
       {loading ? <LoadingDots color="#000" /> : 'Purge collection'}
     </button>
@@ -142,14 +142,20 @@ const PurgeDocuments = () => {
 };
 
 const Profile = (props: any) => {
-  const { apiKey, onSetApiKey } = props;
+  const { apiKey, onSetApiKey, anthropicKey, onSetAnthropicKey } = props;
   const auth = useAuth();
 
   const handleSetApiKey = (apiKey: string) => {
     window.localStorage.setItem('openai-api-key', apiKey);
+    console.log("Setting OpenAI api key")
     onSetApiKey(apiKey);
   };
+  const handleSetAnthropicKey = (anthropicKey: string) => {
+    window.localStorage.setItem('anthropic-api-key', anthropicKey);
+       console.log("Setting Anthropic api key")
 
+    onSetAnthropicKey(anthropicKey);
+  };
   return (
     <div className="flex flex-col  w-2/3 self-center rounded-2xl bg-gray-100 p-4">
       <div className="flex flex-row gap-3 text-xl font-bold mb-4">
@@ -158,29 +164,50 @@ const Profile = (props: any) => {
       <p className="text-xl">Email: {auth.user?.attributes.email}</p>
       <br />
       <br />
-      Use my own OpenAI API key:
-      <br />
-      <input
-        className="border px-2 py-1 rounded-md w-40"
-        type="text"
-        onChange={(e) => handleSetApiKey(e.target.value)}
-        value={apiKey}
-      />
+      Use my own:
+      <div className="grid grid-cols-5 grid-rows-2">
+        <div className="col-span-2 px-2 py-1 whitespace-nowrap">
+          <span><a
+            href="https://openai.com/"
+            className="hover:text-slate-600 cursor-pointer px-0 py-0">OpenAI API</a> key:</span>
+        </div>
+          <input
+            className="border rounded-md w-full pl-1 col-span-3 px-2 py-1"
+            type="text"
+            onChange={(e) => handleSetApiKey(e.target.value)}
+            value={apiKey}
+          />
+
+        <div className="col-span-2 px-2 py-1 whitespace-nowrap">
+          <span><a
+            href="https://www.anthropic.com/"
+            className="hover:text-slate-600 cursor-pointer px-0 py-0">Anthropic {"'Claude'"} API </a>key:</span>
+        </div >
+          <input
+            className="border rounded-md w-full pl-1 col-span-3"
+            type="text"
+            onChange={(e) => handleSetAnthropicKey(e.target.value)}
+            value={anthropicKey}
+          />
+      </div >
+
       <div className="flex flex-row gap-3 mt-4">
         <PurgeDocuments />
       </div>
-      <div className="flex flex-row gap-3 mt-4">
+            <div className="flex flex-row gap-3 mt-4">
         <button
           onClick={() => {
-            auth.signOut();
+            // signout will not delete users local keys
             onSetApiKey('');
+            onSetAnthropicKey('');
+            auth.signOut();
           }}
-          className="border px-2 py-1 rounded-md w-40"
+          className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10"
         >
           Sign out
         </button>
       </div>
-    </div>
+    </div >
   );
 };
 
@@ -296,11 +323,18 @@ export default function Home() {
   };
 
   const [openAiApiKey, setOpenAiApiKey] = useState('');
+  const [anthropicClaudeKey, setAnthropicClaudeKey] = useState('');
 
   useEffect(() => {
     const storedApiKey = window.localStorage.getItem('openai-api-key') || '';
+    console.log(' retreive openai-api-key', storedApiKey);
     setOpenAiApiKey(storedApiKey);
-  }, [setOpenAiApiKey]);
+
+    const storedAnthropicApiKey = window.localStorage.getItem('anthropic-api-key') || '';
+    console.log(' retreive anthropic-api-key', storedAnthropicApiKey);
+    setAnthropicClaudeKey(storedAnthropicApiKey);
+
+  }, [setOpenAiApiKey, setAnthropicClaudeKey]);
 
   useEffect(() => {
     const getUserProfile = async () => {
@@ -486,7 +520,7 @@ export default function Home() {
                         gpt-3.5-turbo-0301
                       </option>
                       <option value="gpt-4-0314">gpt-4-0314</option>
-                      <option value="clyde">Anthropic-Clyde 100k tokens</option>
+                      <option value="claude">Anthropic-Claude 100k tokens</option>
                     </select>
                   </div>
                   <div className="flex gap-3">
@@ -521,7 +555,7 @@ export default function Home() {
             </main>
           </div>
         ) : (
-          <Profile onSetApiKey={setOpenAiApiKey} apiKey={openAiApiKey} />
+          <Profile onSetApiKey={setOpenAiApiKey} apiKey={openAiApiKey} onSetAnthropicKey={setAnthropicClaudeKey} anthropicKey={anthropicClaudeKey} />
         )}
         <footer className="m-auto p-4">
           <div className="flex flex-row gap-10 text">

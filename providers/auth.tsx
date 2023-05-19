@@ -47,11 +47,10 @@ export const AuthStateProvider = ({ children }: { children: ReactNode }) => {
     getUser().then((userData) => setUser(userData));
   }, []);
 
-  console.log(user);
+  // console.log(user);
 
   async function getUser() {
     const user = await Auth.currentAuthenticatedUser();
-
     if (user) {
       setIsSignedIn(true);
       return user;
@@ -59,24 +58,21 @@ export const AuthStateProvider = ({ children }: { children: ReactNode }) => {
   }
 
   async function signOut() {
-    await Auth.signOut();
-    window.localStorage.clear();
+    // signout will not delete your local keys
+    // try {
+    //   window.localStorage.clear();
+    // } catch (error: any) {
+    //   console.log("auth signout error", error)
+    // }
+    await Auth.signOut();   // Note: this page navigates to another page, so don't put anything in this function after this
   }
 
   async function getAccessToken() {
-    const user = await getUser();
-
-    if (user) {
-      const accessToken = user?.signInUserSession?.accessToken?.jwtToken || '';
-
-      if (!accessToken) {
-        return '';
-      }
-
-      return accessToken;
-    } else {
+    const session = await Auth.currentSession();
+    if (!session) {
       return '';
     }
+    return session.getAccessToken().getJwtToken();
   }
 
   const signInWithGoogle = () => {
@@ -86,7 +82,6 @@ export const AuthStateProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const sub = user?.attributes?.sub || '';
-  const accessToken = user?.signInUserSession?.accessToken?.jwtToken || '';
 
   return (
     <AuthStateContext.Provider
