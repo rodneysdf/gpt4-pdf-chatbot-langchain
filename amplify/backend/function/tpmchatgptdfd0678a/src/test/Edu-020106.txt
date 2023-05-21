@@ -1,0 +1,430 @@
+Developing model-making and model-breaking skills using direct measurement video-based activities
+
+ABSTRACT
+This study focuses on student development of two important laboratory skills in the context of introductory college-level physics. The first skill, which we call model making, is the ability to analyze a phenomenon in a way that produces a quantitative multimodal model. The second skill, which we call model breaking, is the ability to critically evaluate if the behavior of a system is consistent with a given model. This study involved 116 introductory physics students in four different sections, each taught by a different instructor. All of the students within a given class section participated in the same instruction (including labs) with the exception of five activities performed throughout the semester. For those five activities, each class section was split into two groups; one group was scaffolded to focus on model-making skills and the other was scaffolded to focus on model-breaking skills. Both conditions involved direct measurement videos. In some cases, students could vary important experimental parameters within the video like mass, frequency, and tension. Data collected at the end of the semester indicate that students in the model-making treatment group significantly outperformed the other group on the model-making skill despite the fact that both groups shared a common physical lab experience. Likewise, the model-breaking treatment group significantly outperformed the other group on the model-breaking skill. This is important because it shows that direct measurement video-based instruction can help students acquire science-process skills, which are critical for scientists, and which are a key part of current science education approaches such as the Next Generation Science Standards and the Advanced Placement Physics 1 course.
+
+AUTHORS & AFFILIATIONS
+Matthew Vonk1,*, Peter Bohacek2, Cheryl Militello†, and Ellen Iverson3
+
+1University of Wisconsin River Falls, River Falls, Wisconsin 54022, USA
+2Henry Sibley High School, 1897 Delaware Ave Delaware Avenue, Mendota Heights, Minnesota 55118, USA
+3Science Education Resource Center at Carleton College (SERC), One North College St., Northfield, Minnesota 55057, USA
+*matthew.vonk@uwrf.edu
+†Present address: 29 Kilburn Rd Garden City, New York 11530, USA.
+
+I. INTRODUCTION
+Being able to explain a complex natural phenomenon with a simple model is powerful, elegant, and useful [1,2]. It is an ability that goes straight to the heart of what it means to be a scientist. Yet most high school students never get a chance to put it into practice since they are exposed to only a limited range of laboratory activities and even those do not often help them to “fully understand science process.” [3] Many leading textbooks circumvent this problem by simply providing students with the equations that they need. While giving students the neatly packaged results of other people’s work may seem like an efficient approach, we feel it leaves out some important steps and seems (from our constructivist mindset) to be like giving students the punch line without ever telling them the joke.
+
+A. A SUMMARY OF THE LITERATURE ON MODEL MAKING
+In the late 1970s Hestenes strongly advocated that teachers help students develop their own models. [4]
+…mathematical modeling should be the central theme of physics instruction. This means that the teaching of physical facts and theories should be subsidiary to teaching the principles and techniques of mathematical modeling [5].
+
+
+Research has shown that students who are instructed using the modeling method outperform students in traditional classes [6]. In the subsequent decades, Hestenes’ work grew into the Modeling Instruction program, an international movement that remains vital and productive today [7].
+
+While Modeling Instruction has reached 10% of teachers at the secondary level [8], other researchers have popularized similar ideas at the undergraduate level. For decades, McDermott has been working to promote the practice of allowing students to learn physics through inquiry.
+Students are guided through carefully sequenced activities and questions to make observations that they can use as the basis for their model. [9]
+
+
+More recently, Brewe expressed the need for modeling by pointing out that models allow students to “see science as a process and scientific knowledge as a work in progress.” [10]
+
+Similarly Windschitl, Thompson, and Braaten champion the use of inquiry learning, but warn that too often student-directed investigations are implemented apart from a grounding conceptual model (e.g., when students test how the growth of a plant is affected by music, Coca-Cola, or being upside down). “Because such questions are arbitrary—i.e., make no sense without the context of at least a beginning model for understanding the phenomenon—then any hypotheses emerging from these questions are likely to be little more than poorly informed guesses.” [11]
+
+Although previous studies have measured the efficacy of the modeling process as a whole [2,6,9], and other studies have measured how modeling affects performance on specific tasks (such as experimental design [12], trouble shooting [1], and explaining phenomena [13]) for this study we opted to focus on two smaller, but important components of the modeling process.
+
+B. A REVIEW OF THE LITERATURE ON MODEL BREAKING
+Physicists are famous for their simplified models, like the frictionless surfaces and massless pulleys that tend to show up in introductory classes. And, while it may make sense to start there, most introductory classes rarely move beyond the idealized cases. Yet, we do our students a disservice when we gloss over perturbations that are plainly obvious to students and compromise the validity of the model. Our sanitized reality too often leaves students with the impression that physics does not actually apply to the real world [14].
+
+Brewe contrasts traditional instruction where the “content is permanent, [and] all validation has already taken place” with modeling instruction, where “models are temporal, [and] must be validated, refined, and applied [10].” An important step toward critically evaluating models is being able to determine if a model matches the data. This fundamental step can be quite challenging for introductory students. In order to make that judgment, students must be able to characterize the uncertainty in their measurements and calculations.
+
+In 1969 Bevington and Robinson published their seminal work, Data Reduction and Error Analysis for the Physical Sciences [15]. While this was a valuable resource, students continued to struggle with these skills, so that nearly three decades later Allie and Buffler and their collaborators [16] could publish a study of first-year university students that showed that their “intuitive ideas about improving precision and accuracy of measurement are not distinct” and that their “procedural understanding is context dependent”.
+
+In 2001, Deardorff found [17] that students often, “make arbitrary judgments about the agreement between results and fail to consider the uncertainty estimates when making these comparisons.” While this is an unfortunate result, it is not a surprising one.
+
+On a more positive note, several researchers have reported making significant strides in changing the way that their students think about measurements and data. In 2005, Kung reported [18] that the fraction of her students that used “range and not just average when comparing two data sets approximately doubled after instruction.” More recently, in 2015 Holmes, Wieman, and Bonn conducted a semester-long study that scaffolded students through the process of quantifying their experimental uncertainty and using that uncertainty to target optimal areas for experimental improvements. They reported [19] that, “Students in the experimental condition were 12 times more likely to spontaneously propose or make changes to improve their experimental methods than the control group.” In addition, “the students in the experimental condition were also four times more likely to identify and explain the limitation of a physical model using data.” “The differences between the groups were seen to persist into a subsequent course taken the following year.”
+
+C. A REVIEW OF THE LITERATURE ON STUDENT-ANALYZED VIDEO
+The area of student-analyzed videos and other web-based resources has also been an active area of research. A meta-study indicates that students using instruction that includes a significant online component do “modestly better, on average than those learning through traditional face-to-face instruction [20].” However, elements such as video do not influence the amount that students learned unless the learners were given “control of their interactions with the media” or prompted to reflect on their activities. [20] Since the early 2000’s, the LivePhoto group (Teese, Laws, Sokoloff, and many others) has pioneered exactly this type of interactive web-based video analysis [21]. The project has provided free online video recordings of real events that students can analyze for themselves. The learning activities associated with these videos offer advantages compared to other methods of instruction:
+
+• Compared to labs, they do not require expensive and time-consuming physical equipment.
+
+• Compared to passive lectures they allow the students to actively collect data and analyze it for themselves.
+
+• Compared to simulations, they depict real events and not idealized computer models of events [22].
+
+• The web-based distribution of the videos makes them suitable for online courses, distance learning, flipped classes and labs, and homework.
+
+• Their on-demand availability means that they can be used by students who missed class or who simply require more time to learn.
+
+A decade after starting the LivePhoto project, LivePhoto founders Teese and Laws joined with Koenig to reinvent the project as Interactive Video Vignettes [23,24] or IVVs. The IVVs include integrated instructional content with the video and provide a mechanism for student response. That said, most of the IVVs present a single linear narrative arc that does not give students the freedom to explore scenarios of their own choosing. Despite that constraint, IVVs have been shown to improve student performance on the Force Concept Inventory [25]. While their results certainly inform our work, for this study we were interested in exploring the impact of video-based educational resources on laboratory skills.
+
+Another project that has used student-analyzed video and student-directed investigation is ISLE, which stands for Investigative Science Learning Environment. ISLE was developed by Etkina, and Van Heuvelen, and it has since grown to include many other collaborators. The ISLE approach leads students through the process of making careful observations, proposing tentative explanations, and then devising experiments to rule out incorrect explanations. Once an explanation has proved reliable, it is applied to a new situation. The process is iterative and cyclical, “at any step, one can go back and revisit the previous step or examine the assumptions [26].” “The goal is to engage students in actions and decisions similar to those of real physicists by working with simple experiments [27].” The ISLE method has been shown to help students design experiments, analyze data, and communicate like scientists [12,28,29]. Although the ISLE website [30] hosts many ISLE video experiments, the ISLE research thus far has concentrated on the efficacy of apparatus-based (rather than video-based) learning.
+
+Although there has been much work dedicated to fostering students’ modeling skills and further work geared toward exploiting the advantages of student-analyzed video, the work has remained largely separate (the ISLE group is a notable exception). This is likely because the technology simply did not exist until recently to allow students to vary multiple parameters in a single video scenario. The advent of direct measurement video (DMV) matrices has opened up a completely new field to explore.
+
+II. DIRECT MEASUREMENT VIDEOS
+The traditional opportunity for students to hone their science skills is in the laboratory. Unfortunately, many lab activities are formulaic and do not actually prepare students for physics exams [31] let alone for the open-ended investigative endeavors that we typically associate with the practice of science [32]. Perhaps an even larger limitation of the traditional laboratory is that student access to physical apparatus is often restricted to brief lab periods. That means that student learning of critical science skills is also restricted. If scientific abilities can only be learned in a laboratory setting, then other potential opportunities (such as learning outside of the classroom, during “lecture” classes, and via online classes) may go unrealized.
+
+Another way for students to observe phenomena, make measurements, collect, and analyze data is using direct measurement videos [33]. DMVs are short high-quality videos that show a scientifically interesting event. Students are able to analyze the event using provided online tools (rulers, protractors, stopwatches, etc.). Some of the DMVs are published as single videos [34], but others are published as an interconnected web or matrix of videos that the user can navigate using an integrated console (see Fig. 1). This gives the user a sense that they are actually controlling what happens in the video. For example, the wave properties video matrix [35] shows a 1.8-meter horizontal spring being oscillated by a hefty subwoofer stereo speaker. From a single video, students can measure the frequency, wavelength, amplitude, period, and velocity of the waves. But then, students can change what is depicted in the video to see how that affects the other parameters. In the case of the wave properties matrix, the user can select between five different frequencies, five different amplitudes, and three different tensions. These options create a 
+5
+×
+5
+×
+3
+ matrix containing 75 videos in all. That freedom allows students to design and execute experiments to answer questions that they generate themselves in much the same way that they would in an inquiry lab with physical apparatus. For example, one group of students might want to determine if the speed of the wave increases with frequency. Another group of students in the same class might be curious to see if the wave slows down as its amplitude decreases. A third group might want to determine the quantitative relationship between the wavelength and the frequency of a wave. All three groups could then design an experiment using the same Wave Properties video matrix that would allow them to collect data, analyze it, and ultimately answer their question.
+ 
+ DMVs have some decided advantages over physical apparatus. For one thing, student access to DMVs is not restricted in the same way that it is for physical apparatus. Instead, DMVs are available on demand to any student with an internet enabled device. In addition, DMVs offer an interesting blend of freedom and constraint. The user is free to make many decisions about what and how to measure and (with the video matrices) even what happens in the video, but the video is also constrained in ways that may help to keep students on track and help them to focus on the essential physics of the interaction.
+
+While existing DMVs are not well suited for all lab practice skills (e.g., learning to use or to debug lab equipment, learning laboratory safely, or learning to perform experimental design using physical apparatus) we were curious to determine if they could be an effective lab supplement for other important science skills. The two skills that we chose to study were model making and model breaking because they are critical parts of the scientific process and they can be difficult to convey outside of a laboratory setting.
+
+III. DESIGNING THE STUDY
+A. WHAT DO WE MEAN BY MODEL MAKING?
+The modeling literature generally describes the modeling process as a cyclic iteration of a number of component steps. While virtually all researchers include the process of coming up with a model, there is no consensus on what to call this step. Thus many terms are used, including constructing [1,13,36,37], developing [6,11,37], generating [11], building [11], and creating [11] a model. Others describe the process as “drawing inferences… [and] formulating… hypotheses” [9]. We have developed a list of component abilities that captures the essence of this creative step in the modeling process and maps easily to a practical rubric. We have chosen to call this particular set of skills model making.
+
+We define model making as the ability to
+
+• devise an experiment to determine a quantitative relationship between different variables,
+
+• perform the experiment and collect data [38],
+
+• analyze the data in a way that leads to the construction of a quantitative model,
+
+• apply the model by using it to express the relationship graphically, algebraically, and verbally, and
+
+• use the model to make predictions.
+
+In order to create a model-making rubric, we looked to two primary sources. The first, AAPT Recommendations for the Undergraduate Physics Laboratory Curriculum [39], details several relevant focus areas including modeling, designing experiments, analyzing and visualizing the data, and communicating physics.
+
+The second document that played a foundational role in our attempts to quantify the model-making skill was the 2014 paper published by Zwickl, Finkelstein, and Lewandowski [36]. It provides a very useful graphical schematic of the modeling process (which we have included in a slightly modified form in Fig. 2). The article details the steps involved in “constructing models, using them to make predictions and explanations, using them to interpret data, comparing predictions and data, and refining models based on new evidence.”
+
+There are two major differences between the way that we framed the model-making skill and the framework presented in the Zwickl paper, and both differences have to do with the fact that their paper was focused on an advanced lab course whereas our study was conducted at the introductory level. The first difference is that their diagram emphasizes the measurement model (the left half of Fig. 2) in addition to the physical system model. While it is important for advanced students to understand the measurement tools they are using, this aspect is “often minimized as a learning goal at the introductory level [36]”.
+
+The second difference is that the Zwickl paper indicates that “the primary goal of modeling in upper-division lecture and lab courses is usually not to uncover new basic principles… [but rather] models are constructed by applying known principles (e.g., Maxwell’s equation) to describe a specific, possibly complex, real-world phenomenon.” Since our work is done at the introductory level, we absolutely want our students to uncover new basic principles using data that they collect themselves. For that reason we modified the diagram (see Fig. 2) to include that step. Equipping students to find that path for themselves is a key aspect of the model-making skill as we defined it.
+
+B. WHAT DO WE MEAN BY MODEL BREAKING?
+Virtually all educational researchers who discuss the modeling process include a step where the model is critically compared to observations in order to determine if the model accurately describes the data. Many terms are used for this process including evaluating [11], testing [9,11,26], refining [10], comparing [1,36], and revising [40].
+
+While each of these words gets close to describing the skill we were interested in measuring, none contained the exact mix of component skills that we were looking for. This is especially true of the words refining and revising which include the process of adjusting the model if it is found to deviate from reality. While the ability to make those adjustments is important, it was beyond the scope of this study.
+
+In order to create a model-breaking rubric we looked to the work of Holmes [40]. This led us to define model breaking as the ability to critically evaluate if the behavior of a system is consistent with a given model. This ability was broken down into a number of component skills:
+
+• estimating the absolute uncertainty in a measurement,
+
+• calculating the relative uncertainty of a number,
+
+• propagating absolute (relative) uncertainties when adding (multiplying) two numbers,
+
+• adding uncertainties as the square root of the sum of squares, and
+
+• referencing calculated measurement uncertainties when evaluating the correspondence of the data to a model.
+
+IV. METHODS
+A. PARTICIPANTS AND ACTIVITIES
+The goal of this study was to measure student mastery of model-making and model-breaking skills. It involved one class section of Algebra-Based Introductory Physics and three sections of Calculus-Based Introductory Physics. All of the classes were taught in a SCALE-UP [41] format that met four times a week, twice for 110 min and twice for 50 min. Each section had a different instructor. The total enrollment of all four sections was 116 students.
+
+Students were divided into treatment groups (model making and model breaking) using matched-pair random assignments based on Force-Motion Concept Evaluation (FMCE) pretest scores. Throughout the semester, students completed five DMV-based activities [42], with each treatment group working on an activity that was specially scaffolded for their skill. All of the students worked with one or two partners on the activities and on the summative assessment. The first two activities were performed during a short period (50 min), but many students were not able to complete the activities so we switched to the long period (110 min) for the last three activities and the final assessment.
+
+The scores for two neutral assessment items were also used to establish equivalency between the treatment groups. These control questions asked students to calculate the initial momentum of the disk, and the final momentum of the disk and cart (see Fig. 3) but had no model-making or model-breaking aspects. Groups that correctly measured the initial momentum to within 10% of the correct value received one point, while groups that measured the initial momentum between 10% and 25% received a half point. Groups whose deviation from the correct value exceeded 25% received no credit. Points for determining the final momentum were awarded in the same way.
+
+An additional instructor of two algebra-based sections was asked to participate in the study but during the course of the semester, several students in those sections switched treatment groups. The completed assessments from those sections were used as practice packets to train the three scorers to consistently apply the rubric, but those results were then excluded from all analyses.
+
+B. ASSESSMENT
+Near the end of the semester, we administered a single 2-h assessment of both skills to both treatment groups. Existing lab groups (usually 2 or 3 people) collaborated on the assessment, turning in one assessment per group. There were 23 lab groups (58 individuals) in the model-making treatment group and 24 lab groups (58 individuals) in the model-breaking treatment group.
+
+The model-making part of the assessment (Appendix A) was based on the wave properties video matrix (Fig. 1) [35], which allows users to independently vary the amplitude, frequency, and tension in a large horizontal spring. Students were asked to, “Use measurements from the videos to determine the mathematical relationship between the wavelength of a wave and the frequency of that wave.” By the time the assessment was administered the model-making group had worked on five model-making activities, but none of the classes had ever studied wave motion or oscillations. In order to successfully complete the task, students had to
+
+• hold the spring tension constant while varying the frequency, to create a graph of wavelength vs frequency,
+
+• select a curve fit (often more than one curve fit matched the data), and interpret the values and the units of the curve fit parameters in a way that led to an algebraic expression,
+
+• express the model in their own words,
+
+• use their models to predict values that extended beyond their measurement region.
+
+The model-breaking part of the assessment (Appendix B) was based on the Iron disk tossed onto cart video (Fig. 3) [43]. The video shows a very messy collision as the disk bounces and slides on the cart before coming to equilibrium. Students were provided with the model 
+p
+i
+=
+p
+f
+, i.e., that the initial momentum is equal to the final momentum of a closed system. Then they were asked to evaluate whether the behavior of the disk and cart conformed or did not conform to that model. Since students often have the impression that momentum is only conserved in tidy collisions, we were curious how they would do analyzing this video. In order to successfully complete the task, students had to
+
+• estimate the measurement uncertainty in the position of the disk and cart,
+
+• use the (provided) uncertainty in the mass,
+
+• combine the individual mass uncertainties to get the uncertainty in the combined mass,
+
+• propagate the uncertainty in the displacement to get values for the uncertainty in the velocity and momentum,
+
+• use the final estimate of the uncertainties to evaluate whether their measured 
+p
+i
+ and 
+p
+f
+ values agreed.
+
+C. RUBRICS
+The model-making rubric awarded one point for each of the following:
+
+M1. varying the frequency
+
+M2. measuring the frequency
+
+M3. measuring the wavelength
+
+M4. making a graph of wavelength vs frequency
+
+M5. fitting the graph to an inverse or power function
+
+M6. writing the equation of the fit
+
+M7. determining that wavelength is inversely proportional to frequency.
+
+M8. predicting what will happen to the wavelength if the frequency is doubled
+
+M9. identifying what physical quantity is represented by the curve fit parameters
+
+M10. identifying the proper units for the curve fit parameters
+
+A total of ten points were possible on this part of the assessment. Although most points were awarded as either full credit (one point) or no credit (zero points) partial points were awarded where appropriate, for example students earned ½ point on rubric element M5 if they did fit the graph to a curve but did not use an inverse fit (or a power curve with a coefficient of -1). Likewise, students earned ½ point on rubric element M7 if they indicated that there was an inverse relationship between wavelength and frequency without specifying that the relationship was inversely proportional.
+
+The model-breaking rubric awarded one point for each of the following:
+
+B1. writing down the uncertainty in the mass (which was provided in the instructions)
+
+B2. propagating the absolute uncertainties in the mass of the disk and cart to determine the uncertainty in the combined disk and cart system after the collision
+
+B3. estimating the uncertainty in the displacement of the disk and/or cart
+
+B4. using the uncertainty in the displacement or time to determine the uncertainty in the velocity
+
+B5. calculating the uncertainty in the momentum
+
+B6. making any reference to absolute uncertainty, either by explicitly mentioning the term or by recording an absolute uncertainty value
+
+B7. making any reference to relative uncertainty, either by explicitly mentioning the term or by recording a relative uncertainty value
+
+B8. combining uncertainties using the square root of the sum of squares
+
+B9. using uncertainties to answer the question of whether 
+p
+i
+ is actually equal to 
+p
+f
+
+A total of nine points were possible on this part of the assessment. Although most points were awarded as either full credit (1 point) or no credit (zero points) partial points were awarded for answers that were partially correct. For example, if students made an attempt to combine the uncertainties in the cart and disk masses but did so incorrectly (by simply adding the values rather than by finding the square root of the sum of their squares) they earned ½ point. Likewise, when students were asked to evaluate if the data matched the model they would earn a half of a point for mentioning uncertainty, but were required to refer to their specific uncertainty values to receive full credit.
+
+The assessments were scored by three individuals. Two of the individuals were blinded to the treatment groups. The third individual was the instructor of one of the class sections and thus was not blinded to the students in his section, but was blinded for the other three sections. Interrater agreement was measured using Fleiss’ kappa which indicated almost perfect agreement (0.88 and 0.90 for model making and model breaking, respectively) between scorers, where “agreement” was defined as two scores having the same value plus or minus 1. The average of the three scores for each rubric point was used to calculate the corresponding statistics.
+
+Students were not provided the rubric. Rather, the mid-semester model-making and model-breaking activities were designed to lead students through the steps that would ultimately earn them points on the assessment rubric. The amount of scaffolding decreased throughout the semester so that the final assessments were minimally scaffolded.
+
+D. ANALYSIS
+Comparisons were made to determine the effectiveness of each of the treatments. Because the data sets did not conform to a normal distribution as measured by Shapiro Wilk tests, the nonparametric two-tailed Mann-Whitney U test with a significance level of 0.05 was used to determine if groups differed by more than would be expected by chance. For all statistically significant results the effect size was calculated using the 
+z
+ score divided by the square root of the total number of samples, i.e., 
+z
+/
+√
+N
+. An effect size of 0.1 is considered small. An effect size of 0.3 is considered medium, and an effect size of 0.5 is considered large.
+
+V. RESULTS
+A. SUMMARY TABLE
+Table I provides a detailed summary of the data broken down by class section, treatment group, and evaluation metric
+
+TABLE I.
+Detailed information about the performance of each treatment group within each class section on each of six measures. Please note that because many of the data sets were not normal all of the statistical comparisons in this study used the nonparametric Mann-Whitney U test, which is based on median values, and not mean values. The sample size, 
+n
+, reflects either individuals (FMCE data) or small lab groups (non-FMCE data).
+
+Model-making treatment group	Model-breaking treatment group
+Class section	Average	Standard deviation	
+n
+Avgerage	Standard deviation	
+n
+FMCE Pre-test scores	1 	8.7	5.2	16 	7.8	3.2	19 
+2 	7.9	2.9	17 	9.6	8.9	18 
+3 	10.9	8.1	15 	11.6	5.2	10 
+4 	14.5	14.9	10 	9.2	5.7	11 
+Total	
+10.0
+8.1	58 	
+9.3
+6.2	58 
+FMCE Normal-ized gains	1 	19.6	27.5	16 	22.1	19.7	19 
+2 	20.6	22.7	17 	20.9	29.2	18 
+3 	26.6	30.8	15 	34.6	24.9	10 
+4 	23.0	29.3	10 	22.4	27.3	11 
+Total	
+22.3
+26.9	58 	
+23.9
+25.1	58 
+Neutral quest. 1	1 	0.64	0.24	7 	0.61	0.49	9 
+2 	1.0	0.0	6 	0.86	0.38	7 
+3 	0.75	0.42	6 	0.5	0.41	4 
+4 	0.75	0.5	4 	1 	0 	4 
+Total	
+0.7
+8
+0.33	23 	
+0.7
+3
+0.42	24 
+Neutral quest. 2	1 	0.86	0.24	7 	0.39	0.42	9 
+2 	0.58	0.49	6 	0.57	0.45	7 
+3 	0.42	0.38	6 	0.5	0.41	4 
+4 	0.75	0.5	4 	0.5	0.41	4 
+Total	
+0.6
+5
+0.41	23 	
+0.4
+8
+0.4	24 
+Model-making Assess.	1 	7.8	1.2	7 	6.8	1.4	9 
+2 	8.6	1.3	6 	7.0	0.9	7 
+3 	7.6	1.5	6 	6.4	0.7	4 
+4 	8.9	1.3	4 	6.4	1.8	4 
+Total	
+8.1
+2.1	23 	
+6.7
+1.8	24 
+Model-breaking Assess.	1 	0.8	1.1	7 	4.6	2.6	9 
+2 	1.5	2.7	6 	3.6	3.3	7 
+3 	0.5	0.8	6 	3.0	2.3	4 
+4 	0.3	0.7	4 	5.1	3.5	4 
+Total	
+0.8
+1.5	23 	
+4.1
+2.9	24 
+B. SIMILARITY OF TREATMENT GROUPS
+Analysis indicated no significant difference in FMCE pretest scores between the treatment groups, 
+z
+ 
+(
+113
+)
+=
+0
+.
+17
+, 
+p
+=
+0.87
+. There was also no significant difference between treatment groups in terms of FMCE pre and postnormalized gains, 
+z
+ 
+(
+109
+)
+=
+0
+.37
+, 
+p
+=
+0.71
+.
+
+Analysis indicated no significant difference between treatment groups in the scores for either of the neutral questions:
+
+• Finding the initial momentum 
+z
+(
+47
+)
+=
+0
+.32
+, 
+p
+=
+0.75
+
+• Finding the final momentum 
+z
+(
+47
+)
+=
+1
+.48
+, 
+p
+=
+0.14
+
+C. MODEL-MAKING ASSESSMENT
+A model-making score was calculated for each small group out of ten possible points on the model-making assessment. There were 47 total groups. The model-making treatment group did significantly better on this part of the assessment than the other group, 
+z
+=
+3.3
+, 
+p
+=
+0.0008
+. For a total of 
+N
+=
+47
+ samples this corresponds to an effect size ( 
+z
+/
+√
+N
+) of 0.49, or just shy of the 0.5 threshold for a large effect.
+
+When the ten rubric points on the model-making assessment were analyzed individually, two of the points displayed a significant differentiation between the two treatment groups with the model-making treatment group outperforming the other group in both cases. The point awarded for determining that wavelength is inversely proportional to frequency (point M7 on the list above) produced a 
+z
+ score of 2.5 and a 
+p
+ value of 0.012. The size of the effect was 0.37. Likewise, the rubric point awarded for identifying what physical quantity is represented by the curve fit parameters (point M9 on the list above) displayed a significant difference between the treatment groups. The 
+z
+ score in this case was 2.6 and the 
+p
+ value was 0.0096. The effect size was 0.38.
+
+D. MODEL-BREAKING ASSESSMENT
+A model-breaking score was calculated for each small group out of nine possible points on the model-breaking test. The model-breaking treatment group did significantly better on this part of the assessment than the other group, 
+z
+=
+4.1
+, 
+p
+=
+<
+0.001
+. For a total of 
+N
+=
+47
+ samples this corresponds to an effect size ( 
+z
+/
+√
+N
+) of 0.6 which signifies a large effect.
+
+When the nine rubric points on the model-breaking assessment were analyzed individually, the model-breaking treatment group significantly outperformed the other group on all of the points. The size of the effect was at least 0.32 for all of the rubric points. It was greater than 0.5 for three of the points: B4, B6, and B8. Point B4 assessed whether students used the uncertainty in the displacement (or time) to determine the uncertainty in the velocity. Point B6 was awarded if students made a reference to absolute uncertainty in the process of determining if the observed events conformed to a given model. Students earned point B8 by combining uncertainties using the square root of the sum of squares.
+
+VI. SUMMARY
+The data analyzed in this article indicate that there were no significant differences between the treatment groups in terms of the FMCE prescore, FMCE normalized gains, or their performance on two neutral questions that were embedded in the final assessment. In addition, the results show that each treatment group significantly outperformed the other on the summative test that was designed to measure the knowledge and skills their treatment had emphasized. The groups that had completed five model-making activities throughout the semester did significantly better on the model-making assessment than the groups that had been in the other treatment. Likewise, the groups that had completed the model-breaking activities outperformed the other treatment on the model-breaking assessment.
+
+VII. CONCLUSIONS AND DISCUSSION
+Constructing accurate useful models often involves the cyclical, iterative process of proposing a model that works under some limited conditions and then testing that model under new conditions to see if it still applies. If the model no longer fits, then the previous model is refined or replaced and the process continues. This pattern can be seen in ISLE cycles (Investigative Science Learning Environments) [28], in Windschitl’s “generation, testing, and revision of scientific models” [11], and in the iterative refinement described by Clement [37]. Two important parts of this process are developing a provisional model (i.e., model making) and then critically testing it in a new situation (i.e., model breaking).
+
+Like most skills, being able to develop robust quantitative models takes practice and there are several indications that there is significant room for improvement within the status quo [44]. Researchers de Jong and van Joolingen have shown that students struggle at nearly every step in the process from generating hypothesis and designing experiments to implementing a systematic pan and interpreting the data [45]. Windschitl et al. indicate that even when instructors do incorporate inquiry activities into their classes the activities often miss the mark [11].
+
+It is clear from the literature that the cyclical process of creating models can help students acquire scientific abilities [28,29], and that such a process can be implemented using apparatus-based labs and simulations [46]. What has not been known, until now, is if activities based on direct measurement videos could also help students acquire some of these skills. Overall, the results of this study indicate that DMV-based activities can produce significant learning outcomes for both of these skills. This is an encouraging result since many science instructors struggle with effectively fostering these skills. The fact that DMVs can produce robust learning of laboratory skills will give instructors more options to help their students acquire these skills. In addition, the fact that such learning can occur in a web-based environment rather than in an apparatus-based laboratory gives teachers more options about when and how to address these skills.
+
+In the future, we would like to close the circle and measure students’ ability to complete both steps sequentially: to develop a model under one set of circumstances and then be forced to refine it given a new set of conditions. For example, a student would discover the inverse squared nature of the Coulomb interaction between two charged spheres that are far apart and then discover a deviation from that ideal behavior as charge polarization within the spheres becomes apparent when the spheres are brought close to each other. Letting students see both aspects of models (their usefulness and their limits) is a worthy and important goal for science instructors that may help students establish the connection between what they are learning and the real world. While instructors expect their students to do that automatically, the research shows that students’ ability to link their learning to the real world often decreases throughout their introductory physics courses [47,48].
+
+ACKNOWLEDGMENTS
+This work is funded by the National Science Foundation (Grants No. 1245268 and No. 1644458), the American Institute of Physics, and the University of Wisconsin System. This work was produced under a grant from the UW-Extension SBIR Advance through its partnership with the WI Economic Development Corporation. The authors also acknowledge the important support of their home institutions: ISD No. 197, the University of Wisconsin River Falls, and the Science Education Resource Center.

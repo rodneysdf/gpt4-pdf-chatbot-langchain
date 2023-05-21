@@ -1,15 +1,20 @@
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
+import { env } from 'node:process';
 import 'source-map-support/register';
 import awsmobile from "./aws-exports";
 import { chat } from './chat';
-import { add, collection, purge, upload } from './collection';
-import { LambdaFunctionURLEvent } from "./datamodels";
+import { collection, purge } from './collection';
+import { Convert, Credentials, LambdaFunctionURLEvent } from "./datamodels";
+import { add, upload } from './ingest';
 import { LambdaFunctionURLResponse } from "./interfaces";
+import { getParameter } from './util/parameterStore';
+import { isLambdaMock } from './runtype'
 
-console.log('INDEX');
+// Disable auth when running as an amplify mock
+const performAuth: boolean = !isLambdaMock;
 
-// DEVELOPER ONLY
-const disableAuth: Boolean = false;
+console.log('isLambdaMock index', isLambdaMock)
+console.log('performAuth', performAuth)
 
 // auth - must be done outside of lambda handler for cache to be effective
 const region: string = process.env["REGION"] || ""
@@ -39,23 +44,27 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
     }
   }
 
-  if (!disableAuth) {
+  if (performAuth) {
     // Authenticate
     if (!event.headers || !event.headers.authorization || !event.headers.authorization.startsWith('Bearer ')) {
       return {
         statusCode: 401,
-        body: JSON.stringify({ message: 'Unauthorized' }),
+        body: JSON.stringify({ message: 'Unauthorized - no token' }),
       };
     }
     const accessToken = event.headers.authorization.substring(7);
-    let payload;
+    console.log("authing token: ", accessToken)
+
+    let tokenPayload;
     try {
       // https://github.com/awslabs/aws-jwt-verify
       // https://repost.aws/knowledge-center/decode-verify-cognito-json-token
       // If the token is not valid, an error is thrown:
-      payload = await jwtVerifier.verify(accessToken);
-      // console.log("Token is valid. Payload:", payload);
-    } catch {
+      tokenPayload = await jwtVerifier.verify(accessToken);
+      console.log("Token is valid:", tokenPayload);
+    } catch (error) {
+      console.log("error obtaining authorization:", error);
+
       return {
         statusCode: 401,
         body: JSON.stringify({ message: 'Unauthorized' }),
@@ -63,25 +72,42 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
     }
   }
 
-  // route the request
-  if (event.requestContext.http.path === '/api/chat') {
-    return chat(event);
+  // load credentials needed to call ChatGPT
+  let credentials: Credentials
+  try {
+    // see https://docs.amplify.aws/cli/function/secrets/#configuring-secret-values
+    const credentialsSecret: string = process.env["credentials"] || ""
+    const credentialsJSON: string = await getParameter(credentialsSecret, true) || "";
+    credentials = Convert.toCredentials(credentialsJSON);
+  } catch (error) {
+    console.log("error accessing credentials :", error);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        "error": "could not get configuration"
+      })
+    }
   }
+  // write OPENAI_API_KEY env var to the process because:
+  // OPENAI_API_KEY is required to be an ENV var by current code dependency
+  env.OPENAI_API_KEY = credentials.openAiApiKey;
+
+  // route the request
   switch (event.requestContext.http.path) {
     case '/api/chat':
-      return chat(event);
+      return chat(event, credentials);
       break;
     case '/api/upload':
-      return upload(event);
+      return upload(event, credentials);
       break;
     case '/api/add':
-      return add(event);
+      return add(event, credentials);
       break;
     case '/api/purge':
-      return purge(event);
+      return purge(event, credentials);
       break;
     case '/api/collection':
-      return collection(event);
+      return collection(event, credentials);
       break;
   }
 
@@ -92,9 +118,4 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
       "error": "unknown request"
     })
   }
-}
-
-
-function sleep(msDuration: number) {
-  return new Promise((resolve) => setTimeout(resolve, msDuration));
 }

@@ -115,7 +115,7 @@
         "Architectures": [
           "arm64"
         ],
-        "MemorySize": 256,
+        "MemorySize": 384,
         "Timeout": 25,
         "Code": {
           "S3Bucket": {

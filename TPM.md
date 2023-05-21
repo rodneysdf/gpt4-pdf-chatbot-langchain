@@ -6,9 +6,22 @@ Credentials for the lambda are in SSM Parameter Store
 
 ## Develop locally
 
-To develop locally and have Google signin redirect back to your local app, change this line in `_app.tsx' to true as in:
+To develop locally and have Google signin redirect back to your local app, redirects are diffents. These are detected base on if you are running on localhost.
 
-`const isLocalhost : Boolean = false;`
+### Run the lambda locally
+`amplify mock function tpmchatgptdfd0678a -v --event 'src/test/event-multi.json'  --timeout 30`
+## Build like `amplify publish`.
+`npm run build`
+## Quickly build the lamda
+`tsc -p tsconfig` in dir ./amplify/backend/function/tpmchatgptdfd0678a/src
+
+# Publishing
+- `amplify push` - push just the backend
+
+- `amplify push function` -push just the functions
+- `amplify publish` - push both the backend and frontend (React U to amplify hosting)
+
+
 
 ## In Progress
 
@@ -34,7 +47,7 @@ The UI makes a call to a single server function `'/api/chat'` in `pages/index.ts
 
 ## Implementation notes
 
-Typescript objects were created using [quicktype](https://quicktype.io/typescript)
+Typescript objects are created in each build using [quicktype](https://quicktype.io/typescript)
   `quicktype data/ -o datamodels.ts`
 
 ## Research

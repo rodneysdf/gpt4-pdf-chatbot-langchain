@@ -1,14 +1,13 @@
-import {  LambdaFunctionURLResponse } from "./interfaces";
+import { LambdaFunctionURLResponse } from "./interfaces";
 import { initPinecone } from './util/pineconeclient';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { makeChain } from './util/make-chain';
-import { getParameter } from './util/parameterStore';
 import { Convert, Credentials, LambdaFunctionURLEvent, QuestionHistory } from "./datamodels";
-import { env } from 'node:process';
 
 // '/api/chat'
-export const chat = async (event: LambdaFunctionURLEvent): Promise<LambdaFunctionURLResponse> => {
+export const chat = async (event: LambdaFunctionURLEvent,
+  credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
   let questionHistory: QuestionHistory
   try {
     let inputBody: string;
@@ -35,27 +34,6 @@ export const chat = async (event: LambdaFunctionURLEvent): Promise<LambdaFunctio
       })
     }
   }
-
-  // load credentials needed to call ChatGPT
-  let credentials: Credentials
-  try {
-    // see https://docs.amplify.aws/cli/function/secrets/#configuring-secret-values
-    const credentialsSecret: string = process.env["credentials"] || ""
-    const credentialsJSON: string = await getParameter(credentialsSecret, true) || "";
-    credentials = Convert.toCredentials(credentialsJSON);
-  } catch (error) {
-    console.log("error accessing credentials :", error);
-
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        "error": "could not get configuration"
-      })
-    }
-  }
-  // write OPENAI_API_KEY env var to the process because:
-  // OPENAI_API_KEY is required to be an ENV var by current code dependency
-  env.OPENAI_API_KEY = credentials.openAiApiKey;
 
   //
   // Start of logic

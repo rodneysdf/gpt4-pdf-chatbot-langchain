@@ -2,23 +2,26 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es2020",
+    "lib": ["esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+
+
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    "incremental": true,
+
+    "baseUrl": ".",
     "outDir": ".",
     "rootDir": ".",
-    "sourceMap": true,
-    "strict": false,
-    "experimentalDecorators": true,
-    "baseUrl": ".",
-    "resolveJsonModule": true,
-    "moduleResolution": "node",
     "paths": {},
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "incremental": true,
-    "allowJs": true,
-    "lib": [
-      "esnext"
-    ],
+
+    "sourceMap": true,
+    "experimentalDecorators": true
   },
   "exclude": [
     "node_modules"

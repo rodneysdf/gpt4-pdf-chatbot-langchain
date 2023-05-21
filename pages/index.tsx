@@ -15,13 +15,16 @@ import {
   postPurgeDocuments,
   postSendUrl,
   postUploadFiles,
+  cache,
 } from '@/utils/api';
+import { useGranularEffect } from "granular-hooks";
 import { Document } from 'langchain/document';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { BsPersonCircle } from 'react-icons/bs';
 import ReactMarkdown from 'react-markdown';
 
-const DocumentUpload = () => {
+const DocumentUpload = (props: any) => {
+  const { onSetCollectionSize } = props;
   const auth = useAuth();
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,36 +33,31 @@ const DocumentUpload = () => {
     fileInputRef.current?.click();
   };
 
-
   const onFilesChange = async (e: any) => {
     const files = Array.from(e.target.files) as File[];
     setLoading(true);
 
     try {
-      console.log("starting")
-
-      await postUploadFiles(files, auth);
-      console.log("done")
+      const response = await postUploadFiles(files, auth);
       e.target.value = null;
+      if (response) {
+        if (response.data?.size) {
+          onSetCollectionSize(response.data.size);
+          cache.set('vectorCount', response.data.size)
+        }
+      }
     } catch (err: any) {
       alert('an error occured uploading the documents');
       console.log('err', err.response);
     }
-    setLoading(true);
-    console.log("setLoading true")
-
-
-    setTimeout(() => {
-      setLoading(false);
-      console.log("timeout complete")
-    }, 5000);
+    setLoading(false);
   };
 
   return (
     <div>
       <button
         onClick={() => openFileDialog()}
-        className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10"
+        className="border px-2 py-1 rounded-md w-full shadow-slate-300 shadow hover:bg-slate-500/10"
       >
         {loading ? <LoadingDots color="#000" /> : 'Upload documents'}
       </button>
@@ -71,17 +69,23 @@ const DocumentUpload = () => {
         type="file"
         className="hidden"
       />
+      <div className="text-sm font-normal ml-2 text-center w-full">
+        pdf,docx,txt,csv,json,jsonl,xls,xlsx
+        <br />
+        (max total size 6mb)
+      </div>
     </div>
   );
 };
 
-const AddUrl = () => {
+const AddUrl = (props: any) => {
+  const { onSetCollectionSize } = props;
   const auth = useAuth();
 
   const [loading, setLoading] = useState(false);
 
   const promptForUrl = () => {
-    const url = prompt('Please enter a url');
+    const url = prompt('Enter a Google Doc, Sheet, or folder link, or add a file via url', 'https://example.com');
 
     if (url === null) {
       return;
@@ -99,23 +103,39 @@ const AddUrl = () => {
     setLoading(true);
 
     try {
-      await postSendUrl(url, auth);
+      const response = await postSendUrl(url, auth);
+      if (response) {
+        if (response.data?.size) {
+          onSetCollectionSize(response.data.size);
+          cache.set('vectorCount', response.data.size)
+        }
+      }
+
     } catch (err: any) {
       alert('an error occured purging the documents');
       console.log('err', err.response);
     }
-
+    console.log()
     setLoading(false);
   };
 
   return (
-    <button onClick={promptForUrl} className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10">
-      {loading ? <LoadingDots color="#000" /> : 'Add url'}
-    </button>
+    <div>
+      <button onClick={promptForUrl} className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10">
+        {loading ? <LoadingDots color="#000" /> : 'Add url'}
+      </button>
+        <div className="text-sm font-normal ml-2 text-center w-full">
+          Google Doc or folder link
+        </div>
+        <div className="text-sm font-normal ml-2 text-center w-full"
+        >or upload a file via url
+        </div>
+      </div>
   );
 };
 
-const PurgeDocuments = () => {
+const PurgeDocuments = (props: any) => {
+  const { onSetCollectionSize } = props
   const [loading, setLoading] = useState(false);
   const auth = useAuth();
 
@@ -123,7 +143,13 @@ const PurgeDocuments = () => {
     setLoading(true);
 
     try {
-      await postPurgeDocuments(auth);
+      const response = await postPurgeDocuments(auth);
+      if (response) {
+        if (response.data?.size || response.data?.size === 0) {
+          onSetCollectionSize(response.data.size);
+          cache.set('vectorCount', response.data.size)
+        }
+      }
     } catch (err: any) {
       alert('an error occured purging the documents');
       console.log('err', err.response);
@@ -132,12 +158,15 @@ const PurgeDocuments = () => {
   };
 
   return (
-    <button
-      onClick={purgeDocuments}
-      className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10"
-    >
-      {loading ? <LoadingDots color="#000" /> : 'Purge collection'}
-    </button>
+    <div>
+      <button
+        onClick={purgeDocuments}
+        className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10"
+      >
+        {loading ? <LoadingDots color="#000" /> : 'Purge collection'}
+      </button>
+
+    </div>
   );
 };
 
@@ -147,13 +176,10 @@ const Profile = (props: any) => {
 
   const handleSetApiKey = (apiKey: string) => {
     window.localStorage.setItem('openai-api-key', apiKey);
-    console.log("Setting OpenAI api key")
     onSetApiKey(apiKey);
   };
   const handleSetAnthropicKey = (anthropicKey: string) => {
     window.localStorage.setItem('anthropic-api-key', anthropicKey);
-       console.log("Setting Anthropic api key")
-
     onSetAnthropicKey(anthropicKey);
   };
   return (
@@ -171,30 +197,30 @@ const Profile = (props: any) => {
             href="https://openai.com/"
             className="hover:text-slate-600 cursor-pointer px-0 py-0">OpenAI API</a> key:</span>
         </div>
-          <input
-            className="border rounded-md w-full pl-1 col-span-3 px-2 py-1"
-            type="text"
-            onChange={(e) => handleSetApiKey(e.target.value)}
-            value={apiKey}
-          />
+        <input
+          className="border rounded-md w-full pl-1 col-span-3 px-2 py-1"
+          type="text"
+          onChange={(e) => handleSetApiKey(e.target.value)}
+          value={apiKey}
+        />
 
         <div className="col-span-2 px-2 py-1 whitespace-nowrap">
           <span><a
             href="https://www.anthropic.com/"
             className="hover:text-slate-600 cursor-pointer px-0 py-0">Anthropic {"'Claude'"} API </a>key:</span>
         </div >
-          <input
-            className="border rounded-md w-full pl-1 col-span-3"
-            type="text"
-            onChange={(e) => handleSetAnthropicKey(e.target.value)}
-            value={anthropicKey}
-          />
+        <input
+          className="border rounded-md w-full pl-1 col-span-3"
+          type="text"
+          onChange={(e) => handleSetAnthropicKey(e.target.value)}
+          value={anthropicKey}
+        />
       </div >
 
       <div className="flex flex-row gap-3 mt-4">
         <PurgeDocuments />
       </div>
-            <div className="flex flex-row gap-3 mt-4">
+      <div className="flex flex-row gap-3 mt-4">
         <button
           onClick={() => {
             // signout will not delete users local keys
@@ -213,7 +239,7 @@ const Profile = (props: any) => {
 
 export default function Home() {
   const auth = useAuth();
-  const [model, setModel] = useState<string>('gpt-3.5-turbo');
+  const [model, setModel] = useState<string>('gpt-3.5-turbo-301');
   const [algo, setAlgo] = useState<string>(
     'LangChain ConversationalRetrievalQAChain',
   );
@@ -327,23 +353,24 @@ export default function Home() {
 
   useEffect(() => {
     const storedApiKey = window.localStorage.getItem('openai-api-key') || '';
-    console.log(' retreive openai-api-key', storedApiKey);
     setOpenAiApiKey(storedApiKey);
 
     const storedAnthropicApiKey = window.localStorage.getItem('anthropic-api-key') || '';
-    console.log(' retreive anthropic-api-key', storedAnthropicApiKey);
     setAnthropicClaudeKey(storedAnthropicApiKey);
 
   }, [setOpenAiApiKey, setAnthropicClaudeKey]);
 
-  useEffect(() => {
+  // todo this end up calling getCollection 5 times during startup
+  useGranularEffect(() => {
     const getUserProfile = async () => {
-      if (auth && auth.user) {
+      if (auth?.isSignedIn) {
         try {
-          const response = await getCollection(auth);
+          // console.log("calling getCollection", auth?.isSignedIn);
 
+          const response = await getCollection(auth);
+          console.log()
           if (response) {
-            if (response.data.size) {
+            if (response.data?.size) {
               setCollectionSize(response.data.size);
             }
           }
@@ -354,9 +381,9 @@ export default function Home() {
         }
       }
     };
-
+    // console.log("calling get user profile", auth);
     getUserProfile();
-  }, [auth]);
+  }, [auth.isSignedIn], [auth]);
 
   const [collectionSize, setCollectionSize] = useState<number | null>(0);
 
@@ -375,9 +402,9 @@ export default function Home() {
                 ) : null}
               </div>
               <div className="flex flex-row gap-3 ml-2 mb-2">
-                <DocumentUpload />
-                <AddUrl />
-                <PurgeDocuments />
+                <AddUrl onSetCollectionSize={setCollectionSize} />
+                <DocumentUpload onSetCollectionSize={setCollectionSize}/>
+                <PurgeDocuments onSetCollectionSize={setCollectionSize}/>
               </div>
             </div>
 
@@ -417,7 +444,7 @@ export default function Home() {
                           : styles.usermessage;
                     }
                     return (
-                      <>
+                      <Fragment key={`chatMessageWrapper-${index}`}>
                         <div key={`chatMessage-${index}`} className={className}>
                           {icon}
                           <div className={styles.markdownanswer}>
@@ -456,7 +483,7 @@ export default function Home() {
                             </Accordion>
                           </div>
                         )}
-                      </>
+                      </Fragment>
                     );
                   })}
                 </div>
@@ -504,33 +531,33 @@ export default function Home() {
                     </button>
                   </form>
                 </div>
-                <div className="flex flex-row  w-full mt-3 m-3 gap-3 justify-end">
-                  <div className="flex gap-3">
+                <div className="flex flex-row w-full mt-3 m-3 gap-5 justify-end">
+                  <div className="flex gap-1 py-1">
                     Model
                     <select
                       value={model}
                       onChange={(e) => setModel(e.target.value)}
                       name="model"
                       id="model"
-                      className="border px-2 py-1 rounded-md"
+                      className="border rounded-md pl-1 pr-2 shadow-slate-300 shadow hover:bg-slate-500/10"
                     >
-                      <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
-                      <option value="gpt-4">gpt-4</option>
                       <option value="gpt-3.5-turbo-0301">
                         gpt-3.5-turbo-0301
                       </option>
+                      <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                      <option value="gpt-4">gpt-4</option>
                       <option value="gpt-4-0314">gpt-4-0314</option>
                       <option value="claude">Anthropic-Claude 100k tokens</option>
                     </select>
                   </div>
-                  <div className="flex gap-3">
-                    Algorithm:{' '}
+                  <div className="flex gap-1 py-1">
+                    Algorithm
                     <select
                       value={algo}
                       onChange={(e) => setAlgo(e.target.value)}
                       name="algo"
                       id="algo"
-                      className="border px-2 py-1 rounded-md w-64"
+                      className="border rounded-md pl-1 pr-2 shadow-slate-300 shadow hover:bg-slate-500/10"
                     >
                       <option value="lc-CRQAC">
                         LangChain ConversationalRetrievalQAChain

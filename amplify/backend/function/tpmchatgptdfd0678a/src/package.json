@@ -7,22 +7,24 @@
   "dependencies": {
     "@pinecone-database/pinecone": "^0.0.12",
     "aws-jwt-verify": "^4.0.0",
-    "aws-sdk": "^2.1378.0",
+    "aws-sdk": "^2.1381.0",
+    "axios": "^1.4.0",
     "busboy": "^1.6.0",
     "langchain": "^0.0.55",
+    "mammoth": "^1.5.1",
     "pdf-parse": "^1.1.1",
     "raw-body": "^2.5.2",
     "redis": "^4.6.6",
     "source-map-support": "^0.5.21",
     "typeorm": "^0.3.16",
+    "xlsx": "^0.18.5",
     "yerror": "^6.2.1"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.115",
     "@types/busboy": "^1.5.0",
     "@types/estree": "^1.0.1",
-    "@types/jsonwebtoken": "^9.0.2",
-    "@types/node": "^20.1.1",
+    "@types/node": "^20.2.1",
     "@types/pdf-parse": "^1.1.1",
     "typescript": "^5.0.4"
   },
