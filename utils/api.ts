@@ -29,7 +29,11 @@ const authedApiCall = async (
     const accessToken = await auth.getAccessToken();
     if (accessToken) {
       reqHeaders.authorization = "Bearer " + accessToken;
+    } else {
+      console.log("no accessToken!")
     }
+  } else {
+    console.log("no auth header!")
   }
   return await axiosInstance.request({
     method: options.method,
@@ -107,8 +111,10 @@ export const getCollection = async (auth: any) => {
   const exists = cache.has('vectorCount')
   let vectorCount: any = 0
   if (exists) {
+    console.log("getCollection responds from cache")
     vectorCount = cache.get('vectorCount')
   } else {
+    console.log("getCollection calls the lambda")
     const response = await authedApiCall({
       method: 'GET',
       url: '/api/collection',

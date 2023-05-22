@@ -215,12 +215,9 @@ const Profile = (props: any) => {
           onChange={(e) => handleSetAnthropicKey(e.target.value)}
           value={anthropicKey}
         />
-      </div >
-
-      <div className="flex flex-row gap-3 mt-4">
-        <PurgeDocuments />
       </div>
-      <div className="flex flex-row gap-3 mt-4">
+      <br />
+       <div className="flex flex-row-reverse gap-3 mt-4">
         <button
           onClick={() => {
             // signout will not delete users local keys
@@ -228,7 +225,7 @@ const Profile = (props: any) => {
             onSetAnthropicKey('');
             auth.signOut();
           }}
-          className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10"
+          className="border px-2 py-1 rounded-md w-40 shadow-slate-500 shadow bg-slate-400/10 hover:bg-slate-800/10"
         >
           Sign out
         </button>
@@ -363,12 +360,13 @@ export default function Home() {
   // todo this end up calling getCollection 5 times during startup
   useGranularEffect(() => {
     const getUserProfile = async () => {
+      // console.log("UseEffect calling getUserProfile", auth?.isSignedIn);
+
       if (auth?.isSignedIn) {
         try {
-          // console.log("calling getCollection", auth?.isSignedIn);
+          // console.log("UI calling getCollection", auth?.isSignedIn);
 
           const response = await getCollection(auth);
-          console.log()
           if (response) {
             if (response.data?.size) {
               setCollectionSize(response.data.size);

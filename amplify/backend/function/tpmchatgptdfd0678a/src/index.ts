@@ -13,8 +13,7 @@ import { isLambdaMock } from './runtype'
 // Disable auth when running as an amplify mock
 const performAuth: boolean = !isLambdaMock;
 
-console.log('isLambdaMock index', isLambdaMock)
-console.log('performAuth', performAuth)
+console.log(`isLambdaMock=${isLambdaMock}, performAuth=${performAuth}`)
 
 // auth - must be done outside of lambda handler for cache to be effective
 const region: string = process.env["REGION"] || ""
@@ -47,13 +46,14 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
   if (performAuth) {
     // Authenticate
     if (!event.headers || !event.headers.authorization || !event.headers.authorization.startsWith('Bearer ')) {
+      console.log("no auth header")
       return {
         statusCode: 401,
         body: JSON.stringify({ message: 'Unauthorized - no token' }),
       };
     }
     const accessToken = event.headers.authorization.substring(7);
-    console.log("authing token: ", accessToken)
+    // console.log("auth token: ", accessToken)
 
     let tokenPayload;
     try {
@@ -63,7 +63,7 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
       tokenPayload = await jwtVerifier.verify(accessToken);
       console.log("Token is valid:", tokenPayload);
     } catch (error) {
-      console.log("error obtaining authorization:", error);
+      console.log("error validating authorization:", error);
 
       return {
         statusCode: 401,

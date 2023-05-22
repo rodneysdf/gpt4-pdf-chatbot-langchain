@@ -47,6 +47,7 @@ const updatedAwsConfig = {
   }
 }
 
+// console.log("redirectSignIn: ", updatedAwsConfig.oauth.redirectSignIn)
 Amplify.configure(updatedAwsConfig);
 
 const inter = Inter({
