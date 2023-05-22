@@ -124,13 +124,13 @@ const AddUrl = (props: any) => {
       <button onClick={promptForUrl} className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10">
         {loading ? <LoadingDots color="#000" /> : 'Add url'}
       </button>
-        <div className="text-sm font-normal ml-2 text-center w-full">
-          Google Doc or folder link
-        </div>
-        <div className="text-sm font-normal ml-2 text-center w-full"
-        >or upload a file via url
-        </div>
+      <div className="text-sm font-normal ml-2 text-center w-full">
+        Google Doc or folder link
       </div>
+      <div className="text-sm font-normal ml-2 text-center w-full"
+      >or upload a file via url
+      </div>
+    </div>
   );
 };
 
@@ -171,7 +171,7 @@ const PurgeDocuments = (props: any) => {
 };
 
 const Profile = (props: any) => {
-  const { apiKey, onSetApiKey, anthropicKey, onSetAnthropicKey } = props;
+  const { apiKey, onSetApiKey, anthropicKey, onSetAnthropicKey, onNavigate } = props;
   const auth = useAuth();
 
   const handleSetApiKey = (apiKey: string) => {
@@ -217,7 +217,14 @@ const Profile = (props: any) => {
         />
       </div>
       <br />
-       <div className="flex flex-row-reverse gap-3 mt-4">
+
+      <div className="flex flex-row-reverse gap-3 mt-4">
+        <button
+          onClick={() => onNavigate('home')}
+          className="border px-2 py-1 rounded-md w-40 shadow-slate-400 shadow bg-slate-300/10 hover:bg-slate-700/10"
+        >
+          Back
+        </button>
         <button
           onClick={() => {
             // signout will not delete users local keys
@@ -225,7 +232,7 @@ const Profile = (props: any) => {
             onSetAnthropicKey('');
             auth.signOut();
           }}
-          className="border px-2 py-1 rounded-md w-40 shadow-slate-500 shadow bg-slate-400/10 hover:bg-slate-800/10"
+          className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10"
         >
           Sign out
         </button>
@@ -401,8 +408,8 @@ export default function Home() {
               </div>
               <div className="flex flex-row gap-3 ml-2 mb-2">
                 <AddUrl onSetCollectionSize={setCollectionSize} />
-                <DocumentUpload onSetCollectionSize={setCollectionSize}/>
-                <PurgeDocuments onSetCollectionSize={setCollectionSize}/>
+                <DocumentUpload onSetCollectionSize={setCollectionSize} />
+                <PurgeDocuments onSetCollectionSize={setCollectionSize} />
               </div>
             </div>
 
@@ -580,7 +587,7 @@ export default function Home() {
             </main>
           </div>
         ) : (
-          <Profile onSetApiKey={setOpenAiApiKey} apiKey={openAiApiKey} onSetAnthropicKey={setAnthropicClaudeKey} anthropicKey={anthropicClaudeKey} />
+          <Profile onSetApiKey={setOpenAiApiKey} apiKey={openAiApiKey} onSetAnthropicKey={setAnthropicClaudeKey} anthropicKey={anthropicClaudeKey} onNavigate={handleNavigate} />
         )}
         <footer className="m-auto p-4">
           <div className="flex flex-row gap-10 text">
