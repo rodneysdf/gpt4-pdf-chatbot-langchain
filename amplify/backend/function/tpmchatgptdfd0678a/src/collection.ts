@@ -50,10 +50,13 @@ export const collection = async (event: LambdaFunctionURLEvent,
     },
   })
   let vectorCount: number = 0
-  // console.log("collection.describeIndexStats:", statsRaw)
+  console.log("collection:index.describeIndexStats():", statsRaw)
 
-  if (statsRaw?.namespaces?.[credentials.pinecone.namespace].vectorCount !== undefined) {
-    vectorCount = statsRaw?.namespaces?.[credentials.pinecone.namespace].vectorCount || 0;
+  // test for the namespace existence first
+  if (statsRaw?.namespaces && statsRaw?.namespaces?.[credentials.pinecone.namespace] !== undefined) {
+    if (statsRaw?.namespaces?.[credentials.pinecone.namespace]?.vectorCount !== undefined) {
+      vectorCount = statsRaw?.namespaces?.[credentials.pinecone.namespace].vectorCount || 0;
+    }
   }
 
   console.log('Returning vectorCount=', vectorCount)
