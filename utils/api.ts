@@ -49,6 +49,7 @@ type PostChatBody = {
   algo: string;
   history: [string, string][];
   openAiKey: string;    // optional
+  anthropicKey: string;
 };
 
 // const chat = (body: any, auth: any) => makeMutation<PostChatBody>({

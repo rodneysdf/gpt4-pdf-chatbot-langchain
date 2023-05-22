@@ -15,7 +15,7 @@ export default function Layout({
   apiKey = '',
 }: LayoutProps) {
   const auth = useAuth();
-  const apiKeyPreview = apiKey ? '***' + apiKey.slice(-4) : null;
+  const apiKeyPreview = apiKey ? '***' + apiKey.slice(-3) : null;
 
   return (
     <div className="mx-auto flex flex-col space-y-4">

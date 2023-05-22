@@ -9,7 +9,7 @@ Credentials for the lambda are in SSM Parameter Store
 To develop locally and have Google signin redirect back to your local app, redirects are diffents. These are detected base on if you are running on localhost.
 
 ### Run the lambda locally
-`amplify mock function tpmchatgptdfd0678a -v --event 'src/test/event-multi.json'  --timeout 30`
+`amplify mock function tpmchatgptdfd0678a -v --event 'src/test/event-multi.json'  --timeout 120`
 ## Build like `amplify publish`.
 `npm run build`
 ## Quickly build the lamda
@@ -20,7 +20,7 @@ To develop locally and have Google signin redirect back to your local app, redir
 
 - `amplify push function` -push just the functions
 - `amplify publish` - push both the backend and frontend (React U to amplify hosting)
-
+- `amplify env checkout <env>`  - switch between dev and prod. <env> is 'dev' or 'prod'
 
 
 ## In Progress

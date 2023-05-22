@@ -1,7 +1,17 @@
 {
-  "question": "Please summarize",
-  "history": [],
-  "model": "gpt",
-  "algo": "langchain",
-  "openAiKey": "sf-"
+  "model": "gpt-4",
+  "algo": "lc-CRC",
+  "question": "Where is San Francisco?",
+  "history": [
+    [
+      "What time is it?",
+      "I'm sorry, but I am tuned to only answer questions related to the given context. Is there anything else I can assist you with?"
+    ],
+    [
+      "What day is it?",
+      "I'm sorry, but I don't have any information about the current date or day. My functions are limited to providing assistance within my programming and knowledge base. Is there anything else I can help you with?"
+    ]
+  ],
+  "openAiKey": "key",
+  "anthropicKey": "key"
 }

@@ -56,8 +56,18 @@ export const chat = async (event: LambdaFunctionURLEvent,
       },
     );
 
+    const modelError = validateModelAndAlgo(questionHistory.model, questionHistory.algo)
+    if (modelError) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          "error": modelError
+        })
+      }
+    }
+
     // //create chain
-    const chain = makeChain(vectorStore);
+    const chain = makeChain(vectorStore, questionHistory.model);
 
     //Ask a question using chat history
     const response = await chain.call({
@@ -79,3 +89,52 @@ export const chat = async (event: LambdaFunctionURLEvent,
     }
   }
 }
+
+function validateModelAndAlgo(model: string, algo: string): string {
+  // Allowed models for lc-ConversationalRetrievalChain
+  const allowedValuesConversationalRetrievalChain: string[] = [
+    'gpt-3.5-turbo',
+    'gpt-3.5-turbo-0301',
+    'gpt-4',
+    'gpt-4-0314',
+    'anthropic'
+  ];
+
+  // Allowed models for lc-ConversationalRetrievalQAChain
+  const allowedValuesConversationalRetrievalQAChain: string[] = [
+    'gpt-3.5-turbo',
+    'gpt-3.5-turbo-0301',
+    'gpt-4',
+    'gpt-4-0314',
+    'anthropic'
+  ];
+
+
+  let allowList: string[] = []
+  let algoName: string = ''
+  switch (algo) {
+    case 'lc-ConversationalRetrievalChain': {
+      allowList = allowedValuesConversationalRetrievalChain;
+      algoName = 'ConversationalRetrievalChain'
+      break;
+    }
+    case 'lc-ConversationalRetrievalQAChain': {
+      allowList = allowedValuesConversationalRetrievalQAChain;
+      algoName = 'ConversationalRetrievalQAChain'
+      break;
+    }
+    default: {
+      return "Algorithm not recognized"
+      break;
+    }
+  }
+
+  // Check if model is in the per-algo allowed values
+  if (allowList.includes(model)) {
+    return "";
+  }
+
+  // return a user-readable error
+  return `'${model}' model not allowed with '${algoName}'`;
+}
+

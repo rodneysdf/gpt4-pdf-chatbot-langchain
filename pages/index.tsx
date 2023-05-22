@@ -243,7 +243,7 @@ const Profile = (props: any) => {
 
 export default function Home() {
   const auth = useAuth();
-  const [model, setModel] = useState<string>('gpt-3.5-turbo-301');
+  const [model, setModel] = useState<string>('gpt-3.5-turbo-0301');
   const [algo, setAlgo] = useState<string>(
     'LangChain ConversationalRetrievalQAChain',
   );
@@ -333,7 +333,8 @@ export default function Home() {
       algo,
       question,
       history,
-      openAiKey: '',
+      openAiKey: openAiApiKey,
+      anthropicKey: anthropicClaudeKey
     });
   }
 
@@ -546,13 +547,11 @@ export default function Home() {
                       id="model"
                       className="border rounded-md pl-1 pr-2 shadow-slate-300 shadow hover:bg-slate-500/10"
                     >
-                      <option value="gpt-3.5-turbo-0301">
-                        gpt-3.5-turbo-0301
-                      </option>
-                      <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
-                      <option value="gpt-4">gpt-4</option>
                       <option value="gpt-4-0314">gpt-4-0314</option>
-                      <option value="claude">Anthropic-Claude 100k tokens</option>
+                      <option value="gpt-4">gpt-4</option>
+                      <option value="gpt-3.5-turbo-0301">gpt-3.5-turbo-0301</option>
+                      <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                      <option value="anthropic">Anthropic-Claude 100k tokens</option>
                     </select>
                   </div>
                   <div className="flex gap-1 py-1">
@@ -564,10 +563,10 @@ export default function Home() {
                       id="algo"
                       className="border rounded-md pl-1 pr-2 shadow-slate-300 shadow hover:bg-slate-500/10"
                     >
-                      <option value="lc-CRQAC">
+                      <option value="lc-ConversationalRetrievalQAChain">
                         LangChain ConversationalRetrievalQAChain
                       </option>
-                      <option value="lc-CRC">
+                      <option value="lc-ConversationalRetrievalChain">
                         LangChain ConversationalRetrievalChain
                       </option>
                       <option value="Bing" disabled>

@@ -4,7 +4,7 @@
   "rawPath": "/api/chat",
   "rawQueryString": "",
   "headers": {
-    "authorization": "Bearer eyg",
+    "authorization": "Bearer ey",
     "x-amzn-lambda-proxying-cell": "0",
     "content-length": "1050",
     "referer": "http: //localhost:3000/",
@@ -48,6 +48,6 @@
     "time": "17/May/2023: 20: 50: 49 +0000",
     "timeEpoch": 1684356649023
   },
-  "body": "{\"model\":\"gpt-4\",\"algo\":\"lc-CRC\",\"question\":\"Where is San Francisco?\",\"history\":[[\"What time is it?\",\"I'm sorry, but I am tuned to only answer questions related to the given context. Is there anything else I can assist you with?\"],[\"What day is it?\",\"I'm sorry, but I don't have any information about the current date or day. My functions are limited to providing assistance within my programming and knowledge base. Is there anything else I can help you with?\"]],\"openAiKey\":\"\"}",
+  "body": "{\"model\":\"gpt-3.5-turbo-0301\",\"algo\":\"lc-ConversationalRetrievalChain\",\"question\":\"How many documents?\",\"history\":[],\"openAiKey\":\"myAI\",\"anthropicKey\":\"myClaud\"}",
   "isBase64Encoded": false
 }
