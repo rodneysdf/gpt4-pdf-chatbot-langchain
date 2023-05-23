@@ -1,6 +1,6 @@
-export const isLambdaMock: boolean = isLambdaMockfunc();
+export const isLambdaMock: boolean = isLambdaMockfunc()
 
-function isLambdaMockfunc(): boolean {
+function isLambdaMockfunc (): boolean {
   const hasRoot: string = process.env.LAMBDA_TASK_ROOT || ''
   const awsEnv: string = process.env.AWS_EXECUTION_ENV || ''
 
