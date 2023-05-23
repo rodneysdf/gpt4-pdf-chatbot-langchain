@@ -32,7 +32,6 @@
     "langchain": "^0.0.55",
     "mammoth": "^1.5.1",
     "pdf-parse": "^1.1.1",
-    "raw-body": "^2.5.2",
     "redis": "^4.6.6",
     "sanitize-filename-ts": "^1.0.2",
     "source-map-support": "^0.5.21",

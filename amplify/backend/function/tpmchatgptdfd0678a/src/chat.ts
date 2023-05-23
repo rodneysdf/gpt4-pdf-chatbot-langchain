@@ -11,7 +11,6 @@ export const chat = async (event: LambdaFunctionURLEvent,
   credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
   let questionHistory: QuestionHistory
   try {
-    let inputBody: string
     if (event.isBase64Encoded) {
       questionHistory = Convert.toQuestionHistory(Buffer.from(event.body, 'base64').toString('utf8'))
     } else {
@@ -27,7 +26,7 @@ export const chat = async (event: LambdaFunctionURLEvent,
       })
     }
   }
-  if (!questionHistory.question) {
+  if (questionHistory.question.length === 0) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -36,10 +35,10 @@ export const chat = async (event: LambdaFunctionURLEvent,
     }
   }
   // personal key overides
-  if (questionHistory.openAiKey) {
+  if (questionHistory.openAiKey.length !== 0) {
     credentials.openAiApiKey = questionHistory.openAiKey
   }
-  if (questionHistory.anthropicKey) {
+  if (questionHistory.anthropicKey.length !== 0) {
     credentials.anthropicKey = questionHistory.anthropicKey
   }
   console.log(credentials.openAiApiKey)
@@ -70,7 +69,7 @@ export const chat = async (event: LambdaFunctionURLEvent,
     )
 
     const modelError = validateModelAndAlgo(questionHistory.model, questionHistory.algo)
-    if (modelError) {
+    if (modelError.length !== 0) {
       return {
         statusCode: 500,
         body: JSON.stringify({
@@ -85,19 +84,21 @@ export const chat = async (event: LambdaFunctionURLEvent,
     // Ask a question using chat history
     const response = await chain.call({
       question: sanitizedQuestion,
-      chat_history: questionHistory.history || []
+      chat_history: questionHistory.history
     })
 
     return {
       statusCode: 200,
       body: JSON.stringify(response)
     }
-  } catch (error: any) {
+  } catch (error) {
     console.log('error', error)
+    // todo put in the type of error and fix 'error.message' below
+    console.log(typeof error)
     return {
       statusCode: 500,
       body: JSON.stringify({
-        error: error.message || 'Something went wrong'
+        error: 'error.message'
       })
     }
   }
@@ -137,7 +138,6 @@ function validateModelAndAlgo (model: string, algo: string): string {
     }
     default: {
       return 'Algorithm not recognized'
-      break
     }
   }
 

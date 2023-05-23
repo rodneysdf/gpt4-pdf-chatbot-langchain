@@ -1,12 +1,6 @@
-import axios from 'axios'
 import { Credentials, LambdaFunctionURLEvent } from './datamodels'
 import { LambdaFunctionURLResponse } from './interfaces'
 import { initPinecone } from './util/pineconeclient'
-
-// import { PineconeStore } from 'langchain/vectorstores/pinecone';
-// import { describeIndexStatsRequest } from '@pinecone-database/pinecone';
-const axiosInstance = axios.create({
-})
 
 // Purge the vector db of data
 export const purge = async (event: LambdaFunctionURLEvent,
@@ -49,9 +43,9 @@ export const collection = async (event: LambdaFunctionURLEvent,
   console.log('collection:index.describeIndexStats():', statsRaw)
 
   // test for the namespace existence first
-  if (((statsRaw?.namespaces) != null) && statsRaw?.namespaces?.[credentials.pinecone.namespace] !== undefined) {
+  if (statsRaw?.namespaces?.[credentials.pinecone.namespace] !== undefined) {
     if (statsRaw?.namespaces?.[credentials.pinecone.namespace]?.vectorCount !== undefined) {
-      vectorCount = statsRaw?.namespaces?.[credentials.pinecone.namespace].vectorCount || 0
+      vectorCount = statsRaw?.namespaces?.[credentials.pinecone.namespace].vectorCount ?? 0
     }
   }
 

@@ -1,6 +1,6 @@
 import { PineconeClient } from '@pinecone-database/pinecone'
 
-export async function initPinecone (environment: string, apiKey: string) {
+export async function initPinecone (environment: string, apiKey: string): Promise<PineconeClient> {
   try {
     const pinecone = new PineconeClient()
 

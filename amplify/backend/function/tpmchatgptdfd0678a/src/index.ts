@@ -12,14 +12,14 @@ import { isLambdaMock } from './runtype'
 // Disable auth when running as an amplify mock
 const performAuth: boolean = !isLambdaMock
 
-console.log(`isLambdaMock=${isLambdaMock}, performAuth=${performAuth}`)
+console.log('isLambdaMock=', isLambdaMock, 'performAuth=', performAuth)
 
 // auth - must be done outside of lambda handler for cache to be effective
-const region: string = process.env.REGION || ''
-const authNameRaw: string = process.env.AUTHNAME || ''
+const authNameRaw: string = process.env.AUTHNAME ?? ''
 const authName: string = authNameRaw.toUpperCase()
-const userPoolId: string = process.env[`AUTH_${authName}_USERPOOLID`] || ''
-const iss = 'https://cognito-idp.' + region + '.amazonaws.com/' + userPoolId
+const userPoolId: string = process.env[`AUTH_${authName}_USERPOOLID`] ?? ''
+// const region: string = process.env.REGION ?? ''
+// const iss = 'https://cognito-idp.' + region + '.amazonaws.com/' + userPoolId
 // Create the verifier outside the Lambda handler (= during cold start),
 // so the cache can be reused for subsequent invocations. Then, only during the
 // first invocation, will the verifier actually need to fetch the JWKS.
@@ -43,7 +43,7 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
 
   if (performAuth) {
     // Authenticate
-    if (!event.headers || !event.headers.authorization || !event.headers.authorization.startsWith('Bearer ')) {
+    if (event?.headers?.authorization == null || !event.headers.authorization.startsWith('Bearer ')) {
       console.log('no auth header')
       return {
         statusCode: 401,
@@ -74,8 +74,8 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
   let credentials: Credentials
   try {
     // see https://docs.amplify.aws/cli/function/secrets/#configuring-secret-values
-    const credentialsSecret: string = process.env.credentials || ''
-    const credentialsJSON: string = await getParameter(credentialsSecret, true) || ''
+    const credentialsSecret: string = process.env.credentials ?? ''
+    const credentialsJSON: string = await getParameter(credentialsSecret, true) ?? ''
 
     credentials = Convert.toCredentials(credentialsJSON)
   } catch (error) {
@@ -93,19 +93,14 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
   switch (event.requestContext.http.path) {
     case '/api/chat':
       return await chat(event, credentials)
-      break
     case '/api/upload':
       return await upload(event, credentials)
-      break
     case '/api/add':
       return await add(event, credentials)
-      break
     case '/api/purge':
       return await purge(event, credentials)
-      break
     case '/api/collection':
       return await collection(event, credentials)
-      break
   }
 
   // if it gets to here it is an error return

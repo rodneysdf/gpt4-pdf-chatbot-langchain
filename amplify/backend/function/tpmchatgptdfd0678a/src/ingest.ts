@@ -19,13 +19,12 @@ import axios from 'axios'
 import { AddInput, Convert, Credentials, LambdaFunctionURLEvent } from './datamodels'
 import { initPinecone } from './util/pineconeclient'
 import { isLambdaMock } from './runtype'
-import { CredentialData, readGoogleDoc } from './util/google/gdoc'
+import { readGoogleDoc } from './util/google/gdoc'
 import { sanitize } from 'sanitize-filename-ts'
 
 const Busboy = require('busboy')
 const fs = require('fs')
 const path = require('path')
-const getRawBody = require('raw-body')
 
 // dir for use by the Lambda
 const DESTINATION_DIR = (isLambdaMock) ? '/tmp/col' : '/tmp'
@@ -49,7 +48,7 @@ export const upload = async (event: LambdaFunctionURLEvent,
       })
     }
   }
-  if (!payload) {
+  if (payload.length === 0) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -64,9 +63,10 @@ export const upload = async (event: LambdaFunctionURLEvent,
     emptyTheTmpDir()
 
     // parse incoming multipart into files in the dir
-    const lodedDocs = await getMultiParts(payload, {
+    const loadedDocs = await getMultiParts(payload, {
       'content-type': contype
     }, DESTINATION_DIR)
+    console.log('loaded=', loadedDocs)
   } catch (error) {
     console.log('error', error)
     return {
@@ -76,11 +76,10 @@ export const upload = async (event: LambdaFunctionURLEvent,
       })
     }
   }
-
   return await langChainIngest(credentials)
 }
 
-const getMultiParts = async (content: any, headers: any, destDir: string) =>
+const getMultiParts = async (content: any, headers: any, destDir: string): Promise<boolean> =>
   await new Promise((resolve, reject) => {
     const filePromises = [] as any
     const bb = Busboy({
@@ -130,7 +129,7 @@ export const add = async (event: LambdaFunctionURLEvent,
       })
     }
   }
-  if (!payload) {
+  if (payload.length === 0) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -139,12 +138,12 @@ export const add = async (event: LambdaFunctionURLEvent,
     }
   }
   // {"url":"http://exampleexzmple.com"}
-  let add: AddInput
+  let addInput: AddInput = { url: '' }
   try {
     if (event.isBase64Encoded) {
-      add = Convert.toAddInput(Buffer.from(payload, 'base64').toString('utf8'))
+      addInput = Convert.toAddInput(Buffer.from(payload, 'base64').toString('utf8'))
     } else {
-      add = Convert.toAddInput(payload)
+      addInput = Convert.toAddInput(payload)
     }
   } catch (error) {
     console.log('error finding input url:', error)
@@ -156,7 +155,7 @@ export const add = async (event: LambdaFunctionURLEvent,
       })
     }
   }
-  if (!add.url) {
+  if (addInput.url.length === 0) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -173,16 +172,16 @@ export const add = async (event: LambdaFunctionURLEvent,
   // folder
   // https://drive.google.com/drive/folders/1e_rjH9Y-08V6fDQC6Uui4124fJ2fbAfk
   // else file
-  if (add.url.startsWith('https://docs.google.com/document/d/')) {
+  if (addInput.url.startsWith('https://docs.google.com/document/d/')) {
     // handle Gdoc
-    return await getGoogleDoc(add.url, credentials)
-  } else if (add.url.startsWith('https://docs.google.com/spreadsheets/d/')) {
+    return await getGoogleDoc(addInput.url, credentials)
+  } else if (addInput.url.startsWith('https://docs.google.com/spreadsheets/d/')) {
     // handle Gsheet
-  } else if (add.url.startsWith('https://drive.google.com/drive/folders/')) {
+  } else if (addInput.url.startsWith('https://drive.google.com/drive/folders/')) {
     // handle an entire folder
   } else {
     // upload as a regular file
-    return await fileUpload(add.url, credentials)
+    return await fileUpload(addInput.url, credentials)
   }
 
   return {
@@ -204,7 +203,7 @@ Promise<LambdaFunctionURLResponse> => {
   emptyTheTmpDir()
   console.log('getGoogleDoc emptied')
   const id = extractGoogleDocID(url)
-  if (!id) {
+  if (id.length === 0) {
     return {
       statusCode: 400,
       headers: {
@@ -258,7 +257,7 @@ async function downloadFile (url: string): Promise<void> {
 }
 
 function emptyTheTmpDir (): void {
-  if (!fs.existsSync(DESTINATION_DIR)) {
+  if (fs.existsSync(DESTINATION_DIR) != null) {
     fs.mkdirSync(DESTINATION_DIR)
   }
 
@@ -268,9 +267,7 @@ function emptyTheTmpDir (): void {
     const filepath = path.join(DESTINATION_DIR, filename)
     // const info = fs.statSync(filepath);
     // console.log(`deleting ${filename}`, info.size+' bytes');
-    fs.unlink(filepath, (err: any) => {
-      if (err) throw err
-    })
+    fs.unlinkSync(filepath)
   })
 }
 
@@ -331,18 +328,9 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
       })
     }
   }
-
-  return {
-    statusCode: 500,
-    body: JSON.stringify({
-      error: 'Failed to ingest your file(s)',
-      size: 0,
-      max: 100
-    })
-  }
 }
 
-function extractGoogleDocID (url: string): string | null {
+function extractGoogleDocID (url: string): string {
   const match = url.match(/https:\/\/docs\.google\.com\/document\/d\/([\w-]{25,})/)
-  return (match != null) ? match[1] : null
+  return (match != null) ? match[1] : ''
 }
