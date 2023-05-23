@@ -19,6 +19,8 @@ import axios from 'axios';
 import { AddInput, Convert, Credentials, LambdaFunctionURLEvent } from "./datamodels";
 import { initPinecone } from './util/pineconeclient';
 import { isLambdaMock } from './runtype';
+import { CredentialData, readGoogleDoc } from './util/google/gdoc'
+import { sanitize } from "sanitize-filename-ts";
 
 const Busboy = require('busboy');
 const fs = require('fs');
@@ -177,6 +179,7 @@ export const add = async (event: LambdaFunctionURLEvent,
   // else file
   if (add.url.startsWith('https://docs.google.com/document/d/')) {
     // handle Gdoc
+    return getGoogleDoc(add.url, credentials)
   } else if (add.url.startsWith('https://docs.google.com/spreadsheets/d/')) {
     // handle Gsheet
   } else if (add.url.startsWith('https://drive.google.com/drive/folders/')) {
@@ -196,6 +199,43 @@ export const add = async (event: LambdaFunctionURLEvent,
 
     })
   }
+}
+
+// Read Google Doc from url
+const getGoogleDoc = async (url: string, credentials: Credentials):
+  Promise<LambdaFunctionURLResponse> => {
+  console.log("getGoogleDoc ", url)
+  emptyTheTmpDir()
+  console.log("getGoogleDoc emptied")
+  const id = extractGoogleDocID(url)
+  if (!id) {
+    return {
+      statusCode: 400,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "error": "url not recognized"
+
+      })
+    }
+  }
+  const gDoc = await readGoogleDoc(id, credentials.google)
+  const filename = sanitize(gDoc.title)
+  console.log(`filename=${filename}`)
+  console.log(`sanitize=${filename}`)
+
+  return {
+    statusCode: 400,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      "error": "url not recognized"
+
+    })
+  }
+  // return langChainIngest(credentials)
 }
 
 // Ingest a file from a url
@@ -305,4 +345,9 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
       "max": 100
     })
   }
+}
+
+function extractGoogleDocID(url: string): string | null {
+  const match = url.match(/https:\/\/docs\.google\.com\/document\/d\/([\w-]{25,})/);
+  return match ? match[1] : null;
 }

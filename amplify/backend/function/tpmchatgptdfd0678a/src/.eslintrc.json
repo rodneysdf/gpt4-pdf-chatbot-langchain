@@ -1,0 +1,12 @@
+{
+  "root": true,
+  "extends": ["@trilogy-group/eslint-config"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "no-console": "off"
+  }
+}

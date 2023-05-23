@@ -4,6 +4,7 @@ import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { makeChain } from './util/make-chain';
 import { Convert, Credentials, LambdaFunctionURLEvent, QuestionHistory } from "./datamodels";
+import { env } from 'node:process';
 
 // '/api/chat'
 export const chat = async (event: LambdaFunctionURLEvent,
@@ -34,6 +35,19 @@ export const chat = async (event: LambdaFunctionURLEvent,
       })
     }
   }
+  // personal key overides
+  if (questionHistory.openAiKey) {
+    credentials.openAiApiKey = questionHistory.openAiKey
+  }
+  if (questionHistory.anthropicKey) {
+    credentials.anthropicKey = questionHistory.anthropicKey
+  }
+  console.log(credentials.openAiApiKey)
+  console.log(credentials.anthropicKey)
+  // write OPENAI_API_KEY env var to the process because:
+  // OPENAI_API_KEY is required to be an ENV var by current code dependency
+  env.OPENAI_API_KEY = credentials.openAiApiKey;
+
 
   //
   // Start of logic
@@ -137,4 +151,3 @@ function validateModelAndAlgo(model: string, algo: string): string {
   // return a user-readable error
   return `'${model}' model not allowed with '${algoName}'`;
 }
-

@@ -1,5 +1,4 @@
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
-import { env } from 'node:process';
 import 'source-map-support/register';
 import awsmobile from "./aws-exports";
 import { chat } from './chat';
@@ -78,9 +77,11 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
     // see https://docs.amplify.aws/cli/function/secrets/#configuring-secret-values
     const credentialsSecret: string = process.env["credentials"] || ""
     const credentialsJSON: string = await getParameter(credentialsSecret, true) || "";
+
     credentials = Convert.toCredentials(credentialsJSON);
   } catch (error) {
     console.log("error accessing credentials :", error);
+
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -88,9 +89,6 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
       })
     }
   }
-  // write OPENAI_API_KEY env var to the process because:
-  // OPENAI_API_KEY is required to be an ENV var by current code dependency
-  env.OPENAI_API_KEY = credentials.openAiApiKey;
 
   // route the request
   switch (event.requestContext.http.path) {
