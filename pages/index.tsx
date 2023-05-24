@@ -417,7 +417,7 @@ export default function Home() {
     <>
       <Layout onNavigate={handleNavigate} apiKey={openAiApiKey}>
         {page === 'home' ? (
-          <div className="mx-auto flex flex-col gap-4">
+          <div className="mx-auto flex flex-col">
             <div className="flex flex-col bg-slate-400/10 p-1 rounded-md border">
               <div className="text-lg font-bold mt-0 m-2">
                 Collection
@@ -425,7 +425,11 @@ export default function Home() {
                   <span className="text-sm font-normal ml-2">
                     Size: ({collectionSize} chunks)
                   </span>
-                ) : null}
+                ) : (
+                  <span className="text-sm font-normal ml-3">
+                  (Files are stored as embeddings only for this chat app)
+                </span>
+                )}
               </div>
               <div className="flex flex-row gap-3 ml-2 mb-2">
                 <AddUrl onSetCollectionSize={setCollectionSize} openAiKey={openAiApiKey} anthropicKey={anthropicClaudeKey} />
@@ -434,7 +438,7 @@ export default function Home() {
               </div>
             </div>
 
-            <main className={styles.main}>
+            <main className="{styles.main} pb-0">
               <div className={styles.cloud}>
                 <div ref={messageListRef} className={styles.messagelist}>
                   {messages.map((message, index) => {
@@ -557,7 +561,7 @@ export default function Home() {
                     </button>
                   </form>
                 </div>
-                <div className="flex flex-row w-full mt-3 m-3 gap-5 justify-end">
+                <div className="flex flex-row w-full mt-2 m-3 gap-5 justify-end mb-2">
                   <div className="flex gap-1 py-1">
                     Model
                     <select
@@ -608,7 +612,7 @@ export default function Home() {
         ) : (
           <Profile onSetApiKey={setOpenAiApiKey} apiKey={openAiApiKey} onSetAnthropicKey={setAnthropicClaudeKey} anthropicKey={anthropicClaudeKey} onNavigate={handleNavigate} />
         )}
-        <footer className="m-auto p-4">
+        <footer className="m-auto">
           <div className="flex flex-row gap-10 text">
             <div className="flex ">Powered by LangChainAI.
             </div>

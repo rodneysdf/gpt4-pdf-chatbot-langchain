@@ -18,7 +18,7 @@ export default function Layout({
   const apiKeyPreview = apiKey ? '***' + apiKey.slice(-3) : null;
 
   return (
-    <div className="mx-auto flex flex-col space-y-4">
+    <div className="mx-auto flex flex-col space-y-2">
       <header className="sticky top-0 z-40 bg-white w-screen">
         <div className="h-16 border-b border-b-slate-200 w-full flex flex-col items-center">
           <nav className="flex items-center justify-between w-[98vw] mx-auto h-full">

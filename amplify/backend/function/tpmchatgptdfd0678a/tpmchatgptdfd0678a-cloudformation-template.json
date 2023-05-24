@@ -116,7 +116,7 @@
         "Architectures": [
           "arm64"
         ],
-        "MemorySize": 1280,
+        "MemorySize": 1792,
         "Layers": [],
         "Timeout": 900
       }
