@@ -282,7 +282,16 @@ export default function Home() {
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
+  }, [messages]);
+  // async function postScroller(messageListRef: any) {
+  //   messageListRef.current?.scrollTo(
+  //     0,
+  //     messageListRef.current.scrollHeight
+  //   );
+  // }
 
   const postChat = makePostChat(
     {
@@ -301,7 +310,6 @@ export default function Home() {
         }));
 
         setLoading(false);
-        setTimeout(() => messagesEndRef.current?.scrollIntoView({behavior: 'smooth'}), 60);
       },
       onError(response) {
         setLoading(false);
@@ -312,12 +320,6 @@ export default function Home() {
     auth
   );
 
-  async function postScroller(messageListRef: any) {
-    messageListRef.current?.scrollTo(
-      0,
-      messageListRef.current.scrollHeight
-    );
-  }
 
   //handle form submission
   async function handleSubmit(e: any) {
@@ -345,7 +347,6 @@ export default function Home() {
 
     setLoading(true);
     setQuery('');
-    setTimeout(() => messagesEndRef.current?.scrollIntoView({behavior: 'smooth'}), 60);
 
     postChat({
       model,
@@ -511,7 +512,6 @@ export default function Home() {
                       </Fragment>
                     );
                   })}
-                <div ref={messagesEndRef} />
                 </div>
               </div>
               <div className={styles.center}>
