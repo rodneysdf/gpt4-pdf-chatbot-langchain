@@ -3,9 +3,9 @@ import 'source-map-support/register'
 import awsmobile from './aws-exports'
 import { chat } from './chat'
 import { collection, purge } from './collection'
-import { Convert, Credentials, LambdaFunctionURLEvent } from './datamodels'
+import { Convert, Credentials } from './datamodels'
 import { add, upload } from './ingest'
-import { LambdaFunctionURLResponse } from './interfaces'
+import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './interfaces'
 import { getParameter } from './util/parameterStore'
 import { isLambdaMock } from './runtype'
 
@@ -32,7 +32,7 @@ const jwtVerifier = CognitoJwtVerifier.create({
 
 // Lambda entry point
 export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunctionURLResponse> => {
-  if (!(event.requestContext.http.method === 'POST' || event.requestContext.http.method === 'GET')) {
+  if (!(event?.requestContext?.http?.method === 'POST' || event?.requestContext?.http?.method === 'GET')) {
     return {
       statusCode: 405,
       body: JSON.stringify({

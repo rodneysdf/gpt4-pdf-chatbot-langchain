@@ -289,14 +289,18 @@
             "Origin",
             "Referer",
             "Host",
-            "User-Agent"
+            "User-Agent",
+            "x-key-openai",
+            "x-key-anthropic"
           ],
           "AllowMethods": [
             "GET",
             "POST"
           ],
           "AllowOrigins": [
-            "*"
+            "https://tpm-ai.devfactory.com",
+            "https://tpm-ai-dev.devfactory.com",
+            "http://localhost:3000"
           ],
           "ExposeHeaders": [
             "Date",

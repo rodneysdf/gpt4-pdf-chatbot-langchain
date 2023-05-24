@@ -76,7 +76,7 @@ export const makePostChat = (handlers: {
   };
 };
 
-export const postUploadFiles = async (files: File[], auth: any) => {
+export const postUploadFiles = async (files: File[], openAiKey: string, anthropicKey: string, auth: any) => {
   const formData = new FormData();
   files.forEach(file => {
     formData.append("arrayOfFilesName", file);
@@ -86,18 +86,22 @@ export const postUploadFiles = async (files: File[], auth: any) => {
     method: 'POST',
     url: '/api/upload',
     headers: {
-      "Content-Type": "multipart/form-data"
+      "Content-Type": "multipart/form-data",
+      "x-key-openai": openAiKey,
+      "x-key-anthropic": anthropicKey
     },
     body: formData,
   }, auth);
 
 }
 
-export const postSendUrl = async (url: string, auth: any) => authedApiCall({
+export const postSendUrl = async (url: string, openAiKey: string, anthropicKey: string, auth: any) => authedApiCall({
   method: 'POST',
   url: '/api/add',
   body: {
-    url
+    url,
+    openAiKey,
+    anthropicKey
   }
 }, auth);
 
@@ -112,10 +116,10 @@ export const getCollection = async (auth: any) => {
   const exists = cache.has('vectorCount')
   let vectorCount: any = 0
   if (exists) {
-    console.log("getCollection responds from cache")
+    // console.log("getCollection responds from cache")
     vectorCount = cache.get('vectorCount')
   } else {
-    console.log("getCollection calls the lambda")
+    // console.log("getCollection calls the lambda")
     const response = await authedApiCall({
       method: 'GET',
       url: '/api/collection',

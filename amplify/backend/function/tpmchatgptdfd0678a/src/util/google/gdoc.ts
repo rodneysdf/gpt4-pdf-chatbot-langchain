@@ -15,14 +15,7 @@ export interface CredentialData {
 
 let docsService: docs_v1.Docs
 
-function extractTextRuns (content: docs_v1.Schema$StructuralElement[]): string[] {
-  const paragraphs = content?.filter(c => c.paragraph !== undefined).map(c => c.paragraph as docs_v1.Schema$Paragraph)
-  const elements = paragraphs.filter(p => p.elements !== undefined).map(p => p.elements as docs_v1.Schema$ParagraphElement[]).flat()
-  return elements.filter(e => e.textRun?.content !== null && e.textRun?.content !== undefined).map(e => e.textRun?.content as string)
-}
-
 async function getDocsService (credentials: CredentialData): Promise<docs_v1.Docs> {
-  console.log('getDocsService')
   credentials.private_key = credentials.private_key.split(String.raw`\n`).join('\n')
 
   const googleAuth = new auth.GoogleAuth({
@@ -35,11 +28,11 @@ async function getDocsService (credentials: CredentialData): Promise<docs_v1.Doc
   })
 }
 
-function convertToString (content: docs_v1.Schema$StructuralElement[]): string {
-  const md = extractTextRuns(content).join('')
+// function convertToString (content: docs_v1.Schema$StructuralElement[]): string {
+//   const md = extractTextRuns(content).join('')
 
-  return md
-}
+//   return md
+// }
 
 /**
  * Read a Google document
@@ -51,12 +44,11 @@ export async function readGoogleDoc (documentId: string, credentials: Credential
   if (docsService === undefined) {
     docsService = await getDocsService(credentials)
   }
-  console.log('got getDocsService')
 
   const doc = await docsService.documents.get({
     documentId
   })
-  console.log('doc=', doc)
+  console.log('readGoogleDoc of ', documentId)
 
   if (doc.data.body?.content === undefined) {
     throw Error('Document does not have content')
@@ -67,66 +59,64 @@ export async function readGoogleDoc (documentId: string, credentials: Credential
   }
 
   const title = doc.data.title ?? ''
-  console.log(`GDoc '${title}'=`, doc.data)
-  console.log(`GDoc '${title}'=`, JSON.stringify(doc.data.body, null, 4))
+  // console.log(`GDoc '${title}'=`, doc.data)
+  // console.log(`GDoc json.stringify '${title}'=`, JSON.stringify(doc.data.body, null, 2))
 
-  const content = convertToString(doc.data.body.content)
-  console.log(`GDoc string '${title}'=`, content)
-
-  // const docstring = await readStructuralElements(doc.data.body.content)
-  // console.log('docstring=', docstring)
+  // strip out all the formatting to get to just the text
+  const docstring = readStructuralElements(doc.data.body.content)
 
   return {
     title,
-    content
+    content: docstring
   }
 }
 
-// async function readParagraphElement (element: docs_v1.Schema$ParagraphElement): Promise<string> {
-//   const run = element.textRun
-//   if (run === null || run?.content === null) {
-//     // The TextRun can be null if there is an inline object.
-//     return ''
-//   }
-//   return run?.content || ''
-// }
+// Returns the text in the given ParagraphElement.
+function readParagraphElement (element: docs_v1.Schema$ParagraphElement): string {
+  const run = element.textRun
+  if (run === null || run?.content === null || run?.content?.length === 0) {
+    // The TextRun can be null if there is an inline object.
+    return ''
+  }
+  return run?.content ?? ''
+}
 
-// async function readStructuralElements (elements: docs_v1.Schema$StructuralElement[]): Promise<string> {
-//   let text = ''
-//   for (const element of elements) {
-//     if (element.paragraph !== null) {
-//       for (const paragraphElement of ((element?.paragraph?.elements) != null) || []) {
-//         text += await readParagraphElement(paragraphElement)
-//       }
-//     } else if (element.table !== null) {
-//       // The text in table cells are in nested Structural Elements and tables may be
-//       // nested.
-//       for (const row of ((element?.table?.tableRows) != null) || []) {
-//         for (const cell of (row.tableCells != null) || []) {
-//           text += await readStructuralElements((cell.content != null) || [])
-//         }
-//       }
-//     } else if (element.tableOfContents !== null) {
-//       // The text in the TOC is also in a Structural Element.
-//       text += await readStructuralElements(((element?.tableOfContents?.content) != null) || [])
-//     }
-//   }
-//   return text
-// }
+// Returns the text in the given TableRow.
+function readTableRow (element: docs_v1.Schema$TableRow): string {
+  let text = ''
+  if (element.tableCells != null) {
+    for (const cell of element.tableCells) {
+      if (cell.content != null) {
+        text += readStructuralElements(cell.content)
+      }
+    }
+  }
+  return text
+}
 
-// async function extractTextFromDocument (document: docs_v1.Schema$Document): Promise<string> {
-//   let text = ''
-//   const elements = document?.body?.content
-//   if (elements != null) {
-//     elements.forEach((contentElement) => {
-//       if (contentElement.paragraph != null) {
-//         contentElement.paragraph.elements.forEach((paragraphElement) => {
-//           if (paragraphElement.textRun != null) {
-//             text += paragraphElement.textRun.content
-//           }
-//         })
-//       }
-//     })
-//   }
-//   return text
-// }
+function readStructuralElements (elements: docs_v1.Schema$StructuralElement[]): string {
+  let text = ''
+  for (const element of elements) {
+    if (element?.paragraph?.elements != null) {
+      // Handle paragraphs
+      for (const paragraphElement of element.paragraph?.elements) {
+        text += readParagraphElement(paragraphElement)
+      }
+    } else if (element?.table != null) {
+      // Handle tables
+      // The text in table cells are in nested Structural Elements and tables may be
+      // nested.
+      if (element?.table?.tableRows != null) {
+        for (const row of element?.table?.tableRows) {
+          text += readTableRow(row)
+        }
+      }
+    } else if (element.tableOfContents !== null) {
+      // The text in the TOC is also in a Structural Element.
+      if (element.tableOfContents?.content != null) {
+        text += readStructuralElements(element?.tableOfContents?.content)
+      }
+    }
+  }
+  return text
+}

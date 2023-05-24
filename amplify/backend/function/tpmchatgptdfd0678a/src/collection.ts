@@ -1,5 +1,5 @@
-import { Credentials, LambdaFunctionURLEvent } from './datamodels'
-import { LambdaFunctionURLResponse } from './interfaces'
+import { Credentials } from './datamodels'
+import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './interfaces'
 import { initPinecone } from './util/pineconeclient'
 
 // Purge the vector db of data
@@ -86,33 +86,6 @@ export function nullLambdaFunctionURLEvent (): LambdaFunctionURLEvent {
     rawPath: '',
     rawQueryString: '',
     headers: {
-      authorization: '',
-      'x-amzn-lambda-proxying-cell': '',
-      'content-length': '',
-      referer: '',
-      'x-amzn-tls-version': '',
-      'sec-fetch-site': '',
-      origin: '',
-      'x-forwarded-port': '',
-      'x-amzn-lambda-proxy-auth': '',
-      'x-amzn-tls-cipher-suite': '',
-      'sec-ch-ua-mobile': '',
-      host: '',
-      'content-type': '',
-      'x-amzn-lambda-forwarded-host': '',
-      'sec-fetch-mode': '',
-      'accept-language': '',
-      'x-forwarded-proto': '',
-      dnt: '',
-      'x-forwarded-for': '',
-      accept: '',
-      'x-amzn-lambda-forwarded-client-ip': '',
-      'sec-ch-ua': '',
-      'x-amzn-trace-id': '',
-      'sec-ch-ua-platform': '',
-      'accept-encoding': '',
-      'sec-fetch-dest': '',
-      'user-agent': ''
     },
     requestContext: {
       accountId: '',

@@ -24,7 +24,7 @@ import { BsPersonCircle } from 'react-icons/bs';
 import ReactMarkdown from 'react-markdown';
 
 const DocumentUpload = (props: any) => {
-  const { onSetCollectionSize } = props;
+  const { onSetCollectionSize, openAiKey, anthropicKey } = props;
   const auth = useAuth();
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -38,7 +38,7 @@ const DocumentUpload = (props: any) => {
     setLoading(true);
 
     try {
-      const response = await postUploadFiles(files, auth);
+      const response = await postUploadFiles(files, openAiKey, anthropicKey, auth);
       e.target.value = null;
       if (response) {
         if (response.data?.size) {
@@ -72,14 +72,14 @@ const DocumentUpload = (props: any) => {
       <div className="text-sm font-normal ml-2 text-center w-full">
         pdf,docx,txt,csv,json,jsonl,xls,xlsx
         <br />
-        (max total size 6mb)
+        (6mb total size)
       </div>
     </div>
   );
 };
 
 const AddUrl = (props: any) => {
-  const { onSetCollectionSize } = props;
+  const { onSetCollectionSize, openAiKey, anthropicKey } = props;
   const auth = useAuth();
 
   const [loading, setLoading] = useState(false);
@@ -103,7 +103,7 @@ const AddUrl = (props: any) => {
     setLoading(true);
 
     try {
-      const response = await postSendUrl(url, auth);
+      const response = await postSendUrl(url, openAiKey, anthropicKey, auth);
       if (response) {
         if (response.data?.size) {
           onSetCollectionSize(response.data.size);
@@ -135,7 +135,7 @@ const AddUrl = (props: any) => {
 };
 
 const PurgeDocuments = (props: any) => {
-  const { onSetCollectionSize } = props
+  const { onSetCollectionSize, onClearMessageState } = props
   const [loading, setLoading] = useState(false);
   const auth = useAuth();
 
@@ -154,6 +154,7 @@ const PurgeDocuments = (props: any) => {
       alert('an error occured purging the documents');
       console.log('err', err.response);
     }
+    onClearMessageState();
     setLoading(false);
   };
 
@@ -163,7 +164,7 @@ const PurgeDocuments = (props: any) => {
         onClick={purgeDocuments}
         className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10"
       >
-        {loading ? <LoadingDots color="#000" /> : 'Purge collection'}
+        {loading ? <LoadingDots color="#000" /> : 'Purge'}
       </button>
 
     </div>
@@ -223,7 +224,7 @@ const Profile = (props: any) => {
           onClick={() => onNavigate('home')}
           className="border px-2 py-1 rounded-md w-40 shadow-slate-400 shadow bg-slate-300/10 hover:bg-slate-700/10"
         >
-          Back
+          OK
         </button>
         <button
           onClick={() => {
@@ -245,7 +246,7 @@ export default function Home() {
   const auth = useAuth();
   const [model, setModel] = useState<string>('gpt-3.5-turbo-0301');
   const [algo, setAlgo] = useState<string>(
-    'LangChain ConversationalRetrievalQAChain',
+    'lc-ConversationalRetrievalQAChain',
   );
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -267,8 +268,21 @@ export default function Home() {
 
   const { messages, history } = messageState;
 
+  const clearMessageState = () => {
+    setMessageState({
+      messages: [
+        {
+          message: 'Hi, what would you like to know about these documents?',
+          type: 'apiMessage',
+        },
+      ],
+      history: [],
+    });
+  }
+
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const postChat = makePostChat(
     {
@@ -287,10 +301,7 @@ export default function Home() {
         }));
 
         setLoading(false);
-        messageListRef.current?.scrollTo(
-          0,
-          messageListRef.current.scrollHeight
-        );
+        setTimeout(() => messagesEndRef.current?.scrollIntoView({behavior: 'smooth'}), 60);
       },
       onError(response) {
         setLoading(false);
@@ -300,6 +311,13 @@ export default function Home() {
     },
     auth
   );
+
+  async function postScroller(messageListRef: any) {
+    messageListRef.current?.scrollTo(
+      0,
+      messageListRef.current.scrollHeight
+    );
+  }
 
   //handle form submission
   async function handleSubmit(e: any) {
@@ -327,6 +345,7 @@ export default function Home() {
 
     setLoading(true);
     setQuery('');
+    setTimeout(() => messagesEndRef.current?.scrollIntoView({behavior: 'smooth'}), 60);
 
     postChat({
       model,
@@ -408,9 +427,9 @@ export default function Home() {
                 ) : null}
               </div>
               <div className="flex flex-row gap-3 ml-2 mb-2">
-                <AddUrl onSetCollectionSize={setCollectionSize} />
-                <DocumentUpload onSetCollectionSize={setCollectionSize} />
-                <PurgeDocuments onSetCollectionSize={setCollectionSize} />
+                <AddUrl onSetCollectionSize={setCollectionSize} openAiKey={openAiApiKey} anthropicKey={anthropicClaudeKey} />
+                <DocumentUpload onSetCollectionSize={setCollectionSize} openAiKey={openAiApiKey} anthropicKey={anthropicClaudeKey} />
+                <PurgeDocuments onSetCollectionSize={setCollectionSize} onClearMessageState={clearMessageState} />
               </div>
             </div>
 
@@ -492,6 +511,7 @@ export default function Home() {
                       </Fragment>
                     );
                   })}
+                <div ref={messagesEndRef} />
                 </div>
               </div>
               <div className={styles.center}>

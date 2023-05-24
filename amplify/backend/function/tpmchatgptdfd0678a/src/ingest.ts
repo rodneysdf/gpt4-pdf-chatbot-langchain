@@ -11,33 +11,35 @@ import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { PineconeStore } from 'langchain/vectorstores/pinecone'
 import YError from 'yerror'
-import { LambdaFunctionURLResponse } from './interfaces'
+import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './interfaces'
 import { collection, nullLambdaFunctionURLEvent } from './collection'
 import { CustomExcelLoader } from './util/customExcelLoader'
 // import { CustomPDFLoader } from './util/customPDFLoader';
 import axios from 'axios'
-import { AddInput, Convert, Credentials, LambdaFunctionURLEvent } from './datamodels'
+import { AddInput, Convert, Credentials } from './datamodels'
 import { initPinecone } from './util/pineconeclient'
 import { isLambdaMock } from './runtype'
 import { readGoogleDoc } from './util/google/gdoc'
 import { sanitize } from 'sanitize-filename-ts'
+import { env } from 'node:process'
 
 const Busboy = require('busboy')
 const fs = require('fs')
 const path = require('path')
 
 // dir for use by the Lambda
-const DESTINATION_DIR = (isLambdaMock) ? '/tmp/col' : '/tmp'
+export const DESTINATION_DIR = (isLambdaMock) ? '/tmp/col' : '/tmp'
 
 //
 export const upload = async (event: LambdaFunctionURLEvent,
   credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
   let payload: string
   try {
-    if (event.isBase64Encoded) {
-      payload = Buffer.from(event.body, 'base64').toString('utf8')
+    const body = event?.body ?? ''
+    if (event?.isBase64Encoded ?? false) {
+      payload = Buffer.from(body, 'base64').toString('utf8')
     } else {
-      payload = event.body
+      payload = body
     }
   } catch (error) {
     console.log('error converting payload:', error)
@@ -57,8 +59,29 @@ export const upload = async (event: LambdaFunctionURLEvent,
     }
   }
 
+  // personal key overides
+  // "x-key-openai": openAiKey,
+  // "x-key-anthropic": anthropicKey
+  if (event?.headers?.['x-key-openai'] != null) {
+    const openaiKey = event.headers['x-key-openai']
+    if (openaiKey.length !== 0) {
+      credentials.openAiApiKey = openaiKey
+      console.log('personal openai key', credentials.openAiApiKey)
+    }
+  }
+  if (event?.headers?.['x-key-anthropic'] != null) {
+    const anthropicKey = event.headers['x-key-anthropic']
+    if (anthropicKey.length !== 0) {
+      credentials.anthropicKey = anthropicKey
+      console.log('personal anthropic key', credentials.anthropicKey)
+    }
+  }
+  // write OPENAI_API_KEY env var to the process because:
+  // OPENAI_API_KEY is required to be an ENV var by current code dependency
+  env.OPENAI_API_KEY = credentials.openAiApiKey
+
   // load docs into dir
-  const contype = event.headers['content-type']
+  const contype = event?.headers?.['content-type'] ?? ''
   try {
     emptyTheTmpDir()
 
@@ -66,7 +89,7 @@ export const upload = async (event: LambdaFunctionURLEvent,
     const loadedDocs = await getMultiParts(payload, {
       'content-type': contype
     }, DESTINATION_DIR)
-    console.log('loaded=', loadedDocs)
+    console.log('multiparts loaded=', loadedDocs)
   } catch (error) {
     console.log('error', error)
     return {
@@ -113,37 +136,14 @@ const getMultiParts = async (content: any, headers: any, destDir: string): Promi
 //    or a file url
 export const add = async (event: LambdaFunctionURLEvent,
   credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
-  let payload: string
-  try {
-    if (event.isBase64Encoded) {
-      payload = Buffer.from(event.body, 'base64').toString('utf8')
-    } else {
-      payload = event.body
-    }
-  } catch (error) {
-    console.log('error converting payload:', error)
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        error: 'No url'
-      })
-    }
-  }
-  if (payload.length === 0) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        error: 'No url'
-      })
-    }
-  }
   // {"url":"http://exampleexzmple.com"}
-  let addInput: AddInput = { url: '' }
+  let addInput: AddInput
   try {
-    if (event.isBase64Encoded) {
-      addInput = Convert.toAddInput(Buffer.from(payload, 'base64').toString('utf8'))
+    const body = event?.body ?? ''
+    if (event?.isBase64Encoded ?? false) {
+      addInput = Convert.toAddInput(Buffer.from(body, 'base64').toString('utf8'))
     } else {
-      addInput = Convert.toAddInput(payload)
+      addInput = Convert.toAddInput(body)
     }
   } catch (error) {
     console.log('error finding input url:', error)
@@ -163,6 +163,18 @@ export const add = async (event: LambdaFunctionURLEvent,
       })
     }
   }
+  // personal key overides
+  if (addInput.openAiKey.length !== 0) {
+    credentials.openAiApiKey = addInput.openAiKey
+    console.log('personal openai key', credentials.openAiApiKey)
+  }
+  if (addInput.anthropicKey.length !== 0) {
+    credentials.anthropicKey = addInput.anthropicKey
+    console.log('personal anthropic key', credentials.anthropicKey)
+  }
+  // write OPENAI_API_KEY env var to the process because:
+  // OPENAI_API_KEY is required to be an ENV var by current code dependency
+  env.OPENAI_API_KEY = credentials.openAiApiKey
 
   // if not a Google Doc, Sheet or GDrive folder, upload the file.
   // doc
@@ -197,13 +209,11 @@ export const add = async (event: LambdaFunctionURLEvent,
 }
 
 // Read Google Doc from url
-const getGoogleDoc = async (url: string, credentials: Credentials):
-Promise<LambdaFunctionURLResponse> => {
-  console.log('getGoogleDoc ', url)
+const getGoogleDoc = async (url: string, credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
   emptyTheTmpDir()
-  console.log('getGoogleDoc emptied')
-  const id = extractGoogleDocID(url)
-  if (id.length === 0) {
+  console.log(credentials)
+  const documentId = extractGoogleDocID(url)
+  if (documentId.length === 0) {
     return {
       statusCode: 400,
       headers: {
@@ -215,27 +225,34 @@ Promise<LambdaFunctionURLResponse> => {
       })
     }
   }
-  const gDoc = await readGoogleDoc(id, credentials.google)
-  const filename = sanitize(gDoc.title)
-  console.log(`filename=${filename}`)
-  console.log(`sanitize=${filename}`)
+  try {
+    const gDoc = await readGoogleDoc(documentId, credentials.google)
+    const filename = sanitize(gDoc.title + `__id(${documentId}).txt`)
+    console.log(`sanitize=${filename}`)
+    // place file in the tmp dir
+    fs.writeFileSync(path.join(DESTINATION_DIR, filename), gDoc.content)
+    console.log(`gdoc content len=${gDoc.content.length}`)
 
-  return {
-    statusCode: 400,
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      error: 'url not recognized'
+    // is the file there?
+    listdir(DESTINATION_DIR)
+  } catch (error) {
+    emptyTheTmpDir()
+    console.log('readGDoc error', error)
+    console.log(typeof error)
 
-    })
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        error: 'Failed to access the Google Doc'
+      })
+    }
   }
-  // return langChainIngest(credentials)
+
+  return await langChainIngest(credentials)
 }
 
 // Ingest a file from a url
-const fileUpload = async (url: string, credentials: Credentials):
-Promise<LambdaFunctionURLResponse> => {
+const fileUpload = async (url: string, credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
   emptyTheTmpDir()
   await downloadFile(url)
 
@@ -243,7 +260,7 @@ Promise<LambdaFunctionURLResponse> => {
 }
 
 // download a file and save it
-async function downloadFile (url: string): Promise<void> {
+async function downloadFile(url: string): Promise<void> {
   const filename = path.basename(url)
   const response = await axios.get(url, { responseType: 'stream' })
   const writer = fs.createWriteStream(path.join(DESTINATION_DIR, filename))
@@ -256,8 +273,8 @@ async function downloadFile (url: string): Promise<void> {
   })
 }
 
-function emptyTheTmpDir (): void {
-  if (fs.existsSync(DESTINATION_DIR) != null) {
+function emptyTheTmpDir(): void {
+  if (fs.existsSync(DESTINATION_DIR) !== true) {
     fs.mkdirSync(DESTINATION_DIR)
   }
 
@@ -273,6 +290,8 @@ function emptyTheTmpDir (): void {
 
 // add contents of the directory to the (vector) db
 const langChainIngest = async (credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
+  console.log('lCingest')
+
   try {
     // Start of LangChain loading
     /* load raw docs from the all files in the directory */
@@ -300,7 +319,7 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
     })
 
     const docs = await textSplitter.splitDocuments(rawDocs)
-    console.log('split docs.length)', docs.length)
+    console.log('split docs.length=', docs.length)
 
     console.log('creating vector store...')
     /* create and store the embeddings in the vectorStore */
@@ -309,7 +328,8 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
     const pinecone = await initPinecone(credentials.pinecone.environment, credentials.pinecone.apiKey)
     const index = pinecone.Index(credentials.pinecone.indexName)
 
-    // embed the PDF documents
+    // adding the documents
+    console.log('adding the documents via fromDocuments...')
     await PineconeStore.fromDocuments(docs, embeddings, {
       pineconeIndex: index,
       namespace: credentials.pinecone.namespace,
@@ -320,7 +340,8 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
     return await collection(nullLambdaFunctionURLEvent(), credentials)
   } catch (error) {
     emptyTheTmpDir()
-    console.log('error', error)
+    console.log('lc error', error)
+    console.log(typeof error)
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -330,7 +351,16 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
   }
 }
 
-function extractGoogleDocID (url: string): string {
+function extractGoogleDocID(url: string): string {
   const match = url.match(/https:\/\/docs\.google\.com\/document\/d\/([\w-]{25,})/)
   return (match != null) ? match[1] : ''
+}
+
+function listdir(dir: string): void {
+  const ls = fs.readdirSync(dir)
+  ls.forEach((filename: string) => {
+    const filepath = path.join(dir, filename)
+    const info = fs.statSync(filepath)
+    console.log(`found ${filename} ${info.size as number} bytes`);
+  })
 }
