@@ -26,7 +26,8 @@ export default async function handler(
   const sanitizedQuestion = question.trim().replaceAll('\n', ' ');
 
   try {
-    const index = pinecone.Index(PINECONE_INDEX_NAME);
+    const pineconeClient = await pinecone
+    const index = await pineconeClient.Index(PINECONE_INDEX_NAME);
 
     /* create vectorstore*/
     const vectorStore = await PineconeStore.fromExistingIndex(
