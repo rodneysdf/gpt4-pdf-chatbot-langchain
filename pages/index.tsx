@@ -624,7 +624,7 @@ export default function Home() {
                       <option value="gpt-4">gpt-4</option>
                       <option value="gpt-3.5-turbo-0301">gpt-3.5-turbo-0301</option>
                       <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
-                      <option value="anthropic">Anthropic-Claude 100k tokens</option>
+                      <option value="anthropic" disabled>Anthropic-Claude 100k tokens</option>
                     </select>
                   </div>
                   <div className="flex gap-1 py-1">

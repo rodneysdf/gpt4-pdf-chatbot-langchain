@@ -57,6 +57,16 @@ export const chat = async (event: LambdaFunctionURLEvent,
   // OPENAI_API_KEY is required to be an ENV var by current code dependency
   env.OPENAI_API_KEY = credentials.openAiApiKey
 
+  const modelError = validateModelAndAlgo(questionHistory.model, questionHistory.algo)
+  if (modelError.length !== 0) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: modelError
+      })
+    }
+  }
+
   //
   // Start of logic
 
@@ -77,16 +87,6 @@ export const chat = async (event: LambdaFunctionURLEvent,
         namespace: credentials.pinecone.namespace // namespace comes from your config folder
       }
     )
-
-    const modelError = validateModelAndAlgo(questionHistory.model, questionHistory.algo)
-    if (modelError.length !== 0) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          error: modelError
-        })
-      }
-    }
 
     // create chain
     const chain = makeChain(vectorStore, questionHistory.model)
@@ -127,7 +127,7 @@ export const chat = async (event: LambdaFunctionURLEvent,
 }
 
 // make the output sleeker for the user by cleaning up the unnecessary '/tmp/' in the source reference.
-function stripPathFromSourceDocuments(response: ChainValues): ChainValues {
+function stripPathFromSourceDocuments (response: ChainValues): ChainValues {
   if (response?.sourceDocuments !== undefined) {
     for (const doc of response?.sourceDocuments) {
       const srcDoc = doc as Document
@@ -139,7 +139,7 @@ function stripPathFromSourceDocuments(response: ChainValues): ChainValues {
   return response
 }
 
-function validateModelAndAlgo(model: string, algo: string): string {
+function validateModelAndAlgo (model: string, algo: string): string {
   // Allowed models for lc-ConversationalRetrievalChain
   const allowedValuesConversationalRetrievalChain: string[] = [
     'gpt-3.5-turbo',
