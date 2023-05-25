@@ -15,13 +15,15 @@ import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './interfaces'
 import { collection, nullLambdaFunctionURLEvent } from './collection'
 import { CustomExcelLoader } from './util/customExcelLoader'
 // import { CustomPDFLoader } from './util/customPDFLoader';
-import axios from 'axios'
 import { AddInput, Convert, Credentials } from './datamodels'
 import { initPinecone } from './util/pineconeclient'
 import { isLambdaMock } from './runtype'
 import { readGoogleDoc } from './util/google/gdoc'
 import { sanitize } from 'sanitize-filename-ts'
 import { env } from 'node:process'
+import { GaxiosError } from 'gaxios'
+import axios from 'axios'
+import { validateOpenAIKey } from './index'
 
 const Busboy = require('busboy')
 const fs = require('fs')
@@ -67,6 +69,10 @@ export const upload = async (event: LambdaFunctionURLEvent,
     if (openaiKey.length !== 0) {
       credentials.openAiApiKey = openaiKey
       console.log('personal openai key', credentials.openAiApiKey)
+      const ret = await validateOpenAIKey(openaiKey)
+      if (ret !== null) {
+        return ret
+      }
     }
   }
   if (event?.headers?.['x-key-anthropic'] != null) {
@@ -167,6 +173,10 @@ export const add = async (event: LambdaFunctionURLEvent,
   if (addInput.openAiKey.length !== 0) {
     credentials.openAiApiKey = addInput.openAiKey
     console.log('personal openai key', credentials.openAiApiKey)
+    const ret = await validateOpenAIKey(addInput.openAiKey)
+    if (ret !== null) {
+      return ret
+    }
   }
   if (addInput.anthropicKey.length !== 0) {
     credentials.anthropicKey = addInput.anthropicKey
@@ -237,13 +247,31 @@ const getGoogleDoc = async (url: string, credentials: Credentials): Promise<Lamb
     listdir(DESTINATION_DIR)
   } catch (error) {
     emptyTheTmpDir()
-    console.log('readGDoc error', error)
-    console.log(typeof error)
 
+    if (error instanceof GaxiosError) {
+      if (error.message === 'The caller does not have permission') {
+        return {
+          statusCode: 401,
+          body: JSON.stringify({
+            error: 'Permission Denied'
+          })
+        }
+      } else if (error.message === 'Requested entity was not found.') {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({
+            error: 'Document not found'
+          })
+        }
+      } else {
+        console.log('GaxiosError', error.message, error)
+      }
+    }
+    console.log('ingest error', error)
     return {
       statusCode: 400,
       body: JSON.stringify({
-        error: 'Failed to access the Google Doc'
+        error: 'Errro accessing the Google Doc'
       })
     }
   }
@@ -254,13 +282,40 @@ const getGoogleDoc = async (url: string, credentials: Credentials): Promise<Lamb
 // Ingest a file from a url
 const fileUpload = async (url: string, credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
   emptyTheTmpDir()
-  await downloadFile(url)
-
+  try {
+    await downloadFile(url)
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.message === 'The caller does not have permission') {
+        return {
+          statusCode: 401,
+          body: JSON.stringify({
+            error: 'Permission Denied'
+          })
+        }
+      } else if (error.message === 'Request failed with status code 404') {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({
+            error: 'File not found'
+          })
+        }
+      }
+      console.log('Axios file access error.message', error.message)
+    }
+    console.log('file access error', error)
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        error: `Problem accessing file - ${error as string}`
+      })
+    }
+  }
   return await langChainIngest(credentials)
 }
 
 // download a file and save it
-async function downloadFile(url: string): Promise<void> {
+async function downloadFile (url: string): Promise<void> {
   const filename = path.basename(url)
   const response = await axios.get(url, { responseType: 'stream' })
   const writer = fs.createWriteStream(path.join(DESTINATION_DIR, filename))

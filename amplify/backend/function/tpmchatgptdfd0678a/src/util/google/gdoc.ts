@@ -15,7 +15,7 @@ export interface CredentialData {
 
 let docsService: docs_v1.Docs
 
-async function getDocsService (credentials: CredentialData): Promise<docs_v1.Docs> {
+async function getDocsService(credentials: CredentialData): Promise<docs_v1.Docs> {
   credentials.private_key = credentials.private_key.split(String.raw`\n`).join('\n')
 
   const googleAuth = new auth.GoogleAuth({
@@ -40,14 +40,14 @@ async function getDocsService (credentials: CredentialData): Promise<docs_v1.Doc
  * @param documentId - The ID of the Google Doc, e.g. https://docs.google.com/document/d/<documentId>/edit#
  * @returns GoogleDoc - The Title and text content of document
  */
-export async function readGoogleDoc (documentId: string, credentials: CredentialData): Promise<GoogleDoc> {
+export async function readGoogleDoc(documentId: string, credentials: CredentialData): Promise<GoogleDoc> {
   if (docsService === undefined) {
     docsService = await getDocsService(credentials)
   }
-
   const doc = await docsService.documents.get({
     documentId
   })
+
   console.log('readGoogleDoc of ', documentId)
 
   if (doc.data.body?.content === undefined) {
@@ -72,7 +72,7 @@ export async function readGoogleDoc (documentId: string, credentials: Credential
 }
 
 // Returns the text in the given ParagraphElement.
-function readParagraphElement (element: docs_v1.Schema$ParagraphElement): string {
+function readParagraphElement(element: docs_v1.Schema$ParagraphElement): string {
   const run = element.textRun
   if (run === null || run?.content === null || run?.content?.length === 0) {
     // The TextRun can be null if there is an inline object.
@@ -82,7 +82,7 @@ function readParagraphElement (element: docs_v1.Schema$ParagraphElement): string
 }
 
 // Returns the text in the given TableRow.
-function readTableRow (element: docs_v1.Schema$TableRow): string {
+function readTableRow(element: docs_v1.Schema$TableRow): string {
   let text = ''
   if (element.tableCells != null) {
     for (const cell of element.tableCells) {
@@ -94,7 +94,7 @@ function readTableRow (element: docs_v1.Schema$TableRow): string {
   return text
 }
 
-function readStructuralElements (elements: docs_v1.Schema$StructuralElement[]): string {
+function readStructuralElements(elements: docs_v1.Schema$StructuralElement[]): string {
   let text = ''
   for (const element of elements) {
     if (element?.paragraph?.elements != null) {

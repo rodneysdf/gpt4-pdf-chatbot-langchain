@@ -8,6 +8,7 @@ import { Convert, Credentials, QuestionHistory } from './datamodels'
 import { env } from 'node:process'
 import { Document } from 'langchain/document'
 import { DESTINATION_DIR } from './ingest'
+import { validateOpenAIKey } from './index'
 
 // '/api/chat'
 export const chat = async (event: LambdaFunctionURLEvent,
@@ -42,6 +43,10 @@ export const chat = async (event: LambdaFunctionURLEvent,
   if (questionHistory.openAiKey.length !== 0) {
     credentials.openAiApiKey = questionHistory.openAiKey
     console.log('personal openai key', credentials.openAiApiKey)
+    const ret = await validateOpenAIKey(credentials.openAiApiKey)
+    if (ret != null) {
+      return ret
+    }
   }
   if (questionHistory.anthropicKey.length !== 0) {
     credentials.anthropicKey = questionHistory.anthropicKey
@@ -114,7 +119,7 @@ export const chat = async (event: LambdaFunctionURLEvent,
 }
 
 // make the output sleeker for the user by cleaning up the unnecessary '/tmp/' in the source reference.
-function stripPathFromSourceDocuments (response: ChainValues): ChainValues {
+function stripPathFromSourceDocuments(response: ChainValues): ChainValues {
   if (response?.sourceDocuments !== undefined) {
     for (const doc of response?.sourceDocuments) {
       const srcDoc = doc as Document

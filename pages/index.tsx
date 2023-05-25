@@ -22,6 +22,9 @@ import { Document } from 'langchain/document';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { BsPersonCircle } from 'react-icons/bs';
 import ReactMarkdown from 'react-markdown';
+import { isAxiosError } from 'axios'
+import axios from 'axios'
+
 
 const DocumentUpload = (props: any) => {
   const { onSetCollectionSize, openAiKey, anthropicKey } = props;
@@ -47,8 +50,13 @@ const DocumentUpload = (props: any) => {
         }
       }
     } catch (err: any) {
-      alert('an error occured uploading the documents');
-      console.log('err', err.response);
+      if (axios.isAxiosError(err)) {
+        console.log('A?', err?.response)
+        alert(`Error '${err?.response?.data?.error}`);
+      } else {
+        console.log('err', err);
+        alert(`Error encountered when uploading the file: ${err?.response?.statusText}`);
+      }
     }
     setLoading(false);
   };
@@ -112,12 +120,23 @@ const AddUrl = (props: any) => {
       }
 
     } catch (err: any) {
-      alert('an error occured purging the documents');
-      console.log('err', err.response);
+      if (axios.isAxiosError(err)) {
+        if (err?.response?.status == 401) {
+          alert(`Permission to the link was denied. Please share the document\nwith 'p2-spec-access@devfactory.com' and then re-add.`);
+        } else if (err?.response?.status == 404) {
+          alert(`${err?.response?.data?.error}. Please check the url / link you are adding.`);
+        } else {
+          console.log('A?', err?.response)
+          alert(`Error when adding the url: ${err?.response?.data?.error}`);
+        }
+      } else {
+        console.log('err', err);
+        alert(`Error encountered when adding the url: ${err?.response?.statusText}`);
+      }
     }
-    console.log()
     setLoading(false);
   };
+
 
   return (
     <div>
@@ -427,8 +446,8 @@ export default function Home() {
                   </span>
                 ) : (
                   <span className="text-sm font-normal ml-3">
-                  (Files are stored as embeddings only for this chat app)
-                </span>
+                    (Files are stored as embeddings only for this chat app)
+                  </span>
                 )}
               </div>
               <div className="flex flex-row gap-3 ml-2 mb-2">
@@ -612,7 +631,7 @@ export default function Home() {
         ) : (
           <Profile onSetApiKey={setOpenAiApiKey} apiKey={openAiApiKey} onSetAnthropicKey={setAnthropicClaudeKey} anthropicKey={anthropicClaudeKey} onNavigate={handleNavigate} />
         )}
-        <footer className="m-auto">
+        <footer className="m-auto pt-1">
           <div className="flex flex-row gap-10 text">
             <div className="flex ">Powered by LangChainAI.
             </div>

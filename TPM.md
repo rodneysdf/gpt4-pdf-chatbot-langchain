@@ -43,7 +43,13 @@ To develop locally and have Google signin redirect back to your local app, redir
 
 The UI makes a call to a single server function `'/api/chat'` in `pages/index.tsx`.
 
-## Requirements
+## Bug fixes
+- **User submits GDoc url but p2team@sys-27331190000236300992246821.iam.gserviceaccount.com or p2-spec-access@devfactory.com don't have access to it** - alert error message gets displayed on screen for Permission Denied with instructions to share it.
+
+- **Document not found** - Google Doc url not found. Alert error message shown.
+- **File not found** - Upload a file url but file not found. Alert error message shown.
+- **Incorrect OpenAI API key** - when uploading file or url an alert error message is shown.
+
 
 ## Implementation notes
 
