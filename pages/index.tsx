@@ -23,7 +23,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import { BsPersonCircle, BsExclamationTriangleFill } from 'react-icons/bs';
 import ReactMarkdown from 'react-markdown';
 import axios from 'axios'
-import { signinError, signinErrorText } from '@/utils/errors'
+import { signinError, signinErrorText, toFriendlyChatError } from '@/utils/errors'
 import classNames from 'classnames';
 
 
@@ -274,7 +274,7 @@ export default function Home() {
   const auth = useAuth();
   const [model, setModel] = useState<string>('gpt-3.5-turbo-0301');
   const [algo, setAlgo] = useState<string>(
-    'lc-ConversationalRetrievalQAChain',
+    'ConversationalRetrievalQAChain-lc',
   );
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -318,6 +318,8 @@ export default function Home() {
   const postChat = makePostChat(
     {
       onSuccess(data, question) {
+        console.log('PC Success response:', data)
+
         setMessageState((state) => ({
           ...state,
           messages: [
@@ -337,8 +339,21 @@ export default function Home() {
         setLoading(false);
         if (response === 'No current user') {
           setError(signinErrorText())
+        } else if (axios.isAxiosError(response)) {
+          console.log('A?', response?.response)
+          // alert(`Error '${response?.response?.data?.error}`);
+          // check for no license
+          if (response?.request.status == 404) {
+            setError(toFriendlyChatError(response?.response?.data.error))
+            setModel('gpt-3.5-turbo-0301')
+          } else {
+            console.log('PC ErrA response:', response)
+            setError(`An error occurred. Please try again - ${response}`);
+          }
         } else {
-          setError('An error occurred while fetching the data. Please try again.');
+          console.log('PC Err response:', response)
+          // else show generic message
+          setError(`An error occurred. Please try again - ${response}`);
         }
       },
     },
@@ -547,52 +562,52 @@ export default function Home() {
               </div>
               <div className={styles.center}>
                 <div className={styles.cloudform}>
-                  <form onSubmit={handleSubmit}>
-                    <textarea
-                      disabled={loading}
-                      onKeyDown={handleEnter}
-                      ref={textAreaRef}
-                      autoFocus={false}
-                      rows={1}
-                      maxLength={512}
-                      id="userInput"
-                      name="userInput"
-                      placeholder={
-                        loading
-                          ? 'Waiting for response...'
-                          : 'What is this doc about?'
-                      }
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      className={textAreaClass}
-                    />
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className={styles.generatebutton}
-                    >
-                      {loading ? (
-                        <div className={styles.loadingwheel}>
-                          <LoadingDots color="#000" />
-                        </div>
-                      ) : (
-                        // Send icon SVG in input field
-                        <svg
-                          viewBox="0 0 20 20"
-                          className={styles.svgicon}
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
-                        </svg>
-                      )}
-                    </button>
-                  </form>
+                    <form onSubmit={handleSubmit}>
+                      <textarea
+                        disabled={loading}
+                        onKeyDown={handleEnter}
+                        ref={textAreaRef}
+                        autoFocus={false}
+                        rows={1}
+                        maxLength={512}
+                        id="userInput"
+                        name="userInput"
+                        placeholder={
+                          loading
+                            ? 'Waiting for response...'
+                            : 'What is this doc about?'
+                        }
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        className={textAreaClass}
+                      />
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className={styles.generatebutton}
+                      >
+                        {loading ? (
+                          <div className={styles.loadingwheel}>
+                            <LoadingDots color="#000" />
+                          </div>
+                        ) : (
+                          // Send icon SVG in input field
+                          <svg
+                            viewBox="0 0 20 20"
+                            className={styles.svgicon}
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+                          </svg>
+                        )}
+                      </button>
+                    </form>
                   {error && (
-                    <div className="flex flex-row gap-1 mt-1 text-red-500 align-bottom mb-1">
-                      <BsExclamationTriangleFill className="ml-1 text-xl pt-1" />
-                      <span>{error}</span>
-                    </div>
-                  )}
+                      <div className="flex flex-row gap-1 mt-1 text-red-500 align-bottom mb-1 w-[75vw]">
+                        <BsExclamationTriangleFill className="ml-1 text-xl pt-1" />
+                        <span>{error}</span>
+                      </div>
+                    )}
                 </div>
 
                 <div className="flex flex-row w-full mt-2 m-3 gap-5 justify-end mb-2">
@@ -621,11 +636,11 @@ export default function Home() {
                       id="algo"
                       className="border rounded-md pl-1 pr-2 shadow-slate-300 shadow hover:bg-slate-500/10"
                     >
-                      <option value="lc-ConversationalRetrievalQAChain">
-                        LangChain ConversationalRetrievalQAChain
+                      <option value="ConversationalRetrievalQAChain-lc">
+                        ConversationalRetrievalQAChain -LangChain
                       </option>
-                      <option value="lc-ConversationalRetrievalChain">
-                        LangChain ConversationalRetrievalChain
+                      <option value="ConversationalRetrievalChain-lc">
+                        ConversationalRetrievalChain -LangChain
                       </option>
                       <option value="Bing" disabled>
                         Bing

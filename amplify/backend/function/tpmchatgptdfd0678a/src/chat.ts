@@ -9,6 +9,7 @@ import { env } from 'node:process'
 import { Document } from 'langchain/document'
 import { DESTINATION_DIR } from './ingest'
 import { validateOpenAIKey } from './index'
+import axios from 'axios'
 
 // '/api/chat'
 export const chat = async (event: LambdaFunctionURLEvent,
@@ -58,10 +59,10 @@ export const chat = async (event: LambdaFunctionURLEvent,
 
   //
   // Start of logic
-  console.log('question', questionHistory)
 
   // OpenAI recommends replacing newlines with spaces for best results
   const sanitizedQuestion = questionHistory.question.trim().replaceAll('\n', ' ')
+  console.log('question:', questionHistory)
 
   try {
     const pinecone = await initPinecone(credentials.pinecone.environment, credentials.pinecone.apiKey)
@@ -99,27 +100,34 @@ export const chat = async (event: LambdaFunctionURLEvent,
     if (response?.sourceDocuments !== undefined) {
       response = stripPathFromSourceDocuments(response)
     }
-    console.log(response)
+    console.log('response:', response)
 
     return {
       statusCode: 200,
       body: JSON.stringify(response)
     }
   } catch (error) {
-    console.log('error', error)
-    // todo put in the type of error and fix 'error.message' below
-    console.log(typeof error)
+    if (axios.isAxiosError(error)) {
+      return {
+        statusCode: error?.response?.status,
+        body: JSON.stringify({
+          error: `${error.response?.data?.error?.code} - ${error.response?.data?.error?.message}`
+        })
+      }
+    }
+
+    console.log('Error:', error)
     return {
       statusCode: 500,
       body: JSON.stringify({
-        error: 'error.message'
+        error
       })
     }
   }
 }
 
 // make the output sleeker for the user by cleaning up the unnecessary '/tmp/' in the source reference.
-function stripPathFromSourceDocuments (response: ChainValues): ChainValues {
+function stripPathFromSourceDocuments(response: ChainValues): ChainValues {
   if (response?.sourceDocuments !== undefined) {
     for (const doc of response?.sourceDocuments) {
       const srcDoc = doc as Document
@@ -131,7 +139,7 @@ function stripPathFromSourceDocuments (response: ChainValues): ChainValues {
   return response
 }
 
-function validateModelAndAlgo (model: string, algo: string): string {
+function validateModelAndAlgo(model: string, algo: string): string {
   // Allowed models for lc-ConversationalRetrievalChain
   const allowedValuesConversationalRetrievalChain: string[] = [
     'gpt-3.5-turbo',
@@ -141,7 +149,7 @@ function validateModelAndAlgo (model: string, algo: string): string {
     'anthropic'
   ]
 
-  // Allowed models for lc-ConversationalRetrievalQAChain
+  // Allowed models for ConversationalRetrievalQAChain-lc
   const allowedValuesConversationalRetrievalQAChain: string[] = [
     'gpt-3.5-turbo',
     'gpt-3.5-turbo-0301',
@@ -153,12 +161,12 @@ function validateModelAndAlgo (model: string, algo: string): string {
   let allowList: string[] = []
   let algoName: string = ''
   switch (algo) {
-    case 'lc-ConversationalRetrievalChain': {
+    case 'ConversationalRetrievalChain-lc': {
       allowList = allowedValuesConversationalRetrievalChain
       algoName = 'ConversationalRetrievalChain'
       break
     }
-    case 'lc-ConversationalRetrievalQAChain': {
+    case 'ConversationalRetrievalQAChain-lc': {
       allowList = allowedValuesConversationalRetrievalQAChain
       algoName = 'ConversationalRetrievalQAChain'
       break

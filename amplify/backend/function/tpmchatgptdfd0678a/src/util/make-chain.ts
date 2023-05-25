@@ -18,7 +18,7 @@ If the question is not related to the context, politely respond that you are tun
 Question: {question}
 Helpful answer in markdown:`
 
-export const makeChain = (vectorstore: PineconeStore, modelNameParam: string) => {
+export const makeChain = (vectorstore: PineconeStore, modelNameParam: string): ConversationalRetrievalQAChain => {
   const model = new OpenAI({
     temperature: 0, // increase temepreature to get more creative answers
     modelName: modelNameParam // change this to gpt-4 if you have access
