@@ -43,12 +43,14 @@ To develop locally and have Google signin redirect back to your local app, redir
 
 The UI makes a call to a single server function `'/api/chat'` in `pages/index.tsx`.
 
-## Bug fixes
-- **User submits GDoc url but p2team@sys-27331190000236300992246821.iam.gserviceaccount.com or p2-spec-access@devfactory.com don't have access to it** - alert error message gets displayed on screen for Permission Denied with instructions to share it.
+## Showing Errors
+Errors in the Collection functions (Add, Upload, Purge) show in an alert at the top of page. Chat question errors show below and around the question entry box, adhering to the design guideline to [keep error messages next to the fields](https://www.nngroup.com/articles/errors-forms-design-guidelines/#:~:text=3.%20Keep%20Error%20Messages%20Next%20to%20Fields)
 
+- **User submits GDoc url but p2team@sys-27331190000236300992246821.iam.gserviceaccount.com or p2-spec-access@devfactory.com don't have access to it** - alert error message gets displayed on screen for Permission Denied with instructions to share it.
 - **Document not found** - Google Doc url not found. Alert error message shown.
 - **File not found** - Upload a file url but file not found. Alert error message shown.
 - **Incorrect OpenAI API key** - when uploading file or url an alert error message is shown.
+- **Not logged in** - All functions don't work when not logged in and show an error.
 
 
 ## Implementation notes

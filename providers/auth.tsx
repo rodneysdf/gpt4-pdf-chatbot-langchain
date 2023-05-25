@@ -47,8 +47,6 @@ export const AuthStateProvider = ({ children }: { children: ReactNode }) => {
     getUser().then((userData) => setUser(userData));
   }, []);
 
-  // console.log(user);
-
   async function getUser() {
     const user = await Auth.currentAuthenticatedUser();
     if (user) {

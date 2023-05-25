@@ -25,10 +25,16 @@
   padding: 1rem 2rem 1rem 2rem;
   width: 75vw;
   border-radius: 0.5rem;
-  border: 1px solid #d9d9e3;
   background: #ffffff;
-  color: #000;
   outline: none;
+  color: #000;
+}
+
+.textareanormal {
+  border: 1px solid #d9d9e3;
+}
+.textareaerror {
+  border: 1px solid #ef0404;
 }
 
 .textarea:disabled {

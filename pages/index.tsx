@@ -20,10 +20,11 @@ import {
 import { useGranularEffect } from "granular-hooks";
 import { Document } from 'langchain/document';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { BsPersonCircle } from 'react-icons/bs';
+import { BsPersonCircle, BsExclamationTriangleFill } from 'react-icons/bs';
 import ReactMarkdown from 'react-markdown';
-import { isAxiosError } from 'axios'
 import axios from 'axios'
+import { signinError, signinErrorText } from '@/utils/errors'
+import classNames from 'classnames';
 
 
 const DocumentUpload = (props: any) => {
@@ -53,6 +54,8 @@ const DocumentUpload = (props: any) => {
       if (axios.isAxiosError(err)) {
         console.log('A?', err?.response)
         alert(`Error '${err?.response?.data?.error}`);
+      } else if (err === 'No current user') {
+        signinError()
       } else {
         console.log('err', err);
         alert(`Error encountered when uploading the file: ${err?.response?.statusText}`);
@@ -129,9 +132,11 @@ const AddUrl = (props: any) => {
           console.log('A?', err?.response)
           alert(`Error when adding the url: ${err?.response?.data?.error}`);
         }
+      } else if (err === 'No current user') {
+        signinError()
       } else {
         console.log('err', err);
-        alert(`Error encountered when adding the url: ${err?.response?.statusText}`);
+        alert(`Error encountered when adding the url: ${err}`);
       }
     }
     setLoading(false);
@@ -170,8 +175,12 @@ const PurgeDocuments = (props: any) => {
         }
       }
     } catch (err: any) {
-      alert('an error occured purging the documents');
-      console.log('err', err.response);
+      if (err === 'No current user') {
+        signinError()
+      } else {
+        alert('an error occured purging the documents');
+        console.log('err', err.response);
+      }
     }
     onClearMessageState();
     setLoading(false);
@@ -305,12 +314,6 @@ export default function Home() {
   useEffect(() => {
     messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
   }, [messages]);
-  // async function postScroller(messageListRef: any) {
-  //   messageListRef.current?.scrollTo(
-  //     0,
-  //     messageListRef.current.scrollHeight
-  //   );
-  // }
 
   const postChat = makePostChat(
     {
@@ -332,8 +335,11 @@ export default function Home() {
       },
       onError(response) {
         setLoading(false);
-        setError('An error occurred while fetching the data. Please try again.');
-        console.log('error', response);
+        if (response === 'No current user') {
+          setError(signinErrorText())
+        } else {
+          setError('An error occurred while fetching the data. Please try again.');
+        }
       },
     },
     auth
@@ -347,7 +353,8 @@ export default function Home() {
     setError(null);
 
     if (!query) {
-      alert('Please input a question');
+      // alert('Please input a question');
+      setError('Please input a question')
       return;
     }
 
@@ -407,12 +414,8 @@ export default function Home() {
   // todo this end up calling getCollection 5 times during startup
   useGranularEffect(() => {
     const getUserProfile = async () => {
-      // console.log("UseEffect calling getUserProfile", auth?.isSignedIn);
-
       if (auth?.isSignedIn) {
         try {
-          // console.log("UI calling getCollection", auth?.isSignedIn);
-
           const response = await getCollection(auth);
           if (response) {
             if (response.data?.size) {
@@ -426,11 +429,16 @@ export default function Home() {
         }
       }
     };
-    // console.log("calling get user profile", auth);
     getUserProfile();
   }, [auth.isSignedIn], [auth]);
 
   const [collectionSize, setCollectionSize] = useState<number | null>(0);
+
+  const textAreaClass = classNames({
+    [styles.textarea]: true,
+    [styles.textareanormal]: error === null,
+    [styles.textareaerror]: error !== null,
+  });
 
   return (
     <>
@@ -457,7 +465,7 @@ export default function Home() {
               </div>
             </div>
 
-            <main className="{styles.main} pb-0">
+            <main className={styles.main}>
               <div className={styles.cloud}>
                 <div ref={messageListRef} className={styles.messagelist}>
                   {messages.map((message, index) => {
@@ -556,7 +564,7 @@ export default function Home() {
                       }
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      className={styles.textarea}
+                      className={textAreaClass}
                     />
                     <button
                       type="submit"
@@ -579,7 +587,14 @@ export default function Home() {
                       )}
                     </button>
                   </form>
+                  {error && (
+                    <div className="flex flex-row gap-1 mt-1 text-red-500 align-bottom mb-1">
+                      <BsExclamationTriangleFill className="ml-1 text-xl pt-1" />
+                      <span>{error}</span>
+                    </div>
+                  )}
                 </div>
+
                 <div className="flex flex-row w-full mt-2 m-3 gap-5 justify-end mb-2">
                   <div className="flex gap-1 py-1">
                     Model
@@ -620,12 +635,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-
-              {error && (
-                <div className="border border-red-400 rounded-md p-4 m-3">
-                  <p className="text-red-500">{error}</p>
-                </div>
-              )}
             </main>
           </div>
         ) : (
