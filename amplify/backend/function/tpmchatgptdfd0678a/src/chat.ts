@@ -119,7 +119,7 @@ export const chat = async (event: LambdaFunctionURLEvent,
 }
 
 // make the output sleeker for the user by cleaning up the unnecessary '/tmp/' in the source reference.
-function stripPathFromSourceDocuments(response: ChainValues): ChainValues {
+function stripPathFromSourceDocuments (response: ChainValues): ChainValues {
   if (response?.sourceDocuments !== undefined) {
     for (const doc of response?.sourceDocuments) {
       const srcDoc = doc as Document
@@ -131,7 +131,7 @@ function stripPathFromSourceDocuments(response: ChainValues): ChainValues {
   return response
 }
 
-function validateModelAndAlgo(model: string, algo: string): string {
+function validateModelAndAlgo (model: string, algo: string): string {
   // Allowed models for lc-ConversationalRetrievalChain
   const allowedValuesConversationalRetrievalChain: string[] = [
     'gpt-3.5-turbo',

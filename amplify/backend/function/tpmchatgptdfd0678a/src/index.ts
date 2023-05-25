@@ -136,7 +136,7 @@ export const validateOpenAIKey = async (openaiKey: string): Promise<LambdaFuncti
       if (axios.isAxiosError(error)) {
         if (error?.response?.status === 401) {
           let msg: string = error?.response?.data?.error?.message ?? ''
-          if (msg.startsWith('Incorrect') == true) {
+          if (msg.startsWith('Incorrect')) {
             msg = 'Incorrect OpenAI' + msg.slice(9)
           }
 

@@ -14,7 +14,6 @@ import YError from 'yerror'
 import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './interfaces'
 import { collection, nullLambdaFunctionURLEvent } from './collection'
 import { CustomExcelLoader } from './util/customExcelLoader'
-// import { CustomPDFLoader } from './util/customPDFLoader';
 import { AddInput, Convert, Credentials } from './datamodels'
 import { initPinecone } from './util/pineconeclient'
 import { isLambdaMock } from './runtype'
@@ -328,7 +327,7 @@ async function downloadFile (url: string): Promise<void> {
   })
 }
 
-function emptyTheTmpDir(): void {
+function emptyTheTmpDir (): void {
   if (fs.existsSync(DESTINATION_DIR) !== true) {
     fs.mkdirSync(DESTINATION_DIR)
   }
@@ -351,7 +350,6 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
     // Start of LangChain loading
     /* load raw docs from the all files in the directory */
     const directoryLoader = new DirectoryLoader(DESTINATION_DIR, {
-      // '.pdf': (path) => new CustomPDFLoader(path),
       '.pdf': (path) => new PDFLoader(path, { splitPages: true }),
       '.docx': (path) => new DocxLoader(path),
       '.json': (path) => new JSONLoader(path, '/texts'),
@@ -406,16 +404,16 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
   }
 }
 
-function extractGoogleDocID(url: string): string {
+function extractGoogleDocID (url: string): string {
   const match = url.match(/https:\/\/docs\.google\.com\/document\/d\/([\w-]{25,})/)
   return (match != null) ? match[1] : ''
 }
 
-function listdir(dir: string): void {
+function listdir (dir: string): void {
   const ls = fs.readdirSync(dir)
   ls.forEach((filename: string) => {
     const filepath = path.join(dir, filename)
     const info = fs.statSync(filepath)
-    console.log(`found ${filename} ${info.size as number} bytes`);
+    console.log(`found ${filename} ${info.size as number} bytes`)
   })
 }
