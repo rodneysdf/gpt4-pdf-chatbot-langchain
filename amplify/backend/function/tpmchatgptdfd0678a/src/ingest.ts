@@ -18,6 +18,7 @@ import { AddInput, Convert, Credentials } from './datamodels'
 import { initPinecone } from './util/pineconeclient'
 import { isLambdaMock } from './runtype'
 import { readGoogleDoc } from './util/google/gdoc'
+import { listGoogleFolder, FolderItem } from './util/google/gdrive'
 import { sanitize } from 'sanitize-filename-ts'
 import { env } from 'node:process'
 import { GaxiosError } from 'gaxios'
@@ -192,14 +193,16 @@ export const add = async (event: LambdaFunctionURLEvent,
   // https://docs.google.com/spreadsheets/d/1qade4nAAxb842as7Y1WVSoBi4v0tdM7bh9YuNAt5CHU/edit#gid=0
   // folder
   // https://drive.google.com/drive/folders/1e_rjH9Y-08V6fDQC6Uui4124fJ2fbAfk
+  // https://drive.google.com/drive/u/0/folders/1jtyirJ_qOPEe3DjODFhWeBajSH08zUIV
   // else file
   if (addInput.url.startsWith('https://docs.google.com/document/d/')) {
     // handle Gdoc
     return await getGoogleDoc(addInput.url, credentials)
   } else if (addInput.url.startsWith('https://docs.google.com/spreadsheets/d/')) {
     // handle Gsheet
-  } else if (addInput.url.startsWith('https://drive.google.com/drive/folders/')) {
+  } else if (addInput.url.startsWith('https://drive.google.com/drive/')) {
     // handle an entire folder
+    return await readGoogleDriveFolder(addInput.url, credentials)
   } else {
     // upload as a regular file
     return await fileUpload(addInput.url, credentials)
@@ -217,11 +220,66 @@ export const add = async (event: LambdaFunctionURLEvent,
   }
 }
 
+// List a Google Drive folder from url
+const readGoogleDriveFolder = async (url: string, credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
+  emptyTheTmpDir()
+  const folderId = extractGoogleFolderId(url)
+  console.log('GDrive folder=', folderId)
+  if (folderId.length === 0) {
+    return {
+      statusCode: 400,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        error: 'folder url not recognized'
+
+      })
+    }
+  }
+
+  // list drive files
+  const glist = await listGoogleFolder(folderId, credentials.google)
+  if (glist.length === 0) {
+    return {
+      statusCode: 404,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        error: 'no files found in drive'
+
+      })
+    }
+  }
+
+  // iterate through the list acting on the different file types
+  const count = await handleGDriveFiles(glist)
+  if (count === 0) {
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        error: 'no files actually processed'
+
+      })
+    }
+  }
+
+  return await langChainIngest(credentials)
+}
+
+const handleGDriveFiles = async (list: FolderItem[]): Promise<number> => {
+  return 0
+}
+
 // Read Google Doc from url
 const getGoogleDoc = async (url: string, credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
   emptyTheTmpDir()
   console.log(credentials)
-  const documentId = extractGoogleDocID(url)
+  const documentId = extractGoogleDocId(url)
   if (documentId.length === 0) {
     return {
       statusCode: 400,
@@ -404,9 +462,24 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
   }
 }
 
-function extractGoogleDocID (url: string): string {
+// https://docs.google.com/document/d/1dRmrPrHK356JymDX4xp8ImQ8zNjSttMJAx0DyEtGGGk/edit
+function extractGoogleDocId (url: string): string {
   const match = url.match(/https:\/\/docs\.google\.com\/document\/d\/([\w-]{25,})/)
   return (match != null) ? match[1] : ''
+}
+
+// https://drive.google.com/drive/folders/1e_rjH9Y-08V6fDQC6Uui4124fJ2fbAfk
+// &
+// https://drive.google.com/drive/u/0/folders/1jtyirJ_qOPEe3DjODFhWeBajSH08zUIV
+function extractGoogleFolderId (url: string): string {
+  let match = url.match(/https:\/\/drive\.google\.com\/drive\/folders\/([\w-]{25,})/)
+  let result = (match != null) ? match[1] : ''
+  if (result.length === 0) {
+    // try alternate form
+    match = url.match(/https:\/\/drive\.google\.com\/drive\/u\/0\/folders\/([\w-]{25,})/)
+    result = (match != null) ? match[1] : ''
+  }
+  return result
 }
 
 function listdir (dir: string): void {

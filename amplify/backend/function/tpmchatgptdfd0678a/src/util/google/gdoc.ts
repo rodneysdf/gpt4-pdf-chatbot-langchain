@@ -28,12 +28,6 @@ async function getDocsService (credentials: CredentialData): Promise<docs_v1.Doc
   })
 }
 
-// function convertToString (content: docs_v1.Schema$StructuralElement[]): string {
-//   const md = extractTextRuns(content).join('')
-
-//   return md
-// }
-
 /**
  * Read a Google document
  *
