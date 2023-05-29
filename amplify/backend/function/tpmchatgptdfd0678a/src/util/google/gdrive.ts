@@ -3,12 +3,11 @@ import { GoogleAuth } from 'googleapis-common'
 import { CredentialData } from './gdoc'
 import { GaxiosPromise } from 'gaxios'
 import { sanitize } from 'sanitize-filename-ts'
-
-const path = require('path')
+import * as path from 'node:path'
 
 let driveService: drive_v3.Drive
 
-const folderMimeType = 'application/vnd.google-apps.folder'
+export const folderMimeType = 'application/vnd.google-apps.folder'
 // https://developers.google.com/drive/api/guides/mime-types
 // export mimetypes
 // https://developers.google.com/drive/api/guides/ref-export-formats
@@ -68,16 +67,20 @@ async function getFolder (drive: drive_v3.Drive, q: string, fields: string, fold
 
   // for each subfolder, get those folders. Don't append them to the list while we're iterating it
   const subFolders: FolderItem[] = []
-  for (const fRef of fileList) {
+  for (const ent of fileList) {
     // if a dir
-    if (fRef.mimeType === folderMimeType) {
-      subFolders.push(fRef)
+    if (ent.mimeType === folderMimeType) {
+      if (ent.name !== 'Recycle bin' && ent.name !== '__MACOSX') {
+        // don't go into trash or Recycle bin folders
+        subFolders.push(ent)
+      }
     }
   }
   // go get the subfolders
   for (const sub of subFolders) {
     const subFolderQ = `'${sub.id}' in parents and trashed=false`
     const subFolderName = sanitize(sub.name)
+    console.log(`getting sub '${subFolderName}'`)
     const subList = await getFolder(driveService, subFolderQ, fields, path.join(folderName, subFolderName))
     fileList.push(...subList)
   }
@@ -126,4 +129,50 @@ GaxiosPromise<drive_v3.Schema$FileList> {
   }
   const res = await drive.files.list(params)
   return res
+}
+
+export interface GoogleRawFile {
+  mimeType: string
+  size: number
+  content: ArrayBuffer
+}
+
+export async function readDriveFile (fileId: string, credentials: CredentialData): Promise<GoogleRawFile> {
+  if (driveService === undefined) {
+    driveService = await getDriveService(credentials)
+  }
+
+  const doc = await driveService.files.get({
+    fileId,
+    alt: 'media'
+  }, {
+    responseType: 'arraybuffer' // MUST set responseType (eg. Buffer)
+  })
+
+  return {
+    content: doc.data as ArrayBuffer,
+    mimeType: doc.headers['content-type'],
+    size: (+(doc.headers['content-length']))
+  }
+}
+
+export async function exportDriveFile (fileId: string, credentials: CredentialData): Promise<GoogleRawFile> {
+  if (driveService === undefined) {
+    driveService = await getDriveService(credentials)
+  }
+
+  const doc = await driveService.files.export({
+    fileId,
+    mimeType: 'text/plain'
+  }, {
+    responseType: 'arraybuffer' // MUST set responseType (eg. Buffer)
+  })
+  console.log('export:', typeof doc)
+  console.log('export:', typeof doc.data)
+
+  return {
+    content: doc.data as ArrayBuffer,
+    mimeType: doc.headers['content-type'],
+    size: (+(doc.headers['content-length']))
+  }
 }

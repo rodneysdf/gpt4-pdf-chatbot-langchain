@@ -1,10 +1,6 @@
-import { CSVLoader } from 'langchain/document_loaders/fs/csv'
 import { DirectoryLoader } from 'langchain/document_loaders/fs/directory'
 import { DocxLoader } from 'langchain/document_loaders/fs/docx'
-import {
-  JSONLinesLoader,
-  JSONLoader
-} from 'langchain/document_loaders/fs/json'
+import { JSONLoader } from 'langchain/document_loaders/fs/json'
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { TextLoader } from 'langchain/document_loaders/fs/text'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
@@ -13,17 +9,20 @@ import { PineconeStore } from 'langchain/vectorstores/pinecone'
 import YError from 'yerror'
 import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './interfaces'
 import { collection, nullLambdaFunctionURLEvent } from './collection'
-import { CustomExcelLoader } from './util/customExcelLoader'
 import { AddInput, Convert, Credentials } from './datamodels'
 import { initPinecone } from './util/pineconeclient'
 import { isLambdaMock } from './runtype'
 import { readGoogleDoc } from './util/google/gdoc'
-import { listGoogleFolder, FolderItem } from './util/google/gdrive'
+import { listGoogleFolder, FolderItem, folderMimeType, readDriveFile, exportDriveFile } from './util/google/gdrive'
 import { sanitize } from 'sanitize-filename-ts'
 import { env } from 'node:process'
 import { GaxiosError } from 'gaxios'
 import axios from 'axios'
 import { validateOpenAIKey } from './index'
+
+// import { CSVLoader } from 'langchain/document_loaders/fs/csv'
+// import { CustomExcelLoader } from './util/customExcelLoader'
+// import { JSONLinesLoader } from 'langchain/document_loaders/fs/json'
 
 const Busboy = require('busboy')
 const fs = require('fs')
@@ -197,12 +196,12 @@ export const add = async (event: LambdaFunctionURLEvent,
   // else file
   if (addInput.url.startsWith('https://docs.google.com/document/d/')) {
     // handle Gdoc
-    return await getGoogleDoc(addInput.url, credentials)
+    return await handleGoogleDoc(addInput.url, credentials)
   } else if (addInput.url.startsWith('https://docs.google.com/spreadsheets/d/')) {
     // handle Gsheet
   } else if (addInput.url.startsWith('https://drive.google.com/drive/')) {
     // handle an entire folder
-    return await readGoogleDriveFolder(addInput.url, credentials)
+    return await handleGoogleDriveFolder(addInput.url, credentials)
   } else {
     // upload as a regular file
     return await fileUpload(addInput.url, credentials)
@@ -221,7 +220,7 @@ export const add = async (event: LambdaFunctionURLEvent,
 }
 
 // List a Google Drive folder from url
-const readGoogleDriveFolder = async (url: string, credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
+const handleGoogleDriveFolder = async (url: string, credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
   emptyTheTmpDir()
   const folderId = extractGoogleFolderId(url)
   console.log('GDrive folder=', folderId)
@@ -254,7 +253,7 @@ const readGoogleDriveFolder = async (url: string, credentials: Credentials): Pro
   }
 
   // iterate through the list acting on the different file types
-  const count = await handleGDriveFiles(glist)
+  const count = await handleGDriveFiles(glist, credentials)
   if (count === 0) {
     return {
       statusCode: 200,
@@ -268,15 +267,254 @@ const readGoogleDriveFolder = async (url: string, credentials: Credentials): Pro
     }
   }
 
+  listdir(DESTINATION_DIR)
+
+  // return {
+  //   statusCode: 404,
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify({
+  //     error: 'early dev exit'
+
+  //   })
+  // }
   return await langChainIngest(credentials)
 }
 
-const handleGDriveFiles = async (list: FolderItem[]): Promise<number> => {
-  return 0
+// sources:
+// https://developers.google.com/drive/api/guides/mime-types
+// https://developers.google.com/drive/api/guides/manage-downloads
+// https://developers.google.com/drive/api/guides/ref-export-formats
+
+const handleGDriveFiles = async (list: FolderItem[], credentials: Credentials): Promise<number> => {
+  let fileCount: number = 0
+  let totalSize: number = 0
+
+  for (const ent of list) {
+    if (ent.name.startsWith('[SNAPSHOT]')) {
+      // skip [SNAPSHOT] files to reduce duplicate data
+      continue
+    }
+    if (ent.mimeType.startsWith('application/vnd.google-apps.drive-sdk')) {
+      // third party shortcut or app data types - like LucidCharts
+      continue
+    }
+    switch (ent.mimeType) {
+      // in order of importance
+      case 'application/vnd.google-apps.document': {
+        const success = await getGoogleDoc(ent.id, ent.parentName, credentials)
+        fileCount = fileCount + success
+        if (success === 1) {
+          totalSize = totalSize + (+(ent.size))
+        }
+        break
+      }
+      case 'application/vnd.google-apps.spreadsheet':
+        // handle it
+        // can export to CSV - https://developers.google.com/drive/api/guides/ref-export-formats
+        // or get it by cells & sheets (preferred)
+        fileCount = fileCount + 1
+        totalSize = totalSize + (+(ent.size))
+        break
+      case 'application/vnd.google-apps.presentation': {
+        // These can be exported as pdf or text. We'll have it go straight to text
+        // https://developers.google.com/drive/api/guides/ref-export-formats
+        const success = await getExportDriveFile(ent.id, ent.name, ent.parentName, '.txt', credentials)
+        if (success > 0) {
+          fileCount = fileCount + 1
+          totalSize = totalSize + success
+        }
+        break
+      }
+      case 'application/pdf': {
+        const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.pdf', credentials)
+        if (success > 0) {
+          fileCount = fileCount + 1
+          totalSize = totalSize + success
+        }
+        break
+      }
+      case 'text/plain': {
+        const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.txt', credentials)
+        if (success > 0) {
+          fileCount = fileCount + 1
+          totalSize = totalSize + success
+        }
+        break
+      }
+      // case 'text/csv': {
+      //   const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.csv', credentials)
+      //   if (success > 0) {
+      //     fileCount = fileCount + 1
+      //     totalSize = totalSize + success
+      //   }
+      //   break
+      // }
+      case 'application/json': {
+        const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.json', credentials)
+        if (success > 0) {
+          fileCount = fileCount + 1
+          totalSize = totalSize + success
+        }
+        break
+      }
+      case 'text/xml': { // treat xml as txt
+        const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.txt', credentials)
+        if (success > 0) {
+          fileCount = fileCount + 1
+          totalSize = totalSize + success
+        }
+        break
+      }
+      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': { // for files like 'test_word.docx'
+        const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.docx', credentials)
+        if (success > 0) {
+          fileCount = fileCount + 1
+          totalSize = totalSize + success
+        }
+        break
+      }
+
+      // case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { // for files like 'Test_XLSX1.xlsx'
+      //   const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.xlsx', credentials)
+      //   if (success > 0) {
+      //     fileCount = fileCount + 1
+      //     totalSize = totalSize + success
+      //   }
+      //   break
+      // }
+      // case 'application/vnd.ms-excel': { // for files like 'IdeasExportTemplate.xls'
+      //   const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.xls', credentials)
+      //   if (success > 0) {
+      //     fileCount = fileCount + 1
+      //     totalSize = totalSize + success
+      //   }
+      //   break
+      // }
+      // case 'application/octet-stream': { // binary files
+      //   // these are the truly unknown-to-Google file types
+      //   if (ent.name.endsWith('.jsonl')) {
+      //     const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.jsonl', credentials)
+      //     if (success > 0) {
+      //       fileCount = fileCount + 1
+      //       totalSize = totalSize + success
+      //     }
+      //   }
+      //   break
+      // }
+
+      // skip these types
+      case folderMimeType: // skip folders, only handle files
+      case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+      case 'application/vnd.ms-excel':
+      case 'text/csv':
+      case 'application/octet-stream':
+      case 'application/vnd.google-apps.form':
+      case 'application/vnd.google-apps.site':
+      case 'application/vnd.google-apps.drive-sdk.7081045131': // Lucidcharts
+      case 'application/zip':
+      case 'video/mp4':
+      case 'image/png':
+      case 'image/gif':
+      case 'image/jpeg':
+      case 'image/svg+xml':
+      case 'application/vnd.google-apps.video':
+      case 'application/vnd.google-apps.audio':
+      case 'application/vnd.google-apps.photo':
+      case 'application/vnd.google-apps.shortcut':
+      case 'application/vnd.google-apps.fusiontable': // Google Fusion Tables
+      case 'application/vnd.google-apps.jam': // Google Jamboard
+      case 'application/vnd.google-apps.map': // Google My Maps
+      case 'application/vnd.google-apps.script+json': // Apps Scripts
+      case 'application/vnd.google-apps.script': // Apps Scripts
+      case 'application/vnd.google-apps.drawing': // note these can be converted to PDF
+      case 'application/vnd.google-apps.unknown':
+      case 'application/vnd.jgraph.mxfile': // draw.io file - don't know how to convert
+        // case 'application/vnd.google-apps.file': // what are these?
+        console.log(`ignored mimeType ${ent.mimeType} ${ent.id} '${ent.parentName}/${ent.name}'`)
+
+        continue
+
+      default:
+        console.log(`unhandled mimeType ${ent.mimeType} ${ent.id} '${ent.parentName}/${ent.name}'`)
+        break
+    }
+  }
+
+  return fileCount
+}
+
+async function getGoogleDoc (documentId: string, folder: string, credentials: Credentials): Promise<number> {
+  try {
+    const gDoc = await readGoogleDoc(documentId, credentials.google)
+    const filename = sanitize(gDoc.title + `__id(${documentId}).txt`)
+    const parent = sanitize(folder)
+    // console.log(`sanitize=${filename}`)
+    const parentDir = path.join(DESTINATION_DIR, parent)
+    if (fs.existsSync(parentDir) !== true) {
+      fs.mkdirSync(parentDir)
+    }
+
+    // place file in the tmp dir
+    fs.writeFileSync(path.join(parentDir, filename), gDoc.content)
+  } catch (error) {
+    if (error instanceof GaxiosError) {
+      console.log(`getGoogleDoc ${documentId} err: ${error.message}`)
+    } else {
+      console.log(`getGoogleDoc ${documentId} err=`, error)
+    }
+    return 0
+  }
+  return 1
+}
+
+async function getRawDriveFile (documentId: string, name: string, folder: string, ext: string, credentials: Credentials): Promise<number> {
+  console.log(`getRawDriveFile(${name})`)
+  let size: number = 0
+  try {
+    const rawFile = await readDriveFile(documentId, credentials.google)
+    const filename = sanitize(name + `__id(${documentId})${ext}`)
+    const parent = sanitize(folder)
+    // console.log(`sanitize=${filename}`)
+    // place file in the tmp dir
+    fs.writeFileSync(path.join(DESTINATION_DIR, parent, filename), Buffer.from(rawFile.content))
+    size = rawFile.size
+  } catch (error) {
+    if (error instanceof GaxiosError) {
+      console.log(`getRawDriveFile ${documentId} err: ${error.message}`)
+    } else {
+      console.log(`getRawDriveFile ${documentId} err=`, error)
+    }
+    return 0
+  }
+  return size
+}
+
+async function getExportDriveFile (documentId: string, name: string, folder: string, ext: string, credentials: Credentials): Promise<number> {
+  console.log(`getExportDriveFile(${name})`)
+  let size: number = 0
+  try {
+    const rawFile = await exportDriveFile(documentId, credentials.google)
+    const filename = sanitize(name + `__id(${documentId})${ext}`)
+    const parent = sanitize(folder)
+    // console.log(`sanitize=${filename}`)
+    // place file in the tmp dir
+    fs.writeFileSync(path.join(DESTINATION_DIR, parent, filename), Buffer.from(rawFile.content))
+    size = rawFile.size
+  } catch (error) {
+    if (error instanceof GaxiosError) {
+      console.log(`getExportDriveFile ${documentId} err: ${error.message}`)
+    } else {
+      console.log(`getExportDriveFile ${documentId} err=`, error)
+    }
+    return 0
+  }
+  return size
 }
 
 // Read Google Doc from url
-const getGoogleDoc = async (url: string, credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
+const handleGoogleDoc = async (url: string, credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
   emptyTheTmpDir()
   console.log(credentials)
   const documentId = extractGoogleDocId(url)
@@ -328,7 +566,7 @@ const getGoogleDoc = async (url: string, credentials: Credentials): Promise<Lamb
     return {
       statusCode: 400,
       body: JSON.stringify({
-        error: 'Errro accessing the Google Doc'
+        error: 'Error accessing the Google Doc'
       })
     }
   }
@@ -410,14 +648,14 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
     const directoryLoader = new DirectoryLoader(DESTINATION_DIR, {
       '.pdf': (path) => new PDFLoader(path, { splitPages: true }),
       '.docx': (path) => new DocxLoader(path),
-      '.json': (path) => new JSONLoader(path, '/texts'),
-      '.jsonl': (path) => new JSONLinesLoader(path, '/html'),
-      '.txt': (path) => new TextLoader(path),
-      '.csv': (path) => new CSVLoader(path, 'text'),
-      '.xlsx': (path) => new CustomExcelLoader(path),
-      '.xls': (path) => new CustomExcelLoader(path)
-      // todo add after upgrading langchain
-      // '.html': (path) => new UnstructuredHTMLLoader(path),
+      '.json': (path) => new JSONLoader(path, ''),
+      '.txt': (path) => new TextLoader(path)
+      // I could not get these to work with two test files, so removing them
+      // '.jsonl': (path) => new JSONLinesLoader(path, ''),
+      // '.csv': (path) => new CSVLoader(path, 'text'),
+      // it cases an exception during loading
+      // '.xlsx': (path) => new CustomExcelLoader(path),
+      // '.xls': (path) => new CustomExcelLoader(path)
     })
 
     // const loader = new PDFLoader(filePath);
