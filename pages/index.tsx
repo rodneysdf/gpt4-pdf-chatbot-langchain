@@ -152,7 +152,7 @@ const AddUrl = (props: any) => {
         Google Doc or folder link
       </div>
       <div className="text-sm font-normal ml-2 text-center w-full"
-      >or upload a file via url
+      >or a file url
       </div>
     </div>
   );
