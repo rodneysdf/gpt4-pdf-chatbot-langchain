@@ -13,6 +13,7 @@ import { AddInput, Convert, Credentials } from './datamodels'
 import { initPinecone } from './util/pineconeclient'
 import { isLambdaMock } from './runtype'
 import { readGoogleDoc } from './util/google/gdoc'
+import { readGoogleSheet } from './util/google/gsheet'
 import { listGoogleFolder, FolderItem, folderMimeType, readDriveFile, exportDriveFile } from './util/google/gdrive'
 import { sanitize } from 'sanitize-filename-ts'
 import { env } from 'node:process'
@@ -195,27 +196,17 @@ export const add = async (event: LambdaFunctionURLEvent,
   // https://drive.google.com/drive/u/0/folders/1jtyirJ_qOPEe3DjODFhWeBajSH08zUIV
   // else file
   if (addInput.url.startsWith('https://docs.google.com/document/d/')) {
-    // handle Gdoc
+    // handle GDoc
     return await handleGoogleDoc(addInput.url, credentials)
   } else if (addInput.url.startsWith('https://docs.google.com/spreadsheets/d/')) {
-    // handle Gsheet
+    // handle GSheet
+    return await handleGoogleSheet(addInput.url, credentials)
   } else if (addInput.url.startsWith('https://drive.google.com/drive/')) {
     // handle an entire folder
     return await handleGoogleDriveFolder(addInput.url, credentials)
   } else {
     // upload as a regular file
     return await fileUpload(addInput.url, credentials)
-  }
-
-  return {
-    statusCode: 400,
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      error: 'url not recognized'
-
-    })
   }
 }
 
@@ -310,13 +301,14 @@ const handleGDriveFiles = async (list: FolderItem[], credentials: Credentials): 
         }
         break
       }
-      case 'application/vnd.google-apps.spreadsheet':
-        // handle it
-        // can export to CSV - https://developers.google.com/drive/api/guides/ref-export-formats
-        // or get it by cells & sheets (preferred)
-        fileCount = fileCount + 1
-        totalSize = totalSize + (+(ent.size))
+      case 'application/vnd.google-apps.spreadsheet': {
+        const success = await getGoogleSheet(ent.id, ent.parentName, credentials)
+        fileCount = fileCount + success
+        if (success === 1) {
+          totalSize = totalSize + (+(ent.size))
+        }
         break
+      }
       case 'application/vnd.google-apps.presentation': {
         // These can be exported as pdf or text. We'll have it go straight to text
         // https://developers.google.com/drive/api/guides/ref-export-formats
@@ -343,14 +335,6 @@ const handleGDriveFiles = async (list: FolderItem[], credentials: Credentials): 
         }
         break
       }
-      // case 'text/csv': {
-      //   const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.csv', credentials)
-      //   if (success > 0) {
-      //     fileCount = fileCount + 1
-      //     totalSize = totalSize + success
-      //   }
-      //   break
-      // }
       case 'application/json': {
         const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.json', credentials)
         if (success > 0) {
@@ -376,6 +360,14 @@ const handleGDriveFiles = async (list: FolderItem[], credentials: Credentials): 
         break
       }
 
+      // case 'text/csv': {
+      //   const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.csv', credentials)
+      //   if (success > 0) {
+      //     fileCount = fileCount + 1
+      //     totalSize = totalSize + success
+      //   }
+      //   break
+      // }
       // case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { // for files like 'Test_XLSX1.xlsx'
       //   const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.xlsx', credentials)
       //   if (success > 0) {
@@ -468,6 +460,29 @@ async function getGoogleDoc (documentId: string, folder: string, credentials: Cr
   }
   return 1
 }
+async function getGoogleSheet (documentId: string, folder: string, credentials: Credentials): Promise<number> {
+  try {
+    const gDoc = await readGoogleSheet(documentId, credentials.google)
+    const filename = sanitize(gDoc.title + `__id(${documentId}).txt`)
+    const parent = sanitize(folder)
+    // console.log(`sanitize=${filename}`)
+    const parentDir = path.join(DESTINATION_DIR, parent)
+    if (fs.existsSync(parentDir) !== true) {
+      fs.mkdirSync(parentDir)
+    }
+
+    // place file in the tmp dir
+    fs.writeFileSync(path.join(parentDir, filename), gDoc.content)
+  } catch (error) {
+    if (error instanceof GaxiosError) {
+      console.log(`getGoogleDoc ${documentId} err: ${error.message}`)
+    } else {
+      console.log(`getGoogleDoc ${documentId} err=`, error)
+    }
+    return 0
+  }
+  return 1
+}
 
 async function getRawDriveFile (documentId: string, name: string, folder: string, ext: string, credentials: Credentials): Promise<number> {
   console.log(`getRawDriveFile(${name})`)
@@ -536,10 +551,10 @@ const handleGoogleDoc = async (url: string, credentials: Credentials): Promise<L
     console.log(`sanitize=${filename}`)
     // place file in the tmp dir
     fs.writeFileSync(path.join(DESTINATION_DIR, filename), gDoc.content)
-    console.log(`gdoc content len=${gDoc.content.length}`)
+    // console.log(`gdoc content len=${gDoc.content.length}`)
 
     // is the file there?
-    listdir(DESTINATION_DIR)
+    // listdir(DESTINATION_DIR)
   } catch (error) {
     emptyTheTmpDir()
 
@@ -567,6 +582,66 @@ const handleGoogleDoc = async (url: string, credentials: Credentials): Promise<L
       statusCode: 400,
       body: JSON.stringify({
         error: 'Error accessing the Google Doc'
+      })
+    }
+  }
+
+  return await langChainIngest(credentials)
+}
+
+// Read Google Sheet from url
+const handleGoogleSheet = async (url: string, credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
+  emptyTheTmpDir()
+  const spreadsheetId = extractGoogleSheetId(url)
+  if (spreadsheetId.length === 0) {
+    return {
+      statusCode: 400,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        error: 'url not recognized'
+
+      })
+    }
+  }
+  try {
+    const gDoc = await readGoogleSheet(spreadsheetId, credentials.google)
+    const filename = sanitize(gDoc.title + `__id(${spreadsheetId}).txt`)
+    console.log(`sanitize=${filename}`)
+    // place file in the tmp dir
+    fs.writeFileSync(path.join(DESTINATION_DIR, filename), gDoc.content)
+    // console.log(`gsheet content len=${gDoc.content.length}`)
+
+    // is the file there?
+    // listdir(DESTINATION_DIR)
+  } catch (error) {
+    emptyTheTmpDir()
+
+    if (error instanceof GaxiosError) {
+      if (error.message === 'The caller does not have permission') {
+        return {
+          statusCode: 401,
+          body: JSON.stringify({
+            error: 'Permission Denied'
+          })
+        }
+      } else if (error.message === 'Requested entity was not found.') {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({
+            error: 'Spreadsheet not found'
+          })
+        }
+      } else {
+        console.log('GaxiosError', error.message, error)
+      }
+    }
+    console.log('ingest error', error)
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        error: 'Error accessing the Google Spreadsheet'
       })
     }
   }
@@ -703,6 +778,12 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
 // https://docs.google.com/document/d/1dRmrPrHK356JymDX4xp8ImQ8zNjSttMJAx0DyEtGGGk/edit
 function extractGoogleDocId (url: string): string {
   const match = url.match(/https:\/\/docs\.google\.com\/document\/d\/([\w-]{25,})/)
+  return (match != null) ? match[1] : ''
+}
+
+// https://docs.google.com/spreadsheets/d/1lTBwij-V3C2x49ys-A4z0bbGnVMoINOx5bjF3aKniXs/edit
+function extractGoogleSheetId (url: string): string {
+  const match = url.match(/https:\/\/docs\.google\.com\/spreadsheets\/d\/([\w-]{25,})/)
   return (match != null) ? match[1] : ''
 }
 
