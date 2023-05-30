@@ -28,7 +28,8 @@ const jwtVerifier = CognitoJwtVerifier.create({
   userPoolId,
   tokenUse: 'access',
   clientId: awsmobile.aws_user_pools_web_client_id,
-  scope: ['openid', 'profile']
+  scope: ['openid', 'profile'],
+  graceSeconds: 5
 })
 
 // Lambda entry point
@@ -60,7 +61,8 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
       // https://repost.aws/knowledge-center/decode-verify-cognito-json-token
       // If the token is not valid, an error is thrown:
       tokenPayload = await jwtVerifier.verify(accessToken)
-      console.log('Token is valid:', tokenPayload)
+      console.log('User:', tokenPayload.sub, tokenPayload.username)
+      
     } catch (error) {
       console.log('error validating authorization:', error)
 
