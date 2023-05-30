@@ -20,10 +20,8 @@ import { env } from 'node:process'
 import { GaxiosError } from 'gaxios'
 import axios from 'axios'
 import { validateOpenAIKey } from './index'
-
-// import { CSVLoader } from 'langchain/document_loaders/fs/csv'
-// import { CustomExcelLoader } from './util/customExcelLoader'
-// import { JSONLinesLoader } from 'langchain/document_loaders/fs/json'
+import { CSVLoader } from 'langchain/document_loaders/fs/csv'
+import { CustomExcelLoader } from './util/customExcelLoader'
 
 const Busboy = require('busboy')
 const fs = require('fs')
@@ -359,31 +357,30 @@ const handleGDriveFiles = async (list: FolderItem[], credentials: Credentials): 
         }
         break
       }
-
-      // case 'text/csv': {
-      //   const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.csv', credentials)
-      //   if (success > 0) {
-      //     fileCount = fileCount + 1
-      //     totalSize = totalSize + success
-      //   }
-      //   break
-      // }
-      // case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { // for files like 'Test_XLSX1.xlsx'
-      //   const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.xlsx', credentials)
-      //   if (success > 0) {
-      //     fileCount = fileCount + 1
-      //     totalSize = totalSize + success
-      //   }
-      //   break
-      // }
-      // case 'application/vnd.ms-excel': { // for files like 'IdeasExportTemplate.xls'
-      //   const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.xls', credentials)
-      //   if (success > 0) {
-      //     fileCount = fileCount + 1
-      //     totalSize = totalSize + success
-      //   }
-      //   break
-      // }
+      case 'text/csv': {
+        const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.csv', credentials)
+        if (success > 0) {
+          fileCount = fileCount + 1
+          totalSize = totalSize + success
+        }
+        break
+      }
+      case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': { // for files like 'Test_XLSX1.xlsx'
+        const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.xlsx', credentials)
+        if (success > 0) {
+          fileCount = fileCount + 1
+          totalSize = totalSize + success
+        }
+        break
+      }
+      case 'application/vnd.ms-excel': { // for files like 'IdeasExportTemplate.xls'
+        const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.xls', credentials)
+        if (success > 0) {
+          fileCount = fileCount + 1
+          totalSize = totalSize + success
+        }
+        break
+      }
       // case 'application/octet-stream': { // binary files
       //   // these are the truly unknown-to-Google file types
       //   if (ent.name.endsWith('.jsonl')) {
@@ -398,9 +395,6 @@ const handleGDriveFiles = async (list: FolderItem[], credentials: Credentials): 
 
       // skip these types
       case folderMimeType: // skip folders, only handle files
-      case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-      case 'application/vnd.ms-excel':
-      case 'text/csv':
       case 'application/octet-stream':
       case 'application/vnd.google-apps.form':
       case 'application/vnd.google-apps.site':
@@ -723,14 +717,11 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
     const directoryLoader = new DirectoryLoader(DESTINATION_DIR, {
       '.pdf': (path) => new PDFLoader(path, { splitPages: true }),
       '.docx': (path) => new DocxLoader(path),
-      '.json': (path) => new JSONLoader(path, ''),
-      '.txt': (path) => new TextLoader(path)
-      // I could not get these to work with two test files, so removing them
-      // '.jsonl': (path) => new JSONLinesLoader(path, ''),
-      // '.csv': (path) => new CSVLoader(path, 'text'),
-      // it cases an exception during loading
-      // '.xlsx': (path) => new CustomExcelLoader(path),
-      // '.xls': (path) => new CustomExcelLoader(path)
+      '.json': (path) => new JSONLoader(path),
+      '.txt': (path) => new TextLoader(path),
+      '.csv': (path) => new CSVLoader(path),
+      '.xlsx': (path) => new CustomExcelLoader(path),
+      '.xls': (path) => new CustomExcelLoader(path)
     })
 
     // const loader = new PDFLoader(filePath);

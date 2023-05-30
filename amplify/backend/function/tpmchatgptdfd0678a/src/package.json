@@ -28,6 +28,7 @@
     "sanitize-filename-ts": "^1.0.2",
     "source-map-support": "^0.5.21",
     "typeorm": "^0.3.16",
+    "xlsx": "^0.18.5",
     "yerror": "^6.2.1"
   },
   "devDependencies": {

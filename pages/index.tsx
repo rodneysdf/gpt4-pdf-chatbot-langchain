@@ -81,7 +81,7 @@ const DocumentUpload = (props: any) => {
         className="hidden"
       />
       <div className="text-sm font-normal ml-2 text-center w-full">
-        pdf,docx,txt,json
+        pdf,docx,txt,json,csv,xls,xlsx
         <br />
         (6mb total size)
       </div>
