@@ -18,10 +18,11 @@ export default function toBb26 (number: number): string {
   let string = ''
   let _number = number
   while (_number > 0) {
-    string = toChar(_number % 26 || 26) + string
+    const mod = _number % 26
+    string = toChar((mod !== 0) ? mod : 26) + string
     _number = Math.floor((_number - 1) / 26)
   }
-  return string;
+  return string
 }
 
 function toChar (number: number): string {

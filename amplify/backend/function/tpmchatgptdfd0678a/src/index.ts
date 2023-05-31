@@ -33,7 +33,7 @@ const jwtVerifier = CognitoJwtVerifier.create({
   graceSeconds: 5
 })
 
-let tokenPayload    // returned from Cognito
+let tokenPayload // returned from Cognito
 let user: User
 
 // Lambda entry point
@@ -82,7 +82,13 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
 
   // get user data
   user = await getUser(tokenPayload.sub)
-  console.log('user from storage', user)
+  console.log(`user: ${user.sub}, namespace=${user.namespace}`)
+  if (user.sub === '' || user.namespace === '') {
+    return {
+      statusCode: 201,
+      body: JSON.stringify({ message: 'unknown user' })
+    }
+  }
 
   // load credentials needed to call ChatGPT
   let credentials: Credentials
@@ -103,9 +109,12 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
     }
   }
 
-  console.log(event.requestContext.http.path)
+  // overrite default credentials with per-user
+  credentials.pinecone.namespace = user.namespace
+
+  console.log(event?.requestContext?.http?.path)
   // route the request
-  switch (event.requestContext.http.path) {
+  switch (event?.requestContext?.http?.path) {
     case '/api/chat':
       return await chat(event, credentials)
     case '/api/upload':

@@ -4,7 +4,7 @@ import {
   UpdateItemCommand, UpdateItemCommandInput,
   PutItemCommand, PutItemCommandInput
 } from '@aws-sdk/client-dynamodb'
-import { marshall } from '@aws-sdk/util-dynamodb'
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb'
 import toBb26 from './to-bb26'
 
 const region: string = process.env.REGION ?? ''
@@ -25,11 +25,14 @@ export async function getUser (subId: string): Promise<User> {
   try {
     const data = await client.send(new GetItemCommand(params))
     // process data.
-    console.log('typeof data', typeof data)
-    console.log(data)
+    if (data?.$metadata?.httpStatusCode !== 200) {
+      console.log('getUser failed with httpStatus', data?.$metadata?.httpStatusCode)
+      console.log('getUser typeof data', typeof data)
+      console.log('getUser data', data)
+    }
     if (data?.Item != null) {
-      console.log('getUser got', data?.Item)
-      return new User('sub', 'nspace')
+      const existingUser = unmarshall(data.Item)
+      return new User(existingUser.sub, existingUser.namespace)
     }
     createNewUser = true
   } catch (error) {
@@ -60,49 +63,106 @@ async function getIncrementedCounter (): Promise<string> {
     ExpressionAttributeValues: marshall({
       ':val': 1
     }),
-    UpdateExpression: 'set counter = counter + :val'
+    UpdateExpression: 'set namespaces = namespaces + :val',
+    ConditionExpression: 'attribute_exists(namespaces)',
+    ReturnValues: 'UPDATED_NEW'
   }
   try {
-    const results = await client.send(new UpdateItemCommand(params))
-    console.log('getIncrementedCounter ', typeof results)
-    console.log('getIncrementedCounter', results)
-    return toBb26(5)
+    const data = await client.send(new UpdateItemCommand(params))
+    if (data?.$metadata?.httpStatusCode !== 200) {
+      console.log('getIncrementedCounter failed with httpStatus', data?.$metadata?.httpStatusCode)
+      console.log('getIncrementedCounter typeof data', typeof data)
+      console.log('getIncrementedCounter  data', data)
+    }
+    if (data?.Attributes != null) {
+      const retval = unmarshall(data?.Attributes)
+      return prependEnv(toBb26(retval.namespaces))
+    }
   } catch (err) {
-    console.error('getIncrementedCounter exception', err)
-    // todo if missing, create it
-    return toBb26(4)
+    if (err instanceof Error) {
+      if (err?.name === 'ConditionalCheckFailedException') {
+        // IncrementedCounter does not exist
+        const value = await createIncrementedCounter()
+        return prependEnv(toBb26(value))
+      } else {
+        console.error('getIncrementedCounter exception t', typeof err)
+        console.error('getIncrementedCounter exception', err)
+      }
+    }
   }
+  return ''
+}
+const awsDevProd: string = process.env.ENV ?? ''
+function prependEnv (s: string): string {
+  if (awsDevProd === 'dev' && s.length > 0) {
+    return 'd' + s
+  }
+  return s
+}
+
+const NAMESPACE_START_NUMBER: number = 27
+async function createIncrementedCounter (): Promise<number> {
+  const params: UpdateItemCommandInput = {
+    TableName,
+    Key: marshall({
+      sub: NamespaceCounter
+    }),
+    ExpressionAttributeValues: marshall({
+      ':val': NAMESPACE_START_NUMBER
+    }),
+    UpdateExpression: 'set namespaces = :val',
+    ReturnValues: 'UPDATED_NEW'
+  }
+
+  try {
+    const data = await client.send(new UpdateItemCommand(params))
+    if (data?.$metadata?.httpStatusCode !== 200) {
+      console.log('createIncrementedCounter failed with httpStatus', data?.$metadata?.httpStatusCode)
+      console.log('createIncrementedCounter typeof data', typeof data)
+      console.log('createIncrementedCounter  data', data)
+    }
+    if (data?.Attributes != null) {
+      const retval = unmarshall(data?.Attributes)
+      return retval.namespaces
+    }
+  } catch (error) {
+    // error handling.
+    // not found takes this path
+    console.log('createIncrementedCounter error', error)
+  }
+  return 0
 }
 
 export async function createUser (subId: string): Promise<User> {
-  const next = await getIncrementedCounter()
+  const namespace = await getIncrementedCounter()
 
   const params: PutItemCommandInput = {
     TableName,
     Item: marshall({
       sub: toStoredUsername(subId),
-      namespace: next
+      namespace
     })
   }
 
   try {
     const data = await client.send(new PutItemCommand(params))
-    // process data.
-    console.log('createUser typeof data', typeof data)
-    console.log('createUser  data', data)
-    return {
-      sub: '',
-      namespace: ''
+    if (data?.$metadata?.httpStatusCode !== 200) {
+      console.log('createUser failed with httpStatus', data?.$metadata?.httpStatusCode)
+      console.log('createUser typeof data', typeof data)
+      console.log('createUser data', data)
     }
+
+    if (namespace !== '') {
+      // todo create a vector namespace
+
+    }
+    return new User(subId, namespace)
   } catch (error) {
     // error handling.
     // not found takes this path
     console.log('createUser error', error)
   }
-  return {
-    sub: '',
-    namespace: ''
-  }
+  return new User('', '')
 }
 
 export class User {
@@ -110,7 +170,11 @@ export class User {
   namespace: string
 
   constructor (subIn: string, namespaceIn: string) {
-    this.sub = subIn
+    if (subIn.startsWith(BaseUser)) {
+      this.sub = subIn.slice(BaseUser.length)
+    } else {
+      this.sub = subIn
+    }
     this.namespace = namespaceIn
   }
 }

@@ -1,6 +1,6 @@
 {
   "resourceName": "tpmai",
-  "tableName": "tpmaiuser",
+  "tableName": "tpmaiusers",
   "partitionKey": {
     "fieldName": "sub",
     "fieldType": "string"

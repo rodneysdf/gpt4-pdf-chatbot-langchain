@@ -84,7 +84,7 @@ export const chat = async (event: LambdaFunctionURLEvent,
       {
         pineconeIndex: index,
         textKey: 'text',
-        namespace: credentials.pinecone.namespace // namespace comes from your config folder
+        namespace: credentials.pinecone.namespace
       }
     )
 
