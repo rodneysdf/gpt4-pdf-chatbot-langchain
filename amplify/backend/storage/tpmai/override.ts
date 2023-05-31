@@ -5,8 +5,4 @@ export function override(resources: AmplifyDDBResourceTemplate, amplifyProjectIn
     delete(resources.dynamoDBTable.provisionedThroughput)
     resources.dynamoDBTable.billingMode = "PAY_PER_REQUEST"
   }
-
-  if (resources?.dynamoDBTable?.streamSpecification != null) {
-    delete( resources.dynamoDBTable.streamSpecification)
-  }
 }
