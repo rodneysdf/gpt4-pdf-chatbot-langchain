@@ -14,7 +14,9 @@
     "lint:fix": "npm run lint:eslint -- --fix && npm run lint:markdown -- --fix"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.342.0",
     "@aws-sdk/client-ssm": "^3.341.0",
+    "@aws-sdk/util-dynamodb": "^3.342.0",
     "@googleapis/docs": "^2.0.1",
     "@pinecone-database/pinecone": "^0.1.6",
     "aws-jwt-verify": "^4.0.0",
@@ -24,10 +26,8 @@
     "langchain": "^0.0.83",
     "mammoth": "^1.5.1",
     "pdf-parse": "^1.1.1",
-    "redis": "^4.6.6",
     "sanitize-filename-ts": "^1.0.2",
     "source-map-support": "^0.5.21",
-    "typeorm": "^0.3.16",
     "xlsx": "^0.18.5",
     "yerror": "^6.2.1"
   },

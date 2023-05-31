@@ -32,5 +32,15 @@ export type AmplifyDependentResourcesAttributes = {
       "Region": "string",
       "tpmchatLambdaFuncUrl": "string"
     }
+  },
+  "storage": {
+    "tpmai": {
+      "Arn": "string",
+      "Name": "string",
+      "PartitionKeyName": "string",
+      "PartitionKeyType": "string",
+      "Region": "string",
+      "StreamArn": "string"
+    }
   }
 }

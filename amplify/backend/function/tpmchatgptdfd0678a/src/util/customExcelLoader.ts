@@ -1,33 +1,36 @@
 import { Document } from 'langchain/document'
-import { readFile } from 'fs/promises'
-import { BaseDocumentLoader } from 'langchain/document_loaders'
+// import { readFile } from 'fs/promises'
+// import { BaseDocumentLoader } from 'langchain/document_loaders'
+import { BufferLoader } from 'langchain/document_loaders/fs/buffer'
 import xlsx from 'xlsx'
 
-export abstract class BufferLoader extends BaseDocumentLoader {
-  constructor (public filePathOrBlob: string | Blob) {
-    super()
-  }
+// from https://github.com/mayooear/gpt4-pdf-chatbot-langchain/pull/307
 
-  protected abstract parse (
-    raw: Buffer,
-    metadata: Document['metadata'],
-  ): Promise<Document[]>
+// export abstract class BufferLoader extends BaseDocumentLoader {
+//   constructor (public filePathOrBlob: string | Blob) {
+//     super()
+//   }
 
-  public async load (): Promise<Document[]> {
-    let buffer: Buffer
-    let metadata: Record<string, string>
-    if (typeof this.filePathOrBlob === 'string') {
-      buffer = await readFile(this.filePathOrBlob)
-      metadata = { source: this.filePathOrBlob }
-    } else {
-      buffer = await this.filePathOrBlob
-        .arrayBuffer()
-        .then((ab) => Buffer.from(ab))
-      metadata = { source: 'blob', blobType: this.filePathOrBlob.type }
-    }
-    return await this.parse(buffer, metadata)
-  }
-}
+//   protected abstract parse (
+//     raw: Buffer,
+//     metadata: Document['metadata'],
+//   ): Promise<Document[]>
+
+//   public async load (): Promise<Document[]> {
+//     let buffer: Buffer
+//     let metadata: Record<string, string>
+//     if (typeof this.filePathOrBlob === 'string') {
+//       buffer = await readFile(this.filePathOrBlob)
+//       metadata = { source: this.filePathOrBlob }
+//     } else {
+//       buffer = await this.filePathOrBlob
+//         .arrayBuffer()
+//         .then((ab) => Buffer.from(ab))
+//       metadata = { source: 'blob', blobType: this.filePathOrBlob.type }
+//     }
+//     return await this.parse(buffer, metadata)
+//   }
+// }
 
 export class CustomExcelLoader extends BufferLoader {
   public async parse (

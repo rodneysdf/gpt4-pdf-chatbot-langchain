@@ -9,6 +9,13 @@
       "tpmchatgpt6780338c": [
         "read"
       ]
+    },
+    "storage": {
+      "tpmai": [
+        "create",
+        "read",
+        "update"
+      ]
     }
   }
 }

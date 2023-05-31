@@ -19,6 +19,18 @@
     "secretsPathAmplifyAppId": {
       "Type": "String"
     },
+    "storagetpmaiName": {
+      "Type": "String",
+      "Default": "storagetpmaiName"
+    },
+    "storagetpmaiArn": {
+      "Type": "String",
+      "Default": "storagetpmaiArn"
+    },
+    "storagetpmaiStreamArn": {
+      "Type": "String",
+      "Default": "storagetpmaiStreamArn"
+    },
     "authtpmchatgpt6780338cUserPoolId": {
       "Type": "String",
       "Default": "authtpmchatgpt6780338cUserPoolId"
@@ -100,10 +112,19 @@
                 ]
               ]
             },
+            "AUTHNAME": "tpmchatgpt6780338c",
+            "STORAGE_TPMAI_NAME": {
+              "Ref": "storagetpmaiName"
+            },
+            "STORAGE_TPMAI_ARN": {
+              "Ref": "storagetpmaiArn"
+            },
+            "STORAGE_TPMAI_STREAMARN": {
+              "Ref": "storagetpmaiStreamArn"
+            },
             "AUTH_TPMCHATGPT6780338C_USERPOOLID": {
               "Ref": "authtpmchatgpt6780338cUserPoolId"
-            },
-            "AUTHNAME": "tpmchatgpt6780338c"
+            }
           }
         },
         "Role": {
@@ -363,6 +384,38 @@
                       {
                         "Ref": "authtpmchatgpt6780338cUserPoolId"
                       }
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:Put*",
+                "dynamodb:Create*",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:Get*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:List*",
+                "dynamodb:Describe*",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:Update*",
+                "dynamodb:RestoreTable*"
+              ],
+              "Resource": [
+                {
+                  "Ref": "storagetpmaiArn"
+                },
+                {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      {
+                        "Ref": "storagetpmaiArn"
+                      },
+                      "index/*"
                     ]
                   ]
                 }

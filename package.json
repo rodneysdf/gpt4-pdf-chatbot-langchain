@@ -11,7 +11,7 @@
     "start": "next start",
     "type-check": "tsc --noEmit",
     "lint": "eslint --ignore-path .gitignore \"**/*.+(ts|js|tsx)\"",
-    "format": "prettier --ignore-path .gitignore \"**/*.+(ts|js|tsx)\" --write",
+    "format": "prettier --space-before-function-paren --ignore-path .gitignore \"**/*.+(ts|js|tsx)\" --write",
     "ingest": "tsx -r dotenv/config scripts/ingest-data.ts",
     "deploy": "next build && next export -o build",
     "amplify:tpmchatgptdfd0678a": "npm run bldenv && npm run bldtypes && cd amplify/backend/function/tpmchatgptdfd0678a/src && tsc -p tsconfig.json && cd -",
@@ -19,8 +19,11 @@
     "bldtypes": "quicktype -l typescript --runtime-typecheck-ignore-unknown-properties --all-properties-optional --telemetry disable --src amplify/backend/function/tpmchatgptdfd0678a/src/interface/ -o amplify/backend/function/tpmchatgptdfd0678a/src/interfaces.ts && quicktype -l typescript --runtime-typecheck-ignore-unknown-properties --telemetry disable --src amplify/backend/function/tpmchatgptdfd0678a/src/data/ -o amplify/backend/function/tpmchatgptdfd0678a/src/datamodels.ts"
   },
   "dependencies": {
+    "@aws-amplify/cli-extensibility-helper": "^3.0.8",
     "@aws-amplify/ui-react": "^4.6.1",
+    "@aws-sdk/client-dynamodb": "^3.342.0",
     "@aws-sdk/client-ssm": "^3.341.0",
+    "@aws-sdk/util-dynamodb": "^3.342.0",
     "@brokerloop/ttlcache": "^3.2.3",
     "@googleapis/docs": "^2.0.1",
     "@microsoft/fetch-event-source": "^2.0.1",

@@ -9,6 +9,7 @@ import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './interfaces'
 import { getParameter } from './util/parameterStore'
 import { isLambdaMock } from './runtype'
 import axios from 'axios'
+import { getUser, User } from './util/storage'
 
 // Disable auth when running as an amplify mock
 const performAuth: boolean = !isLambdaMock
@@ -31,6 +32,9 @@ const jwtVerifier = CognitoJwtVerifier.create({
   scope: ['openid', 'profile'],
   graceSeconds: 5
 })
+
+let tokenPayload    // returned from Cognito
+let user: User
 
 // Lambda entry point
 export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunctionURLResponse> => {
@@ -55,14 +59,12 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
     const accessToken = event.headers.authorization.substring(7)
     // console.log("auth token: ", accessToken)
 
-    let tokenPayload
     try {
       // https://github.com/awslabs/aws-jwt-verify
       // https://repost.aws/knowledge-center/decode-verify-cognito-json-token
       // If the token is not valid, an error is thrown:
       tokenPayload = await jwtVerifier.verify(accessToken)
-      console.log('User:', tokenPayload.sub, tokenPayload.username)
-      
+      console.log(`User: ${tokenPayload.sub}, ${tokenPayload.username}`)
     } catch (error) {
       console.log('error validating authorization:', error)
 
@@ -71,7 +73,16 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
         body: JSON.stringify({ message: 'Unauthorized' })
       }
     }
+  } else {
+    tokenPayload = {
+      sub: 'fakeuser',
+      username: 'fakeusername'
+    }
   }
+
+  // get user data
+  user = await getUser(tokenPayload.sub)
+  console.log('user from storage', user)
 
   // load credentials needed to call ChatGPT
   let credentials: Credentials
