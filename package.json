@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "author": "Mayooear<twitter:@mayowaoshin>",
+  "author": "Rodney Smith",
   "type": "module",
   "scripts": {
     "dev": "amplify/hooks/update_env.sh && next dev",
