@@ -80,10 +80,12 @@ const DocumentUpload = (props: any) => {
         type="file"
         className="hidden"
       />
-      <div className="text-sm font-normal ml-2 text-center w-full">
+      <div className="text-sm font-normal text-center w-full">
         pdf,docx,txt,json,csv,xls,xlsx
         <br />
-        (6mb total size)
+        (each upload set limited
+        <br />
+        to 6mb total size)
       </div>
     </div>
   );
@@ -150,14 +152,14 @@ const AddUrl = (props: any) => {
 
   return (
     <div>
-      <button onClick={promptForUrl} className="border px-2 py-1 rounded-md w-40 shadow-slate-300 shadow hover:bg-slate-500/10">
-        {loading ? <LoadingDots color="#000" /> : 'Add url'}
+      <button onClick={promptForUrl} className="border px-2 py-1 rounded-md w-full shadow-slate-300 shadow hover:bg-slate-500/10">
+        {loading ? <LoadingDots color="#000" /> : 'Add by url'}
       </button>
-      <div className="text-sm font-normal ml-2 text-center w-full">
-        Google Doc or Drive
+      <div className="text-sm font-normal text-center w-full">
+        Google Drive folder or Doc
       </div>
-      <div className="text-sm font-normal ml-2 text-center w-full"
-      >folder link, or a file url
+      <div className="text-sm font-normal text-center w-full"
+      >link, or a file url
       </div>
     </div>
   );
@@ -479,7 +481,7 @@ export default function Home() {
                   </span>
                 )}
               </div>
-              <div className="flex flex-row gap-3 ml-2 mb-2">
+              <div className="flex flex-row gap-5 ml-2 mb-2">
                 <AddUrl onSetCollectionSize={setCollectionSize} openAiKey={openAiApiKey} anthropicKey={anthropicClaudeKey} />
                 <DocumentUpload onSetCollectionSize={setCollectionSize} openAiKey={openAiApiKey} anthropicKey={anthropicClaudeKey} />
                 <PurgeDocuments onSetCollectionSize={setCollectionSize} onClearMessageState={clearMessageState} />

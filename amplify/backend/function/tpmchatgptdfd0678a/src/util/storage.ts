@@ -76,14 +76,14 @@ async function getIncrementedCounter (): Promise<string> {
     }
     if (data?.Attributes != null) {
       const retval = unmarshall(data?.Attributes)
-      return prependEnv(toBb26(retval.namespaces))
+      return prependEnv(toBb26(retval.namespaces).toLowerCase())
     }
   } catch (err) {
     if (err instanceof Error) {
       if (err?.name === 'ConditionalCheckFailedException') {
         // IncrementedCounter does not exist
         const value = await createIncrementedCounter()
-        return prependEnv(toBb26(value))
+        return prependEnv(toBb26(value).toLowerCase())
       } else {
         console.error('getIncrementedCounter exception t', typeof err)
         console.error('getIncrementedCounter exception', err)
@@ -95,7 +95,7 @@ async function getIncrementedCounter (): Promise<string> {
 const awsDevProd: string = process.env.ENV ?? ''
 function prependEnv (s: string): string {
   if (awsDevProd === 'dev' && s.length > 0) {
-    return 'd' + s
+    return 'd-' + s
   }
   return s
 }
