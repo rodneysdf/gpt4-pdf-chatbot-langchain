@@ -53,7 +53,7 @@ const DocumentUpload = (props: any) => {
     } catch (err: any) {
       if (axios.isAxiosError(err)) {
         console.log('A?', err?.response)
-        alert(`Error '${err?.response?.data?.error}`);
+        alert(`Failed upload '${err?.response?.data?.error}'`);
       } else if (err === 'No current user') {
         signinError()
       } else {
@@ -96,7 +96,7 @@ const AddUrl = (props: any) => {
   const [loading, setLoading] = useState(false);
 
   const promptForUrl = () => {
-    const url = prompt('Enter a Google Doc, Sheet, or folder link, or add a file via url', 'https://example.com');
+    const url = prompt('Enter a Google Doc, Sheet, Drive folder link, or add a file via url', 'https://example.com');
 
     if (url === null) {
       return;
@@ -127,7 +127,12 @@ const AddUrl = (props: any) => {
         if (err?.response?.status == 401) {
           alert(`Permission to the link was denied. Please share the document\nwith 'p2-spec-access@devfactory.com' and then re-add.`);
         } else if (err?.response?.status == 404) {
-          alert(`${err?.response?.data?.error}. Please check the url / link you are adding.`);
+          const msg: string = (err?.response?.data?.error as string)
+          if (msg.startsWith('No files found in drive')) {
+            alert(`${err?.response?.data?.error}. Please check that the folder is shared with 'p2-spec-access@devfactory.com'.`);
+          } else {
+            alert(`${err?.response?.data?.error}. Please check the url / link you are adding.`);
+          }
         } else {
           console.log('A?', err?.response)
           alert(`Error when adding the url: ${err?.response?.data?.error}`);
@@ -149,10 +154,10 @@ const AddUrl = (props: any) => {
         {loading ? <LoadingDots color="#000" /> : 'Add url'}
       </button>
       <div className="text-sm font-normal ml-2 text-center w-full">
-        Google Doc or folder link
+        Google Doc or Drive
       </div>
       <div className="text-sm font-normal ml-2 text-center w-full"
-      >or a file url
+      >folder link, or a file url
       </div>
     </div>
   );
@@ -313,6 +318,7 @@ export default function Home() {
 
   useEffect(() => {
     messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
+    textAreaRef?.current?.focus()
   }, [messages]);
 
   const postChat = makePostChat(

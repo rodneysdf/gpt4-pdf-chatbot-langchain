@@ -93,6 +93,72 @@
       "type": "manual"
     }
   },
+  "parameters": {
+    "AMPLIFY_auth_tpmchatgpt6780338c_googleClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "tpmchatgpt6780338c"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgpt6780338cPreSignup_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgpt6780338cPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgpt6780338cPreSignup_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgpt6780338cPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_secretsPathAmplifyAppId": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_appId": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_type": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    }
+  },
   "storage": {
     "tpmai": {
       "providerPlugin": "awscloudformation",

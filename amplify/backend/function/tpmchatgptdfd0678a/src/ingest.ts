@@ -235,7 +235,7 @@ const handleGoogleDriveFolder = async (url: string, credentials: Credentials): P
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        error: 'no files found in drive'
+        error: 'No files found in drive'
 
       })
     }
@@ -724,7 +724,6 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
       '.xls': (path) => new CustomExcelLoader(path)
     })
 
-    // const loader = new PDFLoader(filePath);
     const rawDocs = await directoryLoader.load()
 
     /* Split text into chunks */
@@ -754,13 +753,21 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
     emptyTheTmpDir()
     return await collection(nullLambdaFunctionURLEvent(), credentials)
   } catch (error) {
+    console.log('Ingest lc error:', error)
     emptyTheTmpDir()
-    console.log('lc error', error)
-    console.log(typeof error)
+    if (error instanceof Error) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          error: `${error.name} - ${error.message}`
+        })
+      }
+    }
+    const shorterror = (error as string).slice(0,50)
     return {
       statusCode: 400,
       body: JSON.stringify({
-        error: 'Failed to ingest your data'
+        error: `Failed to ingest your data - ${error}`
       })
     }
   }
