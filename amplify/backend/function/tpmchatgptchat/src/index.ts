@@ -1,7 +1,5 @@
 import 'source-map-support/register'
-
-import { collection, purge } from './collection'
-import { add, upload } from './ingest'
+import { chat } from './chat'
 import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './common/interfaces'
 import { auth, tokenPayload } from './common/auth'
 import { loadUser } from './common/user'
@@ -11,7 +9,7 @@ console.log('env', process.env)
 
 // Lambda entry point
 export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunctionURLResponse> => {
-  if (!(event?.requestContext?.http?.method === 'POST' || event?.requestContext?.http?.method === 'GET')) {
+  if (!(event?.requestContext?.http?.method === 'POST')) {
     return {
       statusCode: 405,
       body: JSON.stringify({
@@ -37,15 +35,8 @@ export const handler = async (event: LambdaFunctionURLEvent): Promise<LambdaFunc
 
   console.log(event?.requestContext?.http?.path)
   // route the request
-  switch (event?.requestContext?.http?.path) {
-    case '/api/upload':
-      return await upload(event, credentials)
-    case '/api/add':
-      return await add(event, credentials)
-    case '/api/purge':
-      return await purge(event, credentials)
-    case '/api/collection':
-      return await collection(event, credentials)
+  if (event?.requestContext?.http?.path === '/api/chat') {
+    return await chat(event, credentials)
   }
 
   // if it gets to here it is an error return

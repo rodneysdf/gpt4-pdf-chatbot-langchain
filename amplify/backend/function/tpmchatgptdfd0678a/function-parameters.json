@@ -3,7 +3,16 @@
   "secretNames": [
     "credentials"
   ],
-  "environmentVariableList": [],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "credentialpath",
+      "environmentVariableName": "credentialpath"
+    },
+    {
+      "cloudFormationParameterName": "credentialname",
+      "environmentVariableName": "credentialname"
+    }
+  ],
   "permissions": {
     "auth": {
       "tpmchatgpt6780338c": [

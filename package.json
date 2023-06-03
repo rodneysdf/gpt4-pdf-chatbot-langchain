@@ -14,9 +14,10 @@
     "format": "prettier --space-before-function-paren --ignore-path .gitignore \"**/*.+(ts|js|tsx)\" --write",
     "ingest": "tsx -r dotenv/config scripts/ingest-data.ts",
     "deploy": "next build && next export -o build",
-    "amplify:tpmchatgptdfd0678a": "npm run bldenv && npm run bldtypes && cd amplify/backend/function/tpmchatgptdfd0678a/src && tsc -p tsconfig.json && cd -",
-    "bldenv": "cp config/aws-exports.js amplify/backend/function/tpmchatgptdfd0678a/src/aws-exports.ts",
-    "bldtypes": "quicktype -l typescript --runtime-typecheck-ignore-unknown-properties --all-properties-optional --telemetry disable --src amplify/backend/function/tpmchatgptdfd0678a/src/interface/ -o amplify/backend/function/tpmchatgptdfd0678a/src/interfaces.ts && quicktype -l typescript --runtime-typecheck-ignore-unknown-properties --telemetry disable --src amplify/backend/function/tpmchatgptdfd0678a/src/data/ -o amplify/backend/function/tpmchatgptdfd0678a/src/datamodels.ts"
+    "amplify:tpmchatgptdfd0678a": "npm run bldenv && npm run bldtypes && cd amplify/backend/function/tpmchatgptdfd0678a/src && npm run tsc && cd -",
+    "amplify:tpmchatgptchat": "npm run bldenv && npm run bldtypes && cd amplify/backend/function/tpmchatgptchat/src && npm run tsc && cd -",
+    "bldenv": "cp config/aws-exports.js amplify/backend/function/common/aws-exports.ts",
+    "bldtypes": "quicktype -l typescript --runtime-typecheck-ignore-unknown-properties --all-properties-optional --telemetry disable --src amplify/backend/function/common/interface/ -o amplify/backend/function/common/interfaces.ts && quicktype -l typescript --runtime-typecheck-ignore-unknown-properties --telemetry disable --src amplify/backend/function/common/data/ -o amplify/backend/function/common/datamodels.ts"
   },
   "dependencies": {
     "@aws-amplify/cli-extensibility-helper": "^3.0.8",
@@ -29,6 +30,7 @@
     "@microsoft/fetch-event-source": "^2.0.1",
     "@pinecone-database/pinecone": "^0.1.6",
     "@radix-ui/react-accordion": "^1.1.1",
+    "@trilogy-group/eslint-config": "^2.0.0",
     "aws-amplify": "^5.2.0",
     "aws-jwt-verify": "^4.0.0",
     "axios": "^1.4.0",

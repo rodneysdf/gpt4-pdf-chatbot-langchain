@@ -24,6 +24,14 @@ export type AmplifyDependentResourcesAttributes = {
       "Name": "string",
       "Region": "string"
     },
+    "tpmchatgptchat": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string",
+      "tpmchatchatLambdaFuncUrl": "string"
+    },
     "tpmchatgptdfd0678a": {
       "Arn": "string",
       "LambdaExecutionRole": "string",

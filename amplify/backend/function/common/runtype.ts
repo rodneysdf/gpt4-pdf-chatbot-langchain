@@ -9,3 +9,6 @@ function isLambdaMockfunc (): boolean {
   }
   return false
 }
+
+// dir for use by the Lambda
+export const DESTINATION_DIR = (isLambdaMock) ? '/tmp/col' : '/tmp'

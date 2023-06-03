@@ -8,7 +8,7 @@ coverage/*
 # 3rd party libs
 # /src/public/
 # custom definition files
-types/*
+types/
 
 #test files
 test/*

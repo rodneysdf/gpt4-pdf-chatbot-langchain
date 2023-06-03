@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.0.0\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.0.3\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -14,9 +14,6 @@
       "Type": "String"
     },
     "s3Key": {
-      "Type": "String"
-    },
-    "secretsPathAmplifyAppId": {
       "Type": "String"
     },
     "storagetpmaiName": {
@@ -34,6 +31,9 @@
     "authtpmchatgpt6780338cUserPoolId": {
       "Type": "String",
       "Default": "authtpmchatgpt6780338cUserPoolId"
+    },
+    "authname": {
+      "Type": "String"
     },
     "credentialpath": {
       "Type": "String"
@@ -60,7 +60,7 @@
         "aws:asset:property": "Code"
       },
       "Properties": {
-        "Description": "Lambda for REST requests",
+        "Description": "Streaming response lambda solely for chat queries",
         "Code": {
           "S3Bucket": {
             "Ref": "deploymentBucketName"
@@ -73,12 +73,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "tpmchatgptdfd0678a",
+            "tpmchatgptchat",
             {
               "Fn::Join": [
                 "",
                 [
-                  "tpmchatgptdfd0678a",
+                  "tpmchatgptchat",
                   "-",
                   {
                     "Ref": "env"
@@ -96,29 +96,6 @@
             "REGION": {
               "Ref": "AWS::Region"
             },
-            "credentials": {
-              "Fn::Join": [
-                "",
-                [
-                  {
-                    "Fn::Sub": [
-                      "/amplify/${appId}/${env}/AMPLIFY_${functionName}_",
-                      {
-                        "appId": {
-                          "Ref": "secretsPathAmplifyAppId"
-                        },
-                        "env": {
-                          "Ref": "env"
-                        },
-                        "functionName": "tpmchatgptdfd0678a"
-                      }
-                    ]
-                  },
-                  "credentials"
-                ]
-              ]
-            },
-            "AUTHNAME": "tpmchatgpt6780338c",
             "STORAGE_TPMAI_NAME": {
               "Ref": "storagetpmaiName"
             },
@@ -130,6 +107,9 @@
             },
             "AUTH_TPMCHATGPT6780338C_USERPOOLID": {
               "Ref": "authtpmchatgpt6780338cUserPoolId"
+            },
+            "AUTHNAME": {
+              "Ref": "authname"
             },
             "credentialpath": {
               "Ref": "credentialpath"
@@ -160,12 +140,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "tpmchatgptLambdaRole5aaeb05d",
+            "tpmchatgptLambdaRole19c35b0a",
             {
               "Fn::Join": [
                 "",
                 [
-                  "tpmchatgptLambdaRole5aaeb05d",
+                  "tpmchatgptLambdaRole19c35b0a",
                   "-",
                   {
                     "Ref": "env"
@@ -236,64 +216,7 @@
         }
       }
     },
-    "AmplifyFunctionSecretsPolicy": {
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyName": "amplify-function-secrets-policy",
-        "Roles": [
-          {
-            "Ref": "LambdaExecutionRole"
-          }
-        ],
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Action": [
-                "ssm:GetParameter",
-                "ssm:GetParameters"
-              ],
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:ssm:",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId"
-                    },
-                    ":parameter",
-                    {
-                      "Fn::Sub": [
-                        "/amplify/${appId}/${env}/AMPLIFY_${functionName}_",
-                        {
-                          "appId": {
-                            "Ref": "secretsPathAmplifyAppId"
-                          },
-                          "env": {
-                            "Ref": "env"
-                          },
-                          "functionName": "tpmchatgptdfd0678a"
-                        }
-                      ]
-                    },
-                    "*"
-                  ]
-                ]
-              }
-            }
-          ]
-        }
-      },
-      "DependsOn": [
-        "LambdaExecutionRole"
-      ]
-    },
-    "tpmchatLambdaUrlPermission": {
+    "tpmchatchatLambdaUrlPermission": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "Action": "lambda:InvokeFunctionUrl",
@@ -304,7 +227,7 @@
         "Principal": "*"
       }
     },
-    "tpmchatLambdaFuncUrl": {
+    "tpmchatchatLambdaFuncUrl": {
       "Type": "AWS::Lambda::Url",
       "Properties": {
         "TargetFunctionArn": {
@@ -322,12 +245,9 @@
             "Origin",
             "Referer",
             "Host",
-            "User-Agent",
-            "x-key-openai",
-            "x-key-anthropic"
+            "User-Agent"
           ],
           "AllowMethods": [
-            "GET",
             "POST"
           ],
           "AllowOrigins": [
@@ -436,6 +356,41 @@
           ]
         }
       }
+    },
+    "CustomLambdaExecutionPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "custom-lambda-execution-policy",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "ssm:GetParameter"
+              ],
+              "Resource": [
+                {
+                  "Fn::Sub": [
+                    "arn:aws:ssm:us-east-1:088858129648:parameter/amplify/d3oslnel1z9r6i/${env}/AMPLIFY_tpmchatgptdfd0678a_*",
+                    {
+                      "env": {
+                        "Ref": "env"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "Effect": "Allow"
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ]
+      },
+      "DependsOn": "LambdaExecutionRole"
     }
   },
   "Outputs": {
@@ -452,10 +407,10 @@
         ]
       }
     },
-    "tpmchatLambdaFuncUrl": {
+    "tpmchatchatLambdaFuncUrl": {
       "Value": {
         "Fn::GetAtt": [
-          "tpmchatLambdaFuncUrl",
+          "tpmchatchatLambdaFuncUrl",
           "FunctionUrl"
         ]
       }

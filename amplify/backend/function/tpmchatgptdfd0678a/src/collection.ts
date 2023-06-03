@@ -1,6 +1,6 @@
-import { Credentials } from './datamodels'
-import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './interfaces'
-import { initPinecone } from './util/pineconeclient'
+import { Credentials } from './common/datamodels'
+import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './common/interfaces'
+import { initPinecone } from './common/pineconeclient'
 
 // Purge the vector db of data
 export const purge = async (event: LambdaFunctionURLEvent,

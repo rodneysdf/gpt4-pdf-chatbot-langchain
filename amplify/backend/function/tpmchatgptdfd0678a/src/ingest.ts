@@ -7,11 +7,11 @@ import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { PineconeStore } from 'langchain/vectorstores/pinecone'
 import YError from 'yerror'
-import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './interfaces'
+import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './common/interfaces'
 import { collection, nullLambdaFunctionURLEvent } from './collection'
-import { AddInput, Convert, Credentials } from './datamodels'
-import { initPinecone } from './util/pineconeclient'
-import { isLambdaMock } from './runtype'
+import { AddInput, Convert, Credentials } from './common/datamodels'
+import { initPinecone } from './common/pineconeclient'
+import { DESTINATION_DIR } from './common/runtype'
 import { readGoogleDoc } from './util/google/gdoc'
 import { readGoogleSheet } from './util/google/gsheet'
 import { listGoogleFolder, FolderItem, folderMimeType, readDriveFile, exportDriveFile } from './util/google/gdrive'
@@ -19,16 +19,13 @@ import { sanitize } from 'sanitize-filename-ts'
 import { env } from 'node:process'
 import { GaxiosError } from 'gaxios'
 import axios from 'axios'
-import { validateOpenAIKey } from './index'
+import { validateOpenAIKey } from './common/validate'
 import { CSVLoader } from 'langchain/document_loaders/fs/csv'
 import { CustomExcelLoader } from './util/customExcelLoader'
 
 const Busboy = require('busboy')
 const fs = require('fs')
 const path = require('path')
-
-// dir for use by the Lambda
-export const DESTINATION_DIR = (isLambdaMock) ? '/tmp/col' : '/tmp'
 
 //
 export const upload = async (event: LambdaFunctionURLEvent,
@@ -763,11 +760,11 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
         })
       }
     }
-    const shorterror = (error as string).slice(0,50)
+    const shorterror = (error as string).slice(0, 50)
     return {
       statusCode: 400,
       body: JSON.stringify({
-        error: `Failed to ingest your data - ${error}`
+        error: `Failed to ingest your data - ${shorterror}`
       })
     }
   }

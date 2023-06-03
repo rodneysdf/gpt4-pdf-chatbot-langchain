@@ -1,0 +1,11 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "description": "common core for the lambda functions",
+  "scripts": {
+    "lint": "npm run lint:eslint",
+    "lint:eslint": "eslint ./",
+    "lint:fix": "npm run lint:eslint -- --fix"
+  },
+  "license": "MIT"
+}

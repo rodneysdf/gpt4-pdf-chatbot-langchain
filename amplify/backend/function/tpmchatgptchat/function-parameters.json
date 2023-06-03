@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "auth": {
+      "tpmchatgpt6780338c": [
+        "read"
+      ]
+    },
+    "storage": {
+      "tpmai": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": [],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "authname",
+      "environmentVariableName": "AUTHNAME"
+    },
+    {
+      "cloudFormationParameterName": "credentialpath",
+      "environmentVariableName": "credentialpath"
+    },
+    {
+      "cloudFormationParameterName": "credentialname",
+      "environmentVariableName": "credentialname"
+    }
+  ]
+}

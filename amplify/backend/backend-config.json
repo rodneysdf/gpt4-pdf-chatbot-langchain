@@ -62,6 +62,29 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "tpmchatgptchat": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "tpmchatgpt6780338c"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "StreamArn"
+          ],
+          "category": "storage",
+          "resourceName": "tpmai"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "tpmchatgptdfd0678a": {
       "build": true,
       "dependsOn": [
@@ -115,6 +138,62 @@
         {
           "category": "function",
           "resourceName": "tpmchatgpt6780338cPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptchat_authname": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptchat"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptchat_credentialname": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptchat"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptchat_credentialpath": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptchat"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptchat_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptchat"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptchat_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptchat"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_credentialname": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_credentialpath": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
         }
       ]
     },

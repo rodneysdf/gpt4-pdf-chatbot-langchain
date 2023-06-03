@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AWS_API_URL } from '../config/aws-amplify';
+import { AWS_API_URL, AWS_CHAT_URL} from '../config/aws-amplify';
 import { TTLCache } from '@brokerloop/ttlcache';
 
 const axiosInstance = axios.create({
@@ -52,11 +52,6 @@ type PostChatBody = {
   anthropicKey: string;
 };
 
-// const chat = (body: any, auth: any) => makeMutation<PostChatBody>({
-//   method: 'POST',
-//   url: '/api/chat',
-// }, auth);
-
 export const makePostChat = (handlers: {
   onSuccess(response: any, question: string): void;
   onError(response: any): void;
@@ -65,7 +60,7 @@ export const makePostChat = (handlers: {
     try {
       const chatResponse = await authedApiCall({
         method: 'POST',
-        url: '/api/chat',
+        url: AWS_CHAT_URL + '/api/chat',
         body,
       }, auth);
 
