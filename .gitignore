@@ -44,6 +44,8 @@ next-env.d.ts
 # Amplify
 amplify/backend/function/tpmchatgptdfd0678a/src/**/*.js
 amplify/backend/function/tpmchatgptdfd0678a/src/**/*.js.map
+amplify/backend/function/tpmchatgptchat/src/**/*.js
+amplify/backend/function/tpmchatgptchat/src/**/*.js.map
 amplify/backend/function/common/aws-exports.ts
 amplify/backend/function/common/datamodels.ts
 amplify/backend/function/common/interfaces.ts
