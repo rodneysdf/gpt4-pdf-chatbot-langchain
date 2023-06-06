@@ -10,10 +10,13 @@ import { Document } from 'langchain/document'
 import { DESTINATION_DIR } from './common/runtype'
 import { validateOpenAIKey } from './common/validate'
 import axios from 'axios'
+import { Writable } from 'stream'
 
 // '/api/chat'
 export const chat = async (event: LambdaFunctionURLEvent,
-  credentials: Credentials): Promise<LambdaFunctionURLResponse> => {
+  credentials: Credentials,
+  responseStream: Writable): Promise<LambdaFunctionURLResponse> => {
+
   let questionHistory: QuestionHistory
   try {
     const body = event?.body ?? ''
@@ -67,6 +70,13 @@ export const chat = async (event: LambdaFunctionURLEvent,
     }
   }
 
+  // util functions
+  const sendData = (data: string): void => {
+    responseStream.write(`data: ${data}\n\n`)
+  }
+  const streaming: boolean = true
+  // streaming handlers
+
   //
   // Start of logic
 
@@ -89,18 +99,38 @@ export const chat = async (event: LambdaFunctionURLEvent,
     )
 
     // create chain
-    const chain = makeChain(vectorStore, questionHistory.model)
+    const chain = makeChain(vectorStore, questionHistory.documentCount, questionHistory.model, streaming, (token: string) => {
+      // console.log('token received', token)
+      if (typeof token === 'string') {
+        sendData(token)
+      } else {
+        console.log('error', 'Invalid token:', token)
+      }
+    })
 
     // Ask a question using chat history
     let response = await chain.call({
       question: sanitizedQuestion,
       chat_history: questionHistory.history
     })
+    if (response === null) {
+      console.log('error', 'GPT API error, not enough tokens left to generate a response.')
+      sendData('[OUT_OF_TOKENS]')
+      return {
+        statusCode: 200,
+        body: JSON.stringify('GPT API error, likely out of tokens')
+      }
+    }
 
     if (response?.sourceDocuments !== undefined) {
       response = stripPathFromSourceDocuments(response)
     }
-    console.log('response:', response)
+    console.log('Full response:', response)
+    // console.log('response lenSourceDoc=', response.sourceDocuments.length, 'len respText=', response.text.length)
+    // console.log('info', '\n===\nResponse: \n', response.text, '\n===\nSource Documents:', response.sourceDocuments, '\n===\n')
+
+    sendData(JSON.stringify({ sourceDocs: response.sourceDocuments }))
+    sendData('[DONE]')
 
     return {
       statusCode: 200,
@@ -127,7 +157,7 @@ export const chat = async (event: LambdaFunctionURLEvent,
 }
 
 // make the output sleeker for the user by cleaning up the unnecessary '/tmp/' in the source reference.
-function stripPathFromSourceDocuments (response: ChainValues): ChainValues {
+function stripPathFromSourceDocuments(response: ChainValues): ChainValues {
   if (response?.sourceDocuments !== undefined) {
     for (const doc of response?.sourceDocuments) {
       const srcDoc = doc as Document
@@ -139,7 +169,7 @@ function stripPathFromSourceDocuments (response: ChainValues): ChainValues {
   return response
 }
 
-function validateModelAndAlgo (model: string, algo: string): string {
+function validateModelAndAlgo(model: string, algo: string): string {
   // Allowed models for lc-ConversationalRetrievalChain
   const allowedValuesConversationalRetrievalChain: string[] = [
     'gpt-3.5-turbo',

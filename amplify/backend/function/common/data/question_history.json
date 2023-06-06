@@ -1,6 +1,4 @@
 {
-  "model": "gpt-4",
-  "algo": "lc-CRC",
   "question": "Where is San Francisco?",
   "history": [
     [
@@ -12,6 +10,9 @@
       "I'm sorry, but I don't have any information about the current date or day. My functions are limited to providing assistance within my programming and knowledge base. Is there anything else I can help you with?"
     ]
   ],
+  "model": "gpt-4",
+  "documentCount": 7,
+  "algo": "lc-CRC",
   "openAiKey": "key",
   "anthropicKey": "key"
 }

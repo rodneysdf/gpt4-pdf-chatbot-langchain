@@ -10,21 +10,23 @@ import { useAuth } from '@/providers/auth';
 import styles from '@/styles/Home.module.css';
 import { Message } from '@/types/chat';
 import {
+  cache,
   getCollection,
   makePostChat,
   postPurgeDocuments,
   postSendUrl,
   postUploadFiles,
-  cache,
 } from '@/utils/api';
+import { signinError, signinErrorText, toFriendlyChatError } from '@/utils/errors';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
+import axios from 'axios';
+import classNames from 'classnames';
 import { useGranularEffect } from "granular-hooks";
 import { Document } from 'langchain/document';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { BsPersonCircle, BsExclamationTriangleFill } from 'react-icons/bs';
+import { BsExclamationTriangleFill, BsPersonCircle } from 'react-icons/bs';
 import ReactMarkdown from 'react-markdown';
-import axios from 'axios'
-import { signinError, signinErrorText, toFriendlyChatError } from '@/utils/errors'
-import classNames from 'classnames';
+import { AWS_CHAT_URL } from '../config/aws-amplify';
 
 
 const DocumentUpload = (props: any) => {
@@ -283,6 +285,7 @@ export default function Home() {
   const [algo, setAlgo] = useState<string>(
     'ConversationalRetrievalQAChain-lc',
   );
+  const [documentCount, setDocumentCount] = useState<number>(10);
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -323,6 +326,8 @@ export default function Home() {
     textAreaRef?.current?.focus()
   }, [messages]);
 
+
+  // no longer needed with streaming
   const postChat = makePostChat(
     {
       onSuccess(data, question) {
@@ -368,6 +373,19 @@ export default function Home() {
     auth
   );
 
+  const insertQuestiontoList = (QuestionIndex: Message) => {
+    setMessageState((state) => {
+      return {
+        ...state,
+        history: [...state.history],
+        messages: [
+          ...state.messages,
+          QuestionIndex,
+        ],
+      }
+    });
+  }
+
 
   //handle form submission
   async function handleSubmit(e: any) {
@@ -382,29 +400,118 @@ export default function Home() {
     }
 
     const question = query.trim();
-
-    setMessageState((state) => ({
-      ...state,
-      messages: [
-        ...state.messages,
-        {
-          type: 'userMessage',
-          message: question,
-        },
-      ],
-    }));
+    const QuestionEntry: Message = {
+      type: 'userMessage',
+      message: question,
+    }
+    insertQuestiontoList(QuestionEntry)
+    let AnswerEntry: Message = {
+      type: 'apiMessage',
+      message: ''
+    }
 
     setLoading(true);
     setQuery('');
 
-    postChat({
-      model,
-      algo,
-      question,
-      history,
-      openAiKey: openAiApiKey,
-      anthropicKey: anthropicClaudeKey
-    });
+    // Send the question to the server
+    const ctrl = new AbortController();
+    try {
+      let bearerToken: string = ''
+      if (auth) {
+        const accessToken = await auth.getAccessToken();
+        if (accessToken) {
+          bearerToken = "Bearer " + accessToken;
+        } else {
+          console.log("no accessToken!")
+        }
+      } else {
+        console.log("no auth header!")
+      }
+      let answerStarted: boolean = false
+      fetchEventSource(AWS_CHAT_URL + '/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': bearerToken,
+          'Retry-After': '5',
+        },
+        body: JSON.stringify({
+          question,
+          history,
+          model,
+          documentCount,
+          algo,
+          openAiKey: openAiApiKey,
+          anthropicKey: anthropicClaudeKey,
+        }),
+        signal: ctrl.signal,
+        onmessage: (event: { data: string; }) => {
+          if (event.data === '[START]') {
+            // console.log('onmessage [START]:', event.data)
+          } else if (event.data === '[DONE]' || event.data === '[ERROR]') {
+            // console.log('event.data [DONE/ERROR]:', event.data)
+            setLoading(false);
+            ctrl.abort();
+          } else if (event.data === '[LLMEnd]') {
+            // nothing
+          } else {   // Data
+            if (event.data.length > 0 && event.data.startsWith(`{`)) {
+              const data = JSON.parse(event.data);
+              // console.log('onMessage parsed:', data)
+
+              if (data.token) {
+                AnswerEntry.message = AnswerEntry.message + data.token
+              }
+              if (!answerStarted) {
+                answerStarted = true
+                setMessageState((state) => ({
+                  history: [...state.history, [question, state.pending ?? '']],
+                  messages: [
+                    ...state.messages,
+                    AnswerEntry,
+                  ],
+                  pending: undefined,
+                  pendingSourceDocs: undefined,
+                }))
+              } else {
+                setMessageState((state) => {
+                  const lastIndex = state.messages.length - 1
+                  let lastMessage = state.messages[lastIndex] as Message
+
+                  if (lastMessage != null && data.token) {
+                    lastMessage.message = AnswerEntry.message
+                  }
+                  return {
+                    history: [...state.history],
+                    messages: [
+                      ...state.messages
+                    ]
+                  }
+                })
+              }
+            } else {
+              console.log('unexpected message', event.data)
+            }
+          }
+        },
+        async onopen(response) {
+          // console.log('onopen: status=', response.status, 'responseOK=', response.ok, 'type=', response.headers.get('content-type'))
+        },
+        onclose() {
+          // console.log('closing unexpected')
+          ctrl.abort();
+        },
+        onerror(err) {
+          console.log(err)
+          ctrl.abort();
+        }
+
+      });
+    } catch (error) {
+      setLoading(false);
+      setError('An error occurred while fetching the data. Please try again.');
+      console.log(error);
+    }
   }
 
   //prevent empty submissions
@@ -570,52 +677,52 @@ export default function Home() {
               </div>
               <div className={styles.center}>
                 <div className={styles.cloudform}>
-                    <form onSubmit={handleSubmit}>
-                      <textarea
-                        disabled={loading}
-                        onKeyDown={handleEnter}
-                        ref={textAreaRef}
-                        autoFocus={false}
-                        rows={1}
-                        maxLength={512}
-                        id="userInput"
-                        name="userInput"
-                        placeholder={
-                          loading
-                            ? 'Waiting for response...'
-                            : 'What is this doc about?'
-                        }
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        className={textAreaClass}
-                      />
-                      <button
-                        type="submit"
-                        disabled={loading}
-                        className={styles.generatebutton}
-                      >
-                        {loading ? (
-                          <div className={styles.loadingwheel}>
-                            <LoadingDots color="#000" />
-                          </div>
-                        ) : (
-                          // Send icon SVG in input field
-                          <svg
-                            viewBox="0 0 20 20"
-                            className={styles.svgicon}
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
-                          </svg>
-                        )}
-                      </button>
-                    </form>
+                  <form onSubmit={handleSubmit}>
+                    <textarea
+                      disabled={loading}
+                      onKeyDown={handleEnter}
+                      ref={textAreaRef}
+                      autoFocus={false}
+                      rows={1}
+                      maxLength={512}
+                      id="userInput"
+                      name="userInput"
+                      placeholder={
+                        loading
+                          ? 'Waiting for response...'
+                          : 'What is this doc about?'
+                      }
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      className={textAreaClass}
+                    />
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className={styles.generatebutton}
+                    >
+                      {loading ? (
+                        <div className={styles.loadingwheel}>
+                          <LoadingDots color="#000" />
+                        </div>
+                      ) : (
+                        // Send icon SVG in input field
+                        <svg
+                          viewBox="0 0 20 20"
+                          className={styles.svgicon}
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+                        </svg>
+                      )}
+                    </button>
+                  </form>
                   {error && (
-                      <div className="flex flex-row gap-1 mt-1 text-red-500 align-bottom mb-1 w-[75vw]">
-                        <BsExclamationTriangleFill className="ml-1 text-xl pt-1" />
-                        <span>{error}</span>
-                      </div>
-                    )}
+                    <div className="flex flex-row gap-1 mt-1 text-red-500 align-bottom mb-1 w-[75vw]">
+                      <BsExclamationTriangleFill className="ml-1 text-xl pt-1" />
+                      <span>{error}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-row w-full mt-2 m-3 gap-5 justify-end mb-2">

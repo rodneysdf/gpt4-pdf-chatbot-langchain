@@ -28,16 +28,8 @@ To develop locally and have Google signin redirect back to your local app, redir
 - Add Cognito login to Lambda and UI via Amplify. Authorize in the Lambda TypeScript code.
 
 ## To Do
-
-- Add an Import PDF button and make the ingestion process available on the website and in the Lambda
-- Add Google Drive support
-  - customize a driver that better understands TPM specs
-- Update dependencies - currently Embedding relies on an environment variable instead of a passed-in parameter.
-- Make credentials per-user - maybe in DynamoDB.
-- Support multiple users in the UI and db
 - Make model and database index selectable
-- Make the Lambda do response streaming (using '[lambda-stream](https://github.com/astuyve/lambda-stream)') like ChatGPT does
-- Get a DNS name from the IT request portal
+
 
 ## Architecture
 

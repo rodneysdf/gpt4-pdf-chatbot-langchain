@@ -242,10 +242,12 @@
             "Accept-Language",
             "Authorization",
             "Content-Type",
+            "Content-Length",
             "Origin",
             "Referer",
             "Host",
-            "User-Agent"
+            "User-Agent",
+            "Retry-After"
           ],
           "AllowMethods": [
             "POST"
@@ -259,11 +261,13 @@
             "Date",
             "Content-Type",
             "Content-Length",
-            "Connection"
+            "Connection",
+            "Retry-After",
+            "Trnasfer-Encoding"
           ],
           "MaxAge": 1200
         },
-        "InvokeMode": "BUFFERED"
+        "InvokeMode": "RESPONSE_STREAM"
       }
     },
     "AmplifyResourcesPolicy": {

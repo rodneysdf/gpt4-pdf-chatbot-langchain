@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { AWS_API_URL, AWS_CHAT_URL} from '../config/aws-amplify';
+import { AWS_API_URL } from '../config/aws-amplify';
 import { TTLCache } from '@brokerloop/ttlcache';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 const axiosInstance = axios.create({
   baseURL: AWS_API_URL,
@@ -39,37 +40,9 @@ const authedApiCall = async (
     method: options.method,
     url: options.url,
     data: options.body,
-    headers: reqHeaders
+    headers: reqHeaders,
   });
 }
-
-type PostChatBody = {
-  question: string;
-  model: string;
-  algo: string;
-  history: [string, string][];
-  openAiKey: string;    // optional
-  anthropicKey: string;
-};
-
-export const makePostChat = (handlers: {
-  onSuccess(response: any, question: string): void;
-  onError(response: any): void;
-}, auth: any) => {
-  return async (body: PostChatBody) => {
-    try {
-      const chatResponse = await authedApiCall({
-        method: 'POST',
-        url: AWS_CHAT_URL + '/api/chat',
-        body,
-      }, auth);
-
-      handlers.onSuccess(chatResponse.data, body.question);
-    } catch (err: any) {
-      handlers.onError(err);
-    }
-  };
-};
 
 export const postUploadFiles = async (files: File[], openAiKey: string, anthropicKey: string, auth: any) => {
   const formData = new FormData();

@@ -52,8 +52,9 @@ export async function readGoogleSheet (spreadsheetId: string, credentials: Crede
     throw Error('Document does not have content')
   }
 
-  const content = readSheetText(doc.data.sheets)
-
+  let content = readSheetText(doc.data.sheets)
+  const spreadsheet = content.replace(/\n\n\n+/g, '\n\n') // replace 3 or more new lines \n with just two.
+  content = spreadsheet.replace(/[^\S\r\n]+/g, ' ').trim() // replace multiple whitespace with single space and then trim
   return {
     title,
     content

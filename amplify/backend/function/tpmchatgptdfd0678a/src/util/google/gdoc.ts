@@ -57,7 +57,9 @@ export async function readGoogleDoc (documentId: string, credentials: Credential
   // console.log(`GDoc json.stringify '${title}'=`, JSON.stringify(doc.data.body, null, 2))
 
   // strip out all the formatting to get to just the text
-  const docstring = readStructuralElements(doc.data.body.content)
+  let docstring = readStructuralElements(doc.data.body.content)
+  const content = docstring.replace(/\n\n\n+/g, '\n\n') // replace 3 or more new lines \n with just two.
+  docstring = content.replace(/[^\S\r\n]+/g, ' ').trim() // replace multiple whitespace with single space and then trim
 
   return {
     title,
