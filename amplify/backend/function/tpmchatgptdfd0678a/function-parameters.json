@@ -5,12 +5,12 @@
   ],
   "environmentVariableList": [
     {
-      "cloudFormationParameterName": "credentialpath",
-      "environmentVariableName": "credentialpath"
-    },
-    {
       "cloudFormationParameterName": "credentialname",
       "environmentVariableName": "credentialname"
+    },
+    {
+      "cloudFormationParameterName": "credentialpath",
+      "environmentVariableName": "credentialpath"
     }
   ],
   "permissions": {

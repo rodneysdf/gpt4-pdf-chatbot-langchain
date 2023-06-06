@@ -35,10 +35,10 @@
       "Type": "String",
       "Default": "authtpmchatgpt6780338cUserPoolId"
     },
-    "credentialpath": {
+    "credentialname": {
       "Type": "String"
     },
-    "credentialname": {
+    "credentialpath": {
       "Type": "String"
     }
   },
@@ -131,11 +131,11 @@
             "AUTH_TPMCHATGPT6780338C_USERPOOLID": {
               "Ref": "authtpmchatgpt6780338cUserPoolId"
             },
-            "credentialpath": {
-              "Ref": "credentialpath"
-            },
             "credentialname": {
               "Ref": "credentialname"
+            },
+            "credentialpath": {
+              "Ref": "credentialpath"
             }
           }
         },

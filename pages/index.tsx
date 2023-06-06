@@ -12,7 +12,6 @@ import { Message } from '@/types/chat';
 import {
   cache,
   getCollection,
-  makePostChat,
   postPurgeDocuments,
   postSendUrl,
   postUploadFiles,
@@ -285,7 +284,7 @@ export default function Home() {
   const [algo, setAlgo] = useState<string>(
     'ConversationalRetrievalQAChain-lc',
   );
-  const [documentCount, setDocumentCount] = useState<number>(10);
+  const [documentCount, setDocumentCount] = useState<number>(20);
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -293,7 +292,6 @@ export default function Home() {
     messages: Message[];
     pending?: string;
     history: [string, string][];
-    pendingSourceDocs?: Document[];
   }>({
     messages: [
       {
@@ -302,9 +300,10 @@ export default function Home() {
       },
     ],
     history: [],
+    pending: '',
   });
 
-  const { messages, history } = messageState;
+  const { messages, history, pending } = messageState;
 
   const clearMessageState = () => {
     setMessageState({
@@ -315,6 +314,7 @@ export default function Home() {
         },
       ],
       history: [],
+      pending: '',
     });
   }
 
@@ -327,64 +327,51 @@ export default function Home() {
   }, [messages]);
 
 
-  // no longer needed with streaming
-  const postChat = makePostChat(
-    {
-      onSuccess(data, question) {
-        console.log('PC Success response:', data)
+  // // no longer needed with streaming
+  // const postChat = makePostChat(
+  //   {
+  //     onSuccess(data, question) {
+  //       console.log('PC Success response:', data)
 
-        setMessageState((state) => ({
-          ...state,
-          messages: [
-            ...state.messages,
-            {
-              type: 'apiMessage',
-              message: data.text,
-              sourceDocs: data.sourceDocuments,
-            },
-          ],
-          history: [...state.history, [question, data.text]],
-        }));
+  //       setMessageState((state) => ({
+  //         ...state,
+  //         messages: [
+  //           ...state.messages,
+  //           {
+  //             type: 'apiMessage',
+  //             message: data.text,
+  //             sourceDocs: data.sourceDocuments,
+  //           },
+  //         ],
+  //         history: [...state.history, [question, data.text]],
+  //       }));
 
-        setLoading(false);
-      },
-      onError(response) {
-        setLoading(false);
-        if (response === 'No current user') {
-          setError(signinErrorText())
-        } else if (axios.isAxiosError(response)) {
-          console.log('A?', response?.response)
-          // alert(`Error '${response?.response?.data?.error}`);
-          // check for no license
-          if (response?.request.status == 404) {
-            setError(toFriendlyChatError(response?.response?.data.error))
-            setModel('gpt-3.5-turbo-0301')
-          } else {
-            console.log('PC ErrA response:', response)
-            setError(`An error occurred. Please try again - ${response}`);
-          }
-        } else {
-          console.log('PC Err response:', response)
-          // else show generic message
-          setError(`An error occurred. Please try again - ${response}`);
-        }
-      },
-    },
-    auth
-  );
-
-  const insertQuestiontoList = (QuestionIndex: Message) => {
-    setMessageState((state) => {
-      return {
-        ...state,
-        history: [...state.history],
-        messages: [
-          ...state.messages,
-          QuestionIndex,
-        ],
-      }
-    });
-  }
+  //       setLoading(false);
+  //     },
+  //     onError(response) {
+  //       setLoading(false);
+  //       if (response === 'No current user') {
+  //         setError(signinErrorText())
+  //       } else if (axios.isAxiosError(response)) {
+  //         console.log('A?', response?.response)
+  //         // alert(`Error '${response?.response?.data?.error}`);
+  //         // check for no license
+  //         if (response?.request.status == 404) {
+  //           setError(toFriendlyChatError(response?.response?.data.error))
+  //           setModel('gpt-3.5-turbo-0301')
+  //         } else {
+  //           console.log('PC ErrA response:', response)
+  //           setError(`An error occurred. Please try again - ${response}`);
+  //         }
+  //       } else {
+  //         console.log('PC Err response:', response)
+  //         // else show generic message
+  //         setError(`An error occurred. Please try again - ${response}`);
+  //       }
+  //     },
+  //   },
+  //   auth
+  // );
 
 
   //handle form submission
@@ -393,18 +380,46 @@ export default function Home() {
 
     setError(null);
 
-    if (!query) {
+   // OpenAI recommends replacing newlines with spaces for best results
+    const sanitizedQuery = query.trim().replaceAll('\n', ' ')
+    if (!sanitizedQuery && sanitizedQuery.length === 0) {
       // alert('Please input a question');
       setError('Please input a question')
       return;
     }
-
-    const question = query.trim();
-    const QuestionEntry: Message = {
-      type: 'userMessage',
-      message: question,
+    let bearerToken: string = ''
+    if (auth) {
+      try {
+        const accessToken = await auth.getAccessToken();
+        if (accessToken) {
+          bearerToken = "Bearer " + accessToken;
+        } else {
+          console.log("no accessToken!")
+        }
+      } catch (e) {
+        // console.log("no auth header!")
+      }
     }
-    insertQuestiontoList(QuestionEntry)
+    if (bearerToken.length === 0) {
+      // console.log("no auth user!")
+      setError(signinErrorText())
+      return
+    }
+
+    const question = sanitizedQuery
+    setMessageState((state) => {
+      return {
+        ...state,
+        messages: [
+          ...state.messages,
+          {
+            type: 'userMessage',
+            message: question,
+          },
+        ],
+        pending: '',
+      }
+    })
     let AnswerEntry: Message = {
       type: 'apiMessage',
       message: ''
@@ -416,17 +431,6 @@ export default function Home() {
     // Send the question to the server
     const ctrl = new AbortController();
     try {
-      let bearerToken: string = ''
-      if (auth) {
-        const accessToken = await auth.getAccessToken();
-        if (accessToken) {
-          bearerToken = "Bearer " + accessToken;
-        } else {
-          console.log("no accessToken!")
-        }
-      } else {
-        console.log("no auth header!")
-      }
       let answerStarted: boolean = false
       fetchEventSource(AWS_CHAT_URL + '/api/chat', {
         method: 'POST',
@@ -449,12 +453,29 @@ export default function Home() {
           if (event.data === '[START]') {
             // console.log('onmessage [START]:', event.data)
           } else if (event.data === '[DONE]' || event.data === '[ERROR]') {
-            // console.log('event.data [DONE/ERROR]:', event.data)
+            // console.log('onmessage [DONE/ERROR]:', event.data)
+            // save question in history
+            setMessageState((state) => ({
+              history: [...state.history, [question, AnswerEntry.message ?? '']],
+              messages: [
+                ...state.messages,
+              ]
+            }));
             setLoading(false);
             ctrl.abort();
+          } else if (event.data.startsWith('[ERROR]')) {
+            console.log('onmessage [ERROR]:', event.data)
+            if (event.data.length > '[ERROR] '.length) {
+              // error from LangChain
+              setError(event.data.slice('[ERROR] '.length))
+            }
+            setLoading(false);
+            ctrl.abort();
+
           } else if (event.data === '[LLMEnd]') {
             // nothing
           } else {   // Data
+            // console.log('onMessage other:', event)
             if (event.data.length > 0 && event.data.startsWith(`{`)) {
               const data = JSON.parse(event.data);
               // console.log('onMessage parsed:', data)
@@ -462,25 +483,20 @@ export default function Home() {
               if (data.token) {
                 AnswerEntry.message = AnswerEntry.message + data.token
               }
+              if (data.sourceDocs) {
+                AnswerEntry.sourceDocs = (data.sourceDocs ?? []).slice(0, 6)
+              }
               if (!answerStarted) {
                 answerStarted = true
                 setMessageState((state) => ({
-                  history: [...state.history, [question, state.pending ?? '']],
+                  history: [...state.history],
                   messages: [
                     ...state.messages,
                     AnswerEntry,
                   ],
-                  pending: undefined,
-                  pendingSourceDocs: undefined,
                 }))
               } else {
                 setMessageState((state) => {
-                  const lastIndex = state.messages.length - 1
-                  let lastMessage = state.messages[lastIndex] as Message
-
-                  if (lastMessage != null && data.token) {
-                    lastMessage.message = AnswerEntry.message
-                  }
                   return {
                     history: [...state.history],
                     messages: [
@@ -490,27 +506,51 @@ export default function Home() {
                 })
               }
             } else {
-              console.log('unexpected message', event.data)
+              console.log('unexpected message', event)
             }
           }
         },
         async onopen(response) {
-          // console.log('onopen: status=', response.status, 'responseOK=', response.ok, 'type=', response.headers.get('content-type'))
+          // console.log('onopen: status=', response.status, 'responseOK=', response.ok, 'responsedata=', response?.data,'type=', response.headers.get('content-type'))
+          if (response.status >= 400) {
+            try {
+              console.log('error:', response.status, 'reason:', response.headers.get('x-error-reason'))
+              const errHeader = response.headers.get('x-error-reason') ?? ''
+              if (errHeader.length > 0) {
+                const reason = JSON.parse(errHeader)
+                if (reason.error === 'No current user') {
+                  setError(signinErrorText())
+                } else if (response.status == 404) {
+                  setError(toFriendlyChatError(reason.error))
+                  setModel('gpt-3.5-turbo-0301')
+                } else if (response.status == 401) {
+                  setError(signinErrorText())
+                } else {
+                  setError(`An error occurred. Please try again - ${reason.error}`);
+                }
+              }
+              setLoading(false);
+              ctrl.abort();
+            } catch (err) {
+              console.log('error catch', err)
+            }
+          }
         },
         onclose() {
-          // console.log('closing unexpected')
+          // console.log('onclose closing unexpected')
           ctrl.abort();
         },
         onerror(err) {
-          console.log(err)
+          console.log('onerror', err)
           ctrl.abort();
         }
 
       });
     } catch (error) {
+      console.log(error);
       setLoading(false);
       setError('An error occurred while fetching the data. Please try again.');
-      console.log(error);
+      ctrl.abort();
     }
   }
 
@@ -653,7 +693,7 @@ export default function Home() {
                               {message.sourceDocs.map((doc, index) => (
                                 <div key={`messageSourceDocs-${index}`}>
                                   <AccordionItem value={`item-${index}`}>
-                                    <AccordionTrigger>
+                                    <AccordionTrigger className="pt-1">
                                       <h3>Source {index + 1}</h3>
                                     </AccordionTrigger>
                                     <AccordionContent>

@@ -33,7 +33,7 @@ export const makeChain = (
     streaming,
     callbackManager: (onTokenStream != null)
       ? CallbackManager.fromHandlers({
-        async handleLLMStart(llm, prompts, runId, parentRunId, extraParams) {
+        async handleLLMStart (llm, prompts, runId, parentRunId, extraParams) {
           // console.log('handleLLMStart', llm, prompts, runId, parentRunId, extraParams)
           // start?
           onTokenStream('[START]')
@@ -44,7 +44,7 @@ export const makeChain = (
             extraSpaceRequired = true
           }
         },
-        async handleLLMNewToken(token, runId, parentRunId) {
+        async handleLLMNewToken (token, runId, parentRunId) {
           // console.log('handleLLMNewToken', token, runId, parentRunId)
           onTokenStream(JSON.stringify({ token }))
         }
@@ -69,6 +69,7 @@ export const makeChain = (
       })
       : undefined
   })
+  console.log('makeChain new OpenAI completed')
 
   const chain = ConversationalRetrievalQAChain.fromLLM(
     model,

@@ -11,12 +11,12 @@ import { DESTINATION_DIR } from './common/runtype'
 import { validateOpenAIKey } from './common/validate'
 import axios from 'axios'
 import { Writable } from 'stream'
+import { consoleLogDebug } from './index'
 
 // '/api/chat'
 export const chat = async (event: LambdaFunctionURLEvent,
   credentials: Credentials,
   responseStream: Writable): Promise<LambdaFunctionURLResponse> => {
-
   let questionHistory: QuestionHistory
   try {
     const body = event?.body ?? ''
@@ -99,14 +99,20 @@ export const chat = async (event: LambdaFunctionURLEvent,
     )
 
     // create chain
-    const chain = makeChain(vectorStore, questionHistory.documentCount, questionHistory.model, streaming, (token: string) => {
-      // console.log('token received', token)
-      if (typeof token === 'string') {
-        sendData(token)
-      } else {
-        console.log('error', 'Invalid token:', token)
-      }
-    })
+    const chain = makeChain(
+      vectorStore,
+      questionHistory.documentCount,
+      questionHistory.model,
+      streaming,
+      (token: string) => {
+        // console.log('token received', token)
+        if (typeof token === 'string') {
+          sendData(token)
+        } else {
+          console.log('error', 'Invalid token:', token)
+        }
+      })
+    console.log('makeChain returned', chain)
 
     // Ask a question using chat history
     let response = await chain.call({
@@ -121,6 +127,7 @@ export const chat = async (event: LambdaFunctionURLEvent,
         body: JSON.stringify('GPT API error, likely out of tokens')
       }
     }
+    console.log('chain.call returned', response)
 
     if (response?.sourceDocuments !== undefined) {
       response = stripPathFromSourceDocuments(response)
@@ -137,9 +144,20 @@ export const chat = async (event: LambdaFunctionURLEvent,
       body: JSON.stringify(response)
     }
   } catch (error) {
+    console.log('caught error', error)
     if (axios.isAxiosError(error)) {
+      consoleLogDebug('is Axios: ', error.response?.data?.error?.code, error.response?.data?.error?.message)
+      consoleLogDebug('is Axios: status', error?.response?.status)
+
+      // oversize is:
+    //   "error": {
+    //     "message": "This model's maximum context length is 4097 tokens. However, your messages resulted in 12617 tokens. Please reduce the length of the messages.",
+    //     "type": "invalid_request_error",
+    //     "param": "messages",
+    //     "code": "context_length_exceeded"
+    // }
       return {
-        statusCode: error?.response?.status,
+        statusCode: 400,
         body: JSON.stringify({
           error: `${error.response?.data?.error?.code} - ${error.response?.data?.error?.message}`
         })

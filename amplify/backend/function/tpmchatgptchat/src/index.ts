@@ -50,8 +50,7 @@ exports.handler = awslambda.streamifyResponse(
       statusCode: 200,
       headers: {
         'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache, no-transform',
-        Connection: 'keep-alive'
+        'Cache-Control': 'no-cache, no-transform'
       }
     }
     // @ts-expect-error
@@ -61,38 +60,69 @@ exports.handler = awslambda.streamifyResponse(
     // route the request
     if (event?.requestContext?.http?.path === '/api/chat') {
       err = await chat(event, credentials, responseStream)
+      if (err.statusCode !== 200) {
+        consoleLogDebug('chat returned err', err)
+        streamErrorMsg(responseStream, err)
+        await new Promise(f => setTimeout(f, 3000))
+        console.log('after sleep')
+        responseStream.end()
+        return
+      }
     } else {
-      err.statusCode = 400
-      err.body = JSON.stringify({
-        error: 'unknown request'
+      streamErrorMsg(responseStream, {
+        statusCode: 400,
+        body: JSON.stringify({
+          error: 'unknown request query'
+        })
       })
-    }
-    // overwrite the previous statusCode and error
-    if (err.statusCode !== 200) {
-      return streamError(responseStream, error)
+      await new Promise(f => setTimeout(f, 3000))
+      console.log('after sleep')
+      responseStream.end()
+      return
     }
     responseStream.end()
   })
 
-async function sleep(millis: number): Promise<void> {
-  const promise = new Promise<void>((resolve, reject) => {
-    setTimeout(() => {
-      resolve()
-    }, millis)
-  })
-  return await promise
-}
-
+// Note this can only be called before HttpResponseStream.from is called
 function streamError(responseStream: Writable, err: LambdaFunctionURLResponse): void {
+  console.log('ending with error:', err)
+  console.log('ending with error:', err.body)
+  if (err instanceof Error) {
+    console.log('name-message:', `${err.name} - ${err.message}`)
+  }
+  console.log('ending with err.statusCode:', err.statusCode)
+
   const httpResponseMetadata = {
     statusCode: err.statusCode,
     headers: {
-      'Content-Type': 'text/event-stream',
-      Connection: 'close'
+      'x-error-reason': err.body,
+      'Cache-Control': 'no-cache, no-transform',
+      'Content-Type': 'text/event-stream'
     }
   }
   // @ts-expect-error
   responseStream = awslambda.HttpResponseStream.from(responseStream, httpResponseMetadata)
-  responseStream.write(err.body)
+  responseStream.write(`data: [ERROR] ${err.body as string}\n\n`)
   responseStream.end()
+}
+
+function streamErrorMsg(responseStream: Writable, err: LambdaFunctionURLResponse): void {
+  console.log('streamErrorMsg with error:', err)
+  console.log('streamErrorMsg with error:', err.body)
+  const msg = JSON.parse(err?.body ?? '')
+  console.log('streamErrorMsg writing msg:', `[ERROR] ${msg.error as string}`)
+
+  responseStream.write(`data: [ERROR] ${msg.error as string}\n\n`)
+  // must wait for client to get the message
+}
+
+const logLevelDebug: boolean = true
+export function consoleLogDebug(...args: any[]): void {
+  if (logLevelDebug) {
+    const message = args
+      .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : arg))
+      .join(' ')
+
+    console.log(message)
+  }
 }

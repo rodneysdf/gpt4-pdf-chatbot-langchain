@@ -33,7 +33,7 @@
         },
         "tpmchatgptchat": {
           "deploymentBucketName": "amplify-tpmchatgpt-dev-184051-deployment",
-          "s3Key": "amplify-builds/tpmchatgptchat-43367a69625052306861-build.zip",
+          "s3Key": "amplify-builds/tpmchatgptchat-42764d4d666b38684679-build.zip",
           "authname": "tpmchatgpt6780338c",
           "credentialpath": "/amplify/d3oslnel1z9r6i/",
           "credentialname": "/AMPLIFY_tpmchatgptdfd0678a_credentials"
@@ -74,13 +74,21 @@
         "tpmchatgptdfd0678a": {
           "secretsPathAmplifyAppId": "d3oslnel1z9r6i",
           "deploymentBucketName": "amplify-tpmchatgpt-prod-152840-deployment",
-          "s3Key": "amplify-builds/tpmchatgptdfd0678a-356c5079554e4431554c-build.zip"
+          "s3Key": "amplify-builds/tpmchatgptdfd0678a-6b57614a6f3841437263-build.zip",
+          "credentialname": "/AMPLIFY_tpmchatgptdfd0678a_credentials",
+          "credentialpath": "/amplify/d3oslnel1z9r6i/"
         },
         "tpmchatgpt6780338cPreSignup": {
           "deploymentBucketName": "amplify-tpmchatgpt-prod-152840-deployment",
           "s3Key": "amplify-builds/tpmchatgpt6780338cPreSignup-4e3554616f5070395276-build.zip"
         },
-        "tpmchatgptchat": {}
+        "tpmchatgptchat": {
+          "credentialpath": "/amplify/d3oslnel1z9r6i/",
+          "credentialname": "/AMPLIFY_tpmchatgptdfd0678a_credentials",
+          "authname": "tpmchatgpt6780338c",
+          "deploymentBucketName": "amplify-tpmchatgpt-prod-152840-deployment",
+          "s3Key": "amplify-builds/tpmchatgptchat-796c59687158764b3378-build.zip"
+        }
       },
       "hosting": {
         "amplifyhosting": {

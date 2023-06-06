@@ -263,7 +263,8 @@
             "Content-Length",
             "Connection",
             "Retry-After",
-            "Trnasfer-Encoding"
+            "Transfer-Encoding",
+            "x-error-reason"
           ],
           "MaxAge": 1200
         },

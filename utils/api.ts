@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { AWS_API_URL } from '../config/aws-amplify';
 import { TTLCache } from '@brokerloop/ttlcache';
-import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 const axiosInstance = axios.create({
   baseURL: AWS_API_URL,

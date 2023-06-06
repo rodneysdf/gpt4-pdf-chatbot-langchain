@@ -27,6 +27,10 @@
     {
       "cloudFormationParameterName": "credentialname",
       "environmentVariableName": "credentialname"
+    },
+    {
+      "cloudFormationParameterName": "authname",
+      "environmentVariableName": "AUTHNAME"
     }
   ]
 }
