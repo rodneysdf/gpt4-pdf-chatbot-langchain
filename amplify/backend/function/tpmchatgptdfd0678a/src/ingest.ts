@@ -338,6 +338,14 @@ const handleGDriveFiles = async (list: FolderItem[], credentials: Credentials): 
         }
         break
       }
+      case 'text/vtt': {
+        const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.vtt', credentials)
+        if (success > 0) {
+          fileCount = fileCount + 1
+          totalSize = totalSize + success
+        }
+        break
+      }
       case 'text/xml': { // treat xml as txt
         const success = await getRawDriveFile(ent.id, ent.name, ent.parentName, '.txt', credentials)
         if (success > 0) {
@@ -716,6 +724,7 @@ const langChainIngest = async (credentials: Credentials): Promise<LambdaFunction
       '.docx': (path) => new DocxLoader(path),
       '.json': (path) => new JSONLoader(path),
       '.txt': (path) => new TextLoader(path),
+      '.vtt': (path) => new TextLoader(path),
       '.csv': (path) => new CSVLoader(path),
       '.xlsx': (path) => new CustomExcelLoader(path),
       '.xls': (path) => new CustomExcelLoader(path)
