@@ -17,7 +17,7 @@ If the question is not related to the context, politely respond that you are tun
 {context}
 
 Question: {question}
-Helpful answer:`
+Helpful answer in markdown:`
 
 export const makeChain = (
   vectorstore: PineconeStore,
@@ -27,6 +27,7 @@ export const makeChain = (
   onTokenStream?: (token: string) => void
 ): ConversationalRetrievalQAChain => {
   let extraSpaceRequired: boolean = false // extra space for subsequent LLM starts to separate the sentences
+
   const model = new OpenAI({
     temperature: 0.1, // increase temepreature to get more creative answers
     modelName: modelNameParam, // change this to gpt-4 if you have access

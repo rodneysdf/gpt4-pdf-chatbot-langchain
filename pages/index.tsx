@@ -82,7 +82,7 @@ const DocumentUpload = (props: any) => {
         className="hidden"
       />
       <div className="text-sm font-normal text-center w-full">
-        pdf,docx,txt,json,csv,xls,xlsx
+        pdf,docx,txt,json,csv,xls,xlsx,vtt
         <br />
         (each upload set limited
         <br />
@@ -284,7 +284,7 @@ export default function Home() {
   const [algo, setAlgo] = useState<string>(
     'ConversationalRetrievalQAChain-lc',
   );
-  const [documentCount, setDocumentCount] = useState<number>(20);
+  const [documentCount, setDocumentCount] = useState<number>(22);
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -484,7 +484,7 @@ export default function Home() {
                 AnswerEntry.message = AnswerEntry.message + data.token
               }
               if (data.sourceDocs) {
-                AnswerEntry.sourceDocs = (data.sourceDocs ?? []).slice(0, 6)
+                AnswerEntry.sourceDocs = (data.sourceDocs ?? []).slice(0, 15)
               }
               if (!answerStarted) {
                 answerStarted = true
@@ -690,6 +690,16 @@ export default function Home() {
                               collapsible
                               className="flex-col"
                             >
+                              <AccordionItem value={`source`}>
+                              <AccordionTrigger className="pt-1">
+                                      <h3>Sources</h3>
+                              </AccordionTrigger>
+                              <AccordionContent>
+
+                               <Accordion
+                              type="multiple"
+                              className="flex-col"
+                            >
                               {message.sourceDocs.map((doc, index) => (
                                 <div key={`messageSourceDocs-${index}`}>
                                   <AccordionItem value={`item-${index}`}>
@@ -707,6 +717,9 @@ export default function Home() {
                                   </AccordionItem>
                                 </div>
                               ))}
+                            </Accordion>
+                            </AccordionContent>
+                            </AccordionItem>
                             </Accordion>
                           </div>
                         )}

@@ -63,7 +63,7 @@ exports.handler = awslambda.streamifyResponse(
       if (err.statusCode !== 200) {
         consoleLogDebug('chat returned err', err)
         streamErrorMsg(responseStream, err)
-        await new Promise(f => setTimeout(f, 3000))
+        await new Promise(f => setTimeout(f, 2000))
         console.log('after sleep')
         responseStream.end()
         return
@@ -75,7 +75,7 @@ exports.handler = awslambda.streamifyResponse(
           error: 'unknown request query'
         })
       })
-      await new Promise(f => setTimeout(f, 3000))
+      await new Promise(f => setTimeout(f, 2000))
       console.log('after sleep')
       responseStream.end()
       return
@@ -84,7 +84,7 @@ exports.handler = awslambda.streamifyResponse(
   })
 
 // Note this can only be called before HttpResponseStream.from is called
-function streamError(responseStream: Writable, err: LambdaFunctionURLResponse): void {
+function streamError (responseStream: Writable, err: LambdaFunctionURLResponse): void {
   console.log('ending with error:', err)
   console.log('ending with error:', err.body)
   if (err instanceof Error) {
@@ -106,7 +106,7 @@ function streamError(responseStream: Writable, err: LambdaFunctionURLResponse): 
   responseStream.end()
 }
 
-function streamErrorMsg(responseStream: Writable, err: LambdaFunctionURLResponse): void {
+function streamErrorMsg (responseStream: Writable, err: LambdaFunctionURLResponse): void {
   console.log('streamErrorMsg with error:', err)
   console.log('streamErrorMsg with error:', err.body)
   const msg = JSON.parse(err?.body ?? '')
@@ -117,7 +117,7 @@ function streamErrorMsg(responseStream: Writable, err: LambdaFunctionURLResponse
 }
 
 const logLevelDebug: boolean = true
-export function consoleLogDebug(...args: any[]): void {
+export function consoleLogDebug (...args: any[]): void {
   if (logLevelDebug) {
     const message = args
       .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : arg))
