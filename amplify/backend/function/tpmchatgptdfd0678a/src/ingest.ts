@@ -65,7 +65,7 @@ export const upload = async (event: LambdaFunctionURLEvent,
       credentials.openAiApiKey = openaiKey
       console.log('personal openai key', credentials.openAiApiKey)
       const ret = await validateOpenAIKey(openaiKey)
-      if (ret !== null) {
+      if (ret?.statusCode !== 200) {
         return ret
       }
     }
@@ -169,7 +169,7 @@ export const add = async (event: LambdaFunctionURLEvent,
     credentials.openAiApiKey = addInput.openAiKey
     console.log('personal openai key', credentials.openAiApiKey)
     const ret = await validateOpenAIKey(addInput.openAiKey)
-    if (ret !== null) {
+    if (ret?.statusCode !== 200) {
       return ret
     }
   }

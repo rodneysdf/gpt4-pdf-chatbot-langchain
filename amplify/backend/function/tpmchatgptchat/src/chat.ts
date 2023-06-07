@@ -1,17 +1,17 @@
+import { AxiosError, isAxiosError } from 'axios'
+import { Document } from 'langchain/document'
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
+import { ChainValues } from 'langchain/schema'
+import { PineconeStore } from 'langchain/vectorstores/pinecone'
+import { env } from 'node:process'
+import { Writable } from 'stream'
+import { Convert, Credentials, QuestionHistory } from './common/datamodels'
 import { LambdaFunctionURLEvent, LambdaFunctionURLResponse } from './common/interfaces'
 import { initPinecone } from './common/pineconeclient'
-import { PineconeStore } from 'langchain/vectorstores/pinecone'
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import { makeChain } from './make-chain'
-import { ChainValues } from 'langchain/schema'
-import { Convert, Credentials, QuestionHistory } from './common/datamodels'
-import { env } from 'node:process'
-import { Document } from 'langchain/document'
 import { DESTINATION_DIR } from './common/runtype'
 import { validateOpenAIKey } from './common/validate'
-import { isAxiosError, AxiosError } from 'axios'
-import { Writable } from 'stream'
 import { consoleLogDebug } from './index'
+import { makeChain } from './make-chain'
 
 // '/api/chat'
 export const chat = async (event: LambdaFunctionURLEvent,
@@ -49,7 +49,7 @@ export const chat = async (event: LambdaFunctionURLEvent,
     credentials.openAiApiKey = questionHistory.openAiKey
     console.log('personal openai key', credentials.openAiApiKey)
     const ret = await validateOpenAIKey(credentials.openAiApiKey)
-    if (ret !== null) {
+    if (ret?.statusCode !== 200) {
       return ret
     }
   }
