@@ -20,4 +20,4 @@ async function initPinecone() {
   }
 }
 
-export const pinecone = await initPinecone();
+export const pinecone = initPinecone();

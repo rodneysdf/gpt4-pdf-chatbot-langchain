@@ -1,0 +1,35 @@
+------WebKitFormBoundaryYiVxoyERpAFZhwym
+Content-Disposition: form-data; name="arrayOfFilesName"; filename="pinecone.ts"
+Content-Type: application/octet-stream
+
+/**
+ * Change the namespace to the namespace on Pinecone you'd like to store your embeddings.
+ */
+
+if (!process.env.PINECONE_INDEX_NAME) {
+  throw new Error('Missing Pinecone index name in .env file');
+}
+
+const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME ?? '';
+
+const PINECONE_NAME_SPACE = 'pdf-test'; //namespace is optional for your vectors
+
+export { PINECONE_INDEX_NAME, PINECONE_NAME_SPACE };
+
+------WebKitFormBoundaryYiVxoyERpAFZhwym
+Content-Disposition: form-data; name="arrayOfFilesName"; filename="aws-amplify.ts"
+Content-Type: application/octet-stream
+
+
+/**
+ * Settings from Amplify hosted infrastructure
+ */
+
+const AWS_API_URL = "https://lnd3ycldospc5lyqacgzcm2fry0bpebp.lambda-url.us-east-1.on.aws";
+
+type AmplifyEnv = "dev" | "prod";
+const AMPLIFY_ENV: AmplifyEnv = "dev";
+
+export { AWS_API_URL, AMPLIFY_ENV };
+
+------WebKitFormBoundaryYiVxoyERpAFZhwym--

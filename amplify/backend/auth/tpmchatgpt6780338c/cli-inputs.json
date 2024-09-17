@@ -1,0 +1,97 @@
+{
+  "version": "1",
+  "cognitoConfig": {
+    "identityPoolName": "tpmchatgpt6780338c_identitypool_6780338c",
+    "allowUnauthenticatedIdentities": false,
+    "resourceNameTruncated": "tpmcha6780338c",
+    "userPoolName": "tpmchatgpt6780338c_userpool_6780338c",
+    "autoVerifiedAttributes": [
+      "email"
+    ],
+    "mfaConfiguration": "OFF",
+    "mfaTypes": [
+      "SMS Text Message"
+    ],
+    "smsAuthenticationMessage": "Your authentication code is {####}",
+    "smsVerificationMessage": "Your verification code is {####}",
+    "emailVerificationSubject": "Your verification code",
+    "emailVerificationMessage": "Your verification code is {####}",
+    "defaultPasswordPolicy": false,
+    "passwordPolicyMinLength": 8,
+    "passwordPolicyCharacters": [],
+    "requiredAttributes": [
+      "email"
+    ],
+    "aliasAttributes": [],
+    "userpoolClientGenerateSecret": false,
+    "userpoolClientRefreshTokenValidity": 30,
+    "userpoolClientWriteAttributes": [
+      "email"
+    ],
+    "userpoolClientReadAttributes": [
+      "email"
+    ],
+    "userpoolClientLambdaRole": "tpmcha6780338c_userpoolclient_lambda_role",
+    "userpoolClientSetAttributes": false,
+    "sharedId": "6780338c",
+    "resourceName": "tpmchatgpt6780338c",
+    "authSelections": "identityPoolAndUserPool",
+    "useDefault": "manual",
+    "hostedUI": true,
+    "usernameAttributes": [
+      "email"
+    ],
+    "triggers": {
+      "PreSignup": [
+        "custom"
+      ]
+    },
+    "hostedUIDomainName": "tpm-ai",
+    "authProvidersUserPool": [
+      "Google"
+    ],
+    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
+    "userPoolGroupList": [
+      "Google"
+    ],
+    "serviceName": "Cognito",
+    "usernameCaseSensitive": false,
+    "useEnabledMfas": true,
+    "authRoleArn": {
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
+    },
+    "unauthRoleArn": {
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
+    },
+    "breakCircularDependency": true,
+    "dependsOn": [
+      {
+        "category": "function",
+        "resourceName": "tpmchatgpt6780338cPreSignup",
+        "triggerProvider": "Cognito",
+        "attributes": [
+          "Arn",
+          "Name"
+        ]
+      }
+    ],
+    "parentStack": {
+      "Ref": "AWS::StackId"
+    },
+    "permissions": [],
+    "thirdPartyAuth": true,
+    "authProviders": [
+      "accounts.google.com"
+    ],
+    "userPoolGroups": true,
+    "adminQueries": false,
+    "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PreSignUp\",\n    \"lambdaFunctionName\": \"tpmchatgpt6780338cPreSignup\"\n  }\n]",
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"https://tpm-ai-dev.devfactory.com/\",\"http://localhost:3000/\",\"https://tpm-ai.devfactory.com/\"],\"LogoutURLs\":[\"https://tpm-ai-dev.devfactory.com/\",\"http://localhost:3000/\",\"https://tpm-ai.devfactory.com/\"]}"
+  }
+}

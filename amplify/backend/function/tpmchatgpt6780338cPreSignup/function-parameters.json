@@ -1,0 +1,16 @@
+{
+  "trigger": true,
+  "modules": [
+    "custom"
+  ],
+  "parentResource": "tpmchatgpt6780338c",
+  "functionName": "tpmchatgpt6780338cPreSignup",
+  "resourceName": "tpmchatgpt6780338cPreSignup",
+  "parentStack": "auth",
+  "triggerEnvs": "[]",
+  "triggerDir": "/snapshot/repo/build/node_modules/@aws-amplify/amplify-category-auth/provider-utils/awscloudformation/triggers/PreSignup",
+  "triggerTemplate": "PreSignup.json.ejs",
+  "triggerEventPath": "PreSignup.event.json",
+  "roleName": "tpmchatgpt6780338cPreSignup",
+  "skipEdit": true
+}

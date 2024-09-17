@@ -1,0 +1,10 @@
+{
+  "resourceName": "tpmai",
+  "tableName": "tpmaiusers",
+  "partitionKey": {
+    "fieldName": "sub",
+    "fieldType": "string"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}

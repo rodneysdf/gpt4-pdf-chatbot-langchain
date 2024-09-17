@@ -1,0 +1,30 @@
+// from https://www.npmjs.com/package/bb26?activeTab=code
+/**
+ * Converts a decimal number to a bijective base-26 string.
+ *
+ * ```
+ * import { toBb26 } from 'bb26'
+ *
+ * toBb26(1)  // 'A'
+ * toBb26(2)  // 'B'
+ * toBb26(26) // 'Z'
+ * toBb26(27) // 'AA'
+ * toBb26(28) // 'AB'
+ * ```
+ *
+ * @param number
+ */
+export default function toBb26 (number: number): string {
+  let string = ''
+  let _number = number
+  while (_number > 0) {
+    const mod = _number % 26
+    string = toChar((mod !== 0) ? mod : 26) + string
+    _number = Math.floor((_number - 1) / 26)
+  }
+  return string
+}
+
+function toChar (number: number): string {
+  return String.fromCodePoint(('A'.codePointAt(0) ?? 65) - 1 + number)
+}

@@ -5,6 +5,8 @@
 /.pnp
 .pnp.js
 
+*.history*
+
 # testing
 /coverage
 
@@ -26,8 +28,11 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-.env*.local
+.env*.local*
 .env
+
+# config
+config/aws-amplify.ts
 
 # vercel
 .vercel
@@ -36,5 +41,39 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Amplify
+amplify/backend/function/tpmchatgptdfd0678a/src/**/*.js
+amplify/backend/function/tpmchatgptdfd0678a/src/**/*.js.map
+amplify/backend/function/tpmchatgptchat/src/**/*.js
+amplify/backend/function/tpmchatgptchat/src/**/*.js.map
+amplify/backend/function/common/aws-exports.ts
+amplify/backend/function/common/datamodels.ts
+amplify/backend/function/common/interfaces.ts
+amplify/backend/function/tpmchatgptchat/src/common/*
+amplify/backend/function/tpmchatgptchat/src/test/*
+amplify/backend/function/tpmchatgptdfd0678a/src/common/*
+amplify/backend/function/tpmchatgptdfd0678a/src/test/*
 #Notion_db
 /Notion_DB
+
+#amplify-do-not-edit-begin
+amplify/\#current-cloud-backend
+amplify/.config/local-*
+amplify/logs
+amplify/mock-data
+amplify/mock-api-resources
+amplify/backend/amplify-meta.json
+amplify/backend/.temp
+build/
+dist/
+node_modules/
+config/aws-exports.js
+awsconfiguration.json
+amplifyconfiguration.json
+amplifyconfiguration.dart
+amplify-build-config.json
+amplify-gradle-config.json
+amplifytools.xcconfig
+.secret-*
+**.sample
+#amplify-do-not-edit-end

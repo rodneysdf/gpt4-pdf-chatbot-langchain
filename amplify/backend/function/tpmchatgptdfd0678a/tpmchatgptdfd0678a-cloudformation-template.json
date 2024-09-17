@@ -1,0 +1,482 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.0.0\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Parameters": {
+    "CloudWatchRule": {
+      "Type": "String",
+      "Default": "NONE",
+      "Description": "Schedule Expression"
+    },
+    "deploymentBucketName": {
+      "Type": "String"
+    },
+    "env": {
+      "Type": "String"
+    },
+    "s3Key": {
+      "Type": "String"
+    },
+    "secretsPathAmplifyAppId": {
+      "Type": "String"
+    },
+    "storagetpmaiName": {
+      "Type": "String",
+      "Default": "storagetpmaiName"
+    },
+    "storagetpmaiArn": {
+      "Type": "String",
+      "Default": "storagetpmaiArn"
+    },
+    "storagetpmaiStreamArn": {
+      "Type": "String",
+      "Default": "storagetpmaiStreamArn"
+    },
+    "authtpmchatgpt6780338cUserPoolId": {
+      "Type": "String",
+      "Default": "authtpmchatgpt6780338cUserPoolId"
+    },
+    "credentialname": {
+      "Type": "String"
+    },
+    "credentialpath": {
+      "Type": "String"
+    }
+  },
+  "Conditions": {
+    "ShouldNotCreateEnvResources": {
+      "Fn::Equals": [
+        {
+          "Ref": "env"
+        },
+        "NONE"
+      ]
+    }
+  },
+  "Resources": {
+    "LambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Metadata": {
+        "aws:asset:path": "./src",
+        "aws:asset:property": "Code"
+      },
+      "Properties": {
+        "Description": "Lambda for REST requests",
+        "Code": {
+          "S3Bucket": {
+            "Ref": "deploymentBucketName"
+          },
+          "S3Key": {
+            "Ref": "s3Key"
+          }
+        },
+        "Handler": "index.handler",
+        "FunctionName": {
+          "Fn::If": [
+            "ShouldNotCreateEnvResources",
+            "tpmchatgptdfd0678a",
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "tpmchatgptdfd0678a",
+                  "-",
+                  {
+                    "Ref": "env"
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "ENV": {
+              "Ref": "env"
+            },
+            "REGION": {
+              "Ref": "AWS::Region"
+            },
+            "credentials": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Fn::Sub": [
+                      "/amplify/${appId}/${env}/AMPLIFY_${functionName}_",
+                      {
+                        "appId": {
+                          "Ref": "secretsPathAmplifyAppId"
+                        },
+                        "env": {
+                          "Ref": "env"
+                        },
+                        "functionName": "tpmchatgptdfd0678a"
+                      }
+                    ]
+                  },
+                  "credentials"
+                ]
+              ]
+            },
+            "AUTHNAME": "tpmchatgpt6780338c",
+            "STORAGE_TPMAI_NAME": {
+              "Ref": "storagetpmaiName"
+            },
+            "STORAGE_TPMAI_ARN": {
+              "Ref": "storagetpmaiArn"
+            },
+            "STORAGE_TPMAI_STREAMARN": {
+              "Ref": "storagetpmaiStreamArn"
+            },
+            "AUTH_TPMCHATGPT6780338C_USERPOOLID": {
+              "Ref": "authtpmchatgpt6780338cUserPoolId"
+            },
+            "credentialname": {
+              "Ref": "credentialname"
+            },
+            "credentialpath": {
+              "Ref": "credentialpath"
+            }
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaExecutionRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs18.x",
+        "Architectures": [
+          "arm64"
+        ],
+        "MemorySize": 1792,
+        "Layers": [],
+        "Timeout": 900
+      }
+    },
+    "LambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": {
+          "Fn::If": [
+            "ShouldNotCreateEnvResources",
+            "tpmchatgptLambdaRole5aaeb05d",
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "tpmchatgptLambdaRole5aaeb05d",
+                  "-",
+                  {
+                    "Ref": "env"
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "lambdaexecutionpolicy": {
+      "DependsOn": [
+        "LambdaExecutionRole"
+      ],
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-execution-policy",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Resource": {
+                "Fn::Sub": [
+                  "arn:aws:logs:${region}:${account}:log-group:/aws/lambda/${lambda}:log-stream:*",
+                  {
+                    "region": {
+                      "Ref": "AWS::Region"
+                    },
+                    "account": {
+                      "Ref": "AWS::AccountId"
+                    },
+                    "lambda": {
+                      "Ref": "LambdaFunction"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "AmplifyFunctionSecretsPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "amplify-function-secrets-policy",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "ssm:GetParameter",
+                "ssm:GetParameters"
+              ],
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:ssm:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":parameter",
+                    {
+                      "Fn::Sub": [
+                        "/amplify/${appId}/${env}/AMPLIFY_${functionName}_",
+                        {
+                          "appId": {
+                            "Ref": "secretsPathAmplifyAppId"
+                          },
+                          "env": {
+                            "Ref": "env"
+                          },
+                          "functionName": "tpmchatgptdfd0678a"
+                        }
+                      ]
+                    },
+                    "*"
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "DependsOn": [
+        "LambdaExecutionRole"
+      ]
+    },
+    "tpmchatLambdaUrlPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunctionUrl",
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "FunctionUrlAuthType": "NONE",
+        "Principal": "*"
+      }
+    },
+    "tpmchatLambdaFuncUrl": {
+      "Type": "AWS::Lambda::Url",
+      "Properties": {
+        "TargetFunctionArn": {
+          "Ref": "LambdaFunction"
+        },
+        "AuthType": "NONE",
+        "Cors": {
+          "AllowCredentials": true,
+          "AllowHeaders": [
+            "Accept",
+            "Accept-Encoding",
+            "Accept-Language",
+            "Authorization",
+            "Content-Type",
+            "Origin",
+            "Referer",
+            "Host",
+            "User-Agent",
+            "x-key-openai",
+            "x-key-anthropic"
+          ],
+          "AllowMethods": [
+            "GET",
+            "POST"
+          ],
+          "AllowOrigins": [
+            "https://tpm-ai.devfactory.com",
+            "https://tpm-ai-dev.devfactory.com",
+            "http://localhost:3000"
+          ],
+          "ExposeHeaders": [
+            "Date",
+            "Content-Type",
+            "Content-Length",
+            "Connection"
+          ],
+          "MaxAge": 1200
+        },
+        "InvokeMode": "BUFFERED"
+      }
+    },
+    "AmplifyResourcesPolicy": {
+      "DependsOn": [
+        "LambdaExecutionRole"
+      ],
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "amplify-lambda-execution-policy",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "cognito-identity:Describe*",
+                "cognito-identity:Get*",
+                "cognito-identity:List*",
+                "cognito-idp:Describe*",
+                "cognito-idp:AdminGetDevice",
+                "cognito-idp:AdminGetUser",
+                "cognito-idp:AdminList*",
+                "cognito-idp:List*",
+                "cognito-sync:Describe*",
+                "cognito-sync:Get*",
+                "cognito-sync:List*",
+                "iam:ListOpenIdConnectProviders",
+                "iam:ListRoles",
+                "sns:ListPlatformApplications"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:cognito-idp:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":userpool/",
+                      {
+                        "Ref": "authtpmchatgpt6780338cUserPoolId"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:Put*",
+                "dynamodb:Create*",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:Get*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:List*",
+                "dynamodb:Describe*",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:Update*",
+                "dynamodb:RestoreTable*"
+              ],
+              "Resource": [
+                {
+                  "Ref": "storagetpmaiArn"
+                },
+                {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      {
+                        "Ref": "storagetpmaiArn"
+                      },
+                      "index/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "Name": {
+      "Value": {
+        "Ref": "LambdaFunction"
+      }
+    },
+    "Arn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "LambdaFunction",
+          "Arn"
+        ]
+      }
+    },
+    "tpmchatLambdaFuncUrl": {
+      "Value": {
+        "Fn::GetAtt": [
+          "tpmchatLambdaFuncUrl",
+          "FunctionUrl"
+        ]
+      }
+    },
+    "Region": {
+      "Value": {
+        "Ref": "AWS::Region"
+      }
+    },
+    "LambdaExecutionRole": {
+      "Value": {
+        "Ref": "LambdaExecutionRole"
+      }
+    },
+    "LambdaExecutionRoleArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "LambdaExecutionRole",
+          "Arn"
+        ]
+      }
+    }
+  }
+}

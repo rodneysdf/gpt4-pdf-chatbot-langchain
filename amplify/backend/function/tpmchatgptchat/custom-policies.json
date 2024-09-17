@@ -1,0 +1,6 @@
+[
+  {
+    "Action": ["ssm:GetParameter"],
+    "Resource": ["arn:aws:ssm:us-east-1:088858129648:parameter/amplify/d3oslnel1z9r6i/${env}/AMPLIFY_tpmchatgptdfd0678a_*"]
+  }
+]

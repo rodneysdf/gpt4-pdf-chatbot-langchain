@@ -1,0 +1,247 @@
+{
+  "auth": {
+    "tpmchatgpt6780338c": {
+      "customAuth": false,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn",
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "tpmchatgpt6780338cPreSignup",
+          "triggerProvider": "Cognito"
+        }
+      ],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [
+          "GOOGLE"
+        ],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito"
+    },
+    "userPoolGroups": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "tpmchatgpt6780338c"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito-UserPool-Groups"
+    }
+  },
+  "custom": {},
+  "function": {
+    "tpmchatgpt6780338cPreSignup": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "tpmchatgptchat": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "tpmchatgpt6780338c"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "StreamArn"
+          ],
+          "category": "storage",
+          "resourceName": "tpmai"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "tpmchatgptdfd0678a": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "tpmchatgpt6780338c"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "StreamArn"
+          ],
+          "category": "storage",
+          "resourceName": "tpmai"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "hosting": {
+    "amplifyhosting": {
+      "providerPlugin": "awscloudformation",
+      "service": "amplifyhosting",
+      "type": "manual"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_auth_tpmchatgpt6780338c_googleClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "tpmchatgpt6780338c"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgpt6780338cPreSignup_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgpt6780338cPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgpt6780338cPreSignup_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgpt6780338cPreSignup"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptchat_authname": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptchat"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptchat_credentialname": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptchat"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptchat_credentialpath": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptchat"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptchat_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptchat"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptchat_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptchat"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_credentialname": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_credentialpath": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_function_tpmchatgptdfd0678a_secretsPathAmplifyAppId": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tpmchatgptdfd0678a"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_appId": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_type": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "tpmai": {
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB"
+    }
+  }
+}

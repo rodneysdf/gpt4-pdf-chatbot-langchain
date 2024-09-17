@@ -1,0 +1,104 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tpmchatgpt-dev-184051-authRole",
+      "UnauthRoleArn": "arn:aws:iam::088858129648:role/amplify-tpmchatgpt-dev-184051-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::088858129648:role/amplify-tpmchatgpt-dev-184051-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-tpmchatgpt-dev-184051-deployment",
+      "UnauthRoleName": "amplify-tpmchatgpt-dev-184051-unauthRole",
+      "StackName": "amplify-tpmchatgpt-dev-184051",
+      "StackId": "arn:aws:cloudformation:us-east-1:088858129648:stack/amplify-tpmchatgpt-dev-184051/2733b9c0-ee02-11ed-abf1-0e2d8bb0b23f",
+      "AmplifyAppId": "d3oslnel1z9r6i",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-tpmchatgpt-dev-184051-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d3oslnel1z9r6i",
+          "type": "manual"
+        }
+      },
+      "function": {
+        "tpmchatgptdfd0678a": {
+          "secretsPathAmplifyAppId": "d3oslnel1z9r6i",
+          "deploymentBucketName": "amplify-tpmchatgpt-dev-184051-deployment",
+          "s3Key": "amplify-builds/tpmchatgptdfd0678a-726a5058307035656e38-build.zip",
+          "credentialpath": "/amplify/d3oslnel1z9r6i/",
+          "credentialname": "/AMPLIFY_tpmchatgptdfd0678a_credentials"
+        },
+        "tpmchatgpt6780338cPreSignup": {
+          "deploymentBucketName": "amplify-tpmchatgpt-dev-184051-deployment",
+          "s3Key": "amplify-builds/tpmchatgpt6780338cPreSignup-4e3554616f5070395276-build.zip"
+        },
+        "tpmchatgptchat": {
+          "deploymentBucketName": "amplify-tpmchatgpt-dev-184051-deployment",
+          "s3Key": "amplify-builds/tpmchatgptchat-2f565051594f784c384c-build.zip",
+          "authname": "tpmchatgpt6780338c",
+          "credentialpath": "/amplify/d3oslnel1z9r6i/",
+          "credentialname": "/AMPLIFY_tpmchatgptdfd0678a_credentials"
+        }
+      },
+      "auth": {
+        "tpmchatgpt6780338c": {
+          "googleClientId": "632052571112-196ci83pk5etlcq8ehkkmbu77anshr6a.apps.googleusercontent.com"
+        },
+        "userPoolGroups": {}
+      },
+      "storage": {
+        "tpmai": {}
+      }
+    }
+  },
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tpmchatgpt-prod-152840-authRole",
+      "UnauthRoleArn": "arn:aws:iam::088858129648:role/amplify-tpmchatgpt-prod-152840-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::088858129648:role/amplify-tpmchatgpt-prod-152840-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-tpmchatgpt-prod-152840-deployment",
+      "UnauthRoleName": "amplify-tpmchatgpt-prod-152840-unauthRole",
+      "StackName": "amplify-tpmchatgpt-prod-152840",
+      "StackId": "arn:aws:cloudformation:us-east-1:088858129648:stack/amplify-tpmchatgpt-prod-152840/f78b28e0-f10b-11ed-ab90-0ae2dc95655b",
+      "AmplifyAppId": "d3oslnel1z9r6i",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-tpmchatgpt-prod-152840-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+    },
+    "categories": {
+      "auth": {
+        "tpmchatgpt6780338c": {
+          "googleClientId": "632052571112-196ci83pk5etlcq8ehkkmbu77anshr6a.apps.googleusercontent.com"
+        },
+        "userPoolGroups": {}
+      },
+      "function": {
+        "tpmchatgptdfd0678a": {
+          "secretsPathAmplifyAppId": "d3oslnel1z9r6i",
+          "deploymentBucketName": "amplify-tpmchatgpt-prod-152840-deployment",
+          "s3Key": "amplify-builds/tpmchatgptdfd0678a-6b57614a6f3841437263-build.zip",
+          "credentialname": "/AMPLIFY_tpmchatgptdfd0678a_credentials",
+          "credentialpath": "/amplify/d3oslnel1z9r6i/"
+        },
+        "tpmchatgpt6780338cPreSignup": {
+          "deploymentBucketName": "amplify-tpmchatgpt-prod-152840-deployment",
+          "s3Key": "amplify-builds/tpmchatgpt6780338cPreSignup-4e3554616f5070395276-build.zip"
+        },
+        "tpmchatgptchat": {
+          "credentialpath": "/amplify/d3oslnel1z9r6i/",
+          "credentialname": "/AMPLIFY_tpmchatgptdfd0678a_credentials",
+          "authname": "tpmchatgpt6780338c",
+          "deploymentBucketName": "amplify-tpmchatgpt-prod-152840-deployment",
+          "s3Key": "amplify-builds/tpmchatgptchat-6e43784d535149707552-build.zip"
+        }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d3oslnel1z9r6i",
+          "type": "manual"
+        }
+      },
+      "storage": {
+        "tpmai": {}
+      }
+    }
+  }
+}
